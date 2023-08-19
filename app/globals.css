@@ -1,0 +1,13 @@
+@tailwind components;
+@tailwind utilities;
+
+body {
+    color: white;
+    background: #151515;
+}
+
+@layer utilities {
+    .clip-circle {
+        clip-path: circle(63.5% at 57% 69%);
+    }
+}

@@ -1,0 +1,54 @@
+{
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "emulators": {
+    "auth": {
+      "port": 4001
+    },
+    "firestore": {
+      "port": 4003
+    },
+    "database": {
+      "port": 4004
+    },
+    "hosting": {
+      "port": 4005
+    },
+    "pubsub": {
+      "port": 4006
+    },
+    "storage": {
+      "port": 4007
+    },
+    "eventarc": {
+      "port": 4008
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4000
+    },
+    "singleProjectMode": true,
+    "functions": {
+      "port": 5001
+    }
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "functions": {
+    "source": "functions"
+  },
+  "database": {
+    "rules": "database.rules.json"
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}
