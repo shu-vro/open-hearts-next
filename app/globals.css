@@ -2,6 +2,9 @@
 @tailwind utilities;
 
 body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
     color: white;
     background: #151515;
 }
@@ -10,4 +13,13 @@ body {
     .clip-circle {
         clip-path: circle(63.5% at 57% 69%);
     }
+}
+
+a {
+    color: dodgerblue;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
