@@ -134,7 +134,6 @@ export default function AppBarCustom() {
               size="large" 
               aria-label="show 4 new mails" 
               color="inherit" 
-              onClick={(e)=> setAnchorElForMessagesPopover(e.currentTarget)}
             >
               <Badge badgeContent={4} color="error">
                 <LuMail />
@@ -158,6 +157,7 @@ export default function AppBarCustom() {
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"
+              onClick={(e)=> setAnchorElForMessagesPopover(e.currentTarget)}
             >
               <Badge badgeContent={17} color="error">
                 <MdOutlineNotifications />

@@ -9,7 +9,7 @@ export default function RootLayout({
     children: React.ReactElement;
 }) {
     return (
-        <div className="h-[100vh] w-full flex justify-center flex-col items-center">
+        <div className="h-[100vh] w-full flex justify-start flex-col items-start">
             <AppBarCustom />
             {children}
         </div>
