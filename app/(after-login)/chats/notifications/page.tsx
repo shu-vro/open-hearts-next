@@ -1,13 +1,21 @@
-import Notification from './Notification'
+import Notification from "./Notification";
 
 export default async function Notifications() {
+    const response = await fetch("https://jsonplaceholder.org/posts");
+    const data: object[] = await response.json();
+
     return (
-        <div className="w-full h-full flex flex-col justify-start items-start gap-4">
-            {
-                Array(15).fill("").map((e,i)=> (
-                    <Notification data={e} key={i} />
-                ))
-            }
+        <div className="w-full h-full flex flex-col justify-start items-start gap-4 max-[668px]:gap-2">
+            {data.map((e: unknown, i: number) => (
+                <Notification
+                    name={e.slug}
+                    photoURL={e.thumbnail}
+                    time={e.publishedAt}
+                    description={e.content}
+                    url={e.url}
+                    key={i}
+                />
+            ))}
         </div>
-    )
+    );
 }

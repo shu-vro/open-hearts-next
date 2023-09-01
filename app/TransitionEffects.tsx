@@ -8,7 +8,7 @@ const variants = {
         opacity: 1,
     },
     center: {
-        opacity: 1,
+        opacity: 0,
     },
     out: {
         opacity: 0,
@@ -23,7 +23,7 @@ export default function TransitionEffect({
     const pathname = usePathname();
 
     return (
-        <AnimatePresence initial={false}>
+        <AnimatePresence initial={false} mode="wait">
             <motion.div
                 transition={{
                     duration: 0.6,
