@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 import React from "react";
-import AppBarCustom from './AppBarCustom'
+import AppBarCustom from "./AppBarCustom";
 
 export default function RootLayout({
     children,

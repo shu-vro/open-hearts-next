@@ -5,8 +5,6 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: white;
-    background: #151515;
 }
 
 @layer utilities {
@@ -23,3 +21,40 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+html ::-webkit-scrollbar {
+    width: 10px;
+    background: #f0f0f0;
+}
+
+html ::-webkit-scrollbar-thumb {
+    background: #9b9b9b;
+    border-radius: 20px;
+}
+
+html.dark ::-webkit-scrollbar {
+    width: 10px;
+    background: #222;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 20px;
+}
+/* 
+@media (prefers-color-scheme: dark) {
+    body {
+        color: white;
+        background: #151515;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+        background: #222;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 20px;
+    }
+} */

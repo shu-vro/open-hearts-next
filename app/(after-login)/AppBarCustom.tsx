@@ -6,20 +6,16 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { VscAccount } from "react-icons/vsc";
-import { MdOutlineNotifications } from "react-icons/md";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import Popover from "@mui/material/Popover";
+import { BsSun, BsThreeDotsVertical } from "react-icons/bs";
 import MobileNotificationItem from "./MobileNotificationItem";
 import DesktopNotificationItem from "./DesktopNotificationItem";
+import { useColorMode } from "@/contexts/ColorModeContext";
 
 export default function AppBarCustom() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [anchorElForMessagesPopover, setAnchorElForMessagesPopover] =
-        React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
 
@@ -97,6 +93,7 @@ export default function AppBarCustom() {
             </MenuItem>
         </Menu>
     );
+    const { mode, setMode } = useColorMode();
 
     return (
         <Box sx={{ flexGrow: 1, width: "100%" }}>
@@ -112,6 +109,24 @@ export default function AppBarCustom() {
                     </Typography>
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                        <IconButton
+                            size="large"
+                            onClick={() => {
+                                if (mode === "dark") {
+                                    document.documentElement.classList.remove(
+                                        "dark"
+                                    );
+                                    localStorage.theme = "light";
+                                    setMode!("light");
+                                    return;
+                                }
+                                document.documentElement.classList.add("dark");
+                                localStorage.theme = "dark";
+                                setMode!("dark");
+                            }}
+                        >
+                            <BsSun />
+                        </IconButton>
                         <DesktopNotificationItem />
                         <IconButton
                             size="large"
@@ -120,7 +135,6 @@ export default function AppBarCustom() {
                             aria-controls={menuId}
                             aria-haspopup="true"
                             onClick={handleProfileMenuOpen}
-                            color="inherit"
                         >
                             <VscAccount />
                         </IconButton>
@@ -132,7 +146,6 @@ export default function AppBarCustom() {
                             aria-controls={mobileMenuId}
                             aria-haspopup="true"
                             onClick={handleMobileMenuOpen}
-                            color="inherit"
                         >
                             <BsThreeDotsVertical />
                         </IconButton>

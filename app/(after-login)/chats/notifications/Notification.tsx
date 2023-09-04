@@ -1,10 +1,9 @@
 "use client";
 
-import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { IconButton } from "@mui/material";
+import { IconButton, useTheme } from "@mui/material";
 import { BsCheck2All } from "react-icons/bs";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +13,7 @@ type Props = {
     time: number | string;
     description: string;
     url: string;
+    iconOnly?: boolean;
 };
 
 export default function Notification({
@@ -22,9 +22,12 @@ export default function Notification({
     photoURL,
     time,
     url,
+    iconOnly = false,
 }: Props) {
+    const theme = useTheme();
     const matches668 = useMediaQuery("(min-width:668px)");
     const matches438 = useMediaQuery("(min-width:438px)");
+
     const handleMarkAsRead = (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
@@ -34,19 +37,23 @@ export default function Notification({
         <a
             href={url}
             className={cn(
-                "grid h-full text-[#dcdcdc] mx-8 rounded-lg p-2 border-4 border-black border-solid first:mt-4 hover:no-underline",
+                "grid h-full mx-8 rounded-lg p-2 border-4 border-gray-400 dark:border-black border-solid first:mt-4 hover:no-underline",
                 "max-[538px]:text-[10px] max-[438px]:mx-2 max-[900px]:text-sm first:mt-4"
             )}
             style={{
+                color: theme.palette.text.primary,
                 width: matches438 ? "calc(100% - 4rem)" : "calc(100% - 1rem)",
                 background:
-                    "linear-gradient(to bottom, #252525 50%, #444 100%)",
+                    theme.palette.mode === "dark"
+                        ? "linear-gradient(to bottom, #252525 50%, #444 100%)"
+                        : `#dfe1eb`,
 
-                gridTemplateAreas: matches668
-                    ? `
+                gridTemplateAreas:
+                    matches668 && !iconOnly
+                        ? `
                 'avatar info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info'
                 '.    button   .  time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time'`
-                    : `'avatar info info info info info button'
+                        : `'avatar info info info info info button'
                         '.       .     .   .  time  time  time'`,
             }}
         >
@@ -64,10 +71,12 @@ export default function Notification({
                     gridArea: "info",
                 }}
             >
-                <h3 className="m-0 p-0 mb-2">{name}</h3>
-                <div className="text-slate-400 truncate">{description}</div>
+                <h3 className="m-0 p-0 mb-2 truncate">{name}</h3>
+                <div className="text-slate-500 dark:text-slate-400 truncate">
+                    {description}
+                </div>
             </div>
-            {matches668 ? (
+            {matches668 && !iconOnly ? (
                 <Button
                     variant="outlined"
                     style={{
@@ -95,7 +104,7 @@ export default function Notification({
                 style={{
                     gridArea: "time",
                 }}
-                className="text-gray-500 place-self-end text-[1em]"
+                className="text-gray-400 place-self-end text-[1em]"
             >
                 {time}
             </span>
