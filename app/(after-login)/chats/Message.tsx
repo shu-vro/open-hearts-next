@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import Avatar from "@mui/material/Avatar";
-import React, { HTMLAttributes, useState } from "react";
+import React, { useState } from "react";
 import { AiOutlineMessage } from "react-icons/ai";
 import { Popover, useTheme } from "@mui/material";
 import EmojiPicker, {
@@ -47,42 +47,26 @@ function MessageBox({ by, type }: Props) {
     } = useTheme();
 
     const [showImageModal, setShowImageModal] = useState("");
-    if (type === "text") {
+    if (type === "emoji") {
         return (
-            <div
-                className={cn(
-                    "message text-sm m-2 p-3 rounded-lg",
-                    by === "me" ? "text-right" : ""
-                )}
-                style={{
-                    gridArea: "message",
-                    background: by === "him" ? messageBG : main,
-                }}
-            >
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                Nesciunt provident nisi perferendis laudantium beatae inventore
-                consectetur ea, nostrum soluta rerum et vero eum iste ipsum
-                incidunt debitis optio recusandae molestias.
-            </div>
-        );
-    } else if (type === "emoji") {
-        return (
-            <div
-                className={cn(
-                    "message text-sm m-2 p-3 rounded-lg",
-                    by === "me" ? "justify-self-end" : ""
-                )}
-                style={{
-                    gridArea: "message",
-                }}
-            >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                    src="https://cdn.jsdelivr.net/npm/emoji-datasource-facebook/img/facebook/64/1f601.png"
-                    alt="https://cdn.jsdelivr.net/npm/emoji-datasource-facebook/img/facebook/64/1f601.png"
-                    width={50}
-                />
-            </div>
+            <>
+                <div
+                    className={cn(
+                        "message text-sm m-2 p-3 rounded-lg",
+                        by === "me" ? "justify-self-end" : ""
+                    )}
+                    style={{
+                        // TODO: afterwards, we will get how many images we have to show, then, we can tell column-count: min(3, images.length).
+                        gridArea: "message",
+                    }}
+                >
+                    <Emoji
+                        unified="1f601"
+                        size={50}
+                        emojiStyle={EmojiStyle.FACEBOOK}
+                    />
+                </div>
+            </>
         );
     } else if (type === "image") {
         let images = Array(10)
@@ -92,7 +76,6 @@ function MessageBox({ by, type }: Props) {
         const handleClose = () => {
             setShowImageModal("");
         };
-        console.log("hi");
         return (
             <div
                 className={cn(
@@ -127,7 +110,7 @@ function MessageBox({ by, type }: Props) {
                         images={images}
                         handleClose={handleClose}
                         showImageModal={showImageModal}
-                    ></ImagePreviewModal>
+                    />
                 </div>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus
                 fuga quos nihil, similique voluptatem, aspernatur id qui
@@ -136,7 +119,23 @@ function MessageBox({ by, type }: Props) {
             </div>
         );
     } else {
-        return <></>;
+        return (
+            <div
+                className={cn(
+                    "message text-sm m-2 p-3 rounded-lg",
+                    by === "me" ? "text-right" : ""
+                )}
+                style={{
+                    gridArea: "message",
+                    background: by === "him" ? messageBG : main,
+                }}
+            >
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                Nesciunt provident nisi perferendis laudantium beatae inventore
+                consectetur ea, nostrum soluta rerum et vero eum iste ipsum
+                incidunt debitis optio recusandae molestias.
+            </div>
+        );
     }
 }
 

@@ -49,6 +49,7 @@ export default function Chats() {
                     <MessageSent by="me" type="text" />
                     <MessageSent by="him" type="image" />
                     <MessageSent by="me" type="emoji" />
+                    <MessageSent by="him" type="emoji" />
                 </div>
                 <MessageForm message={message} setMessage={setMessage} />
             </main>
