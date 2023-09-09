@@ -52,7 +52,6 @@ export default function AppBarCustom() {
                 horizontal: "center",
             }}
             id={menuId}
-            keepMounted
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
@@ -74,7 +73,6 @@ export default function AppBarCustom() {
                 horizontal: "center",
             }}
             id={mobileMenuId}
-            keepMounted
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
@@ -85,7 +83,6 @@ export default function AppBarCustom() {
                     aria-label="account of current user"
                     aria-controls="primary-search-account-menu"
                     aria-haspopup="true"
-                    color="inherit"
                 >
                     <VscAccount />
                 </IconButton>

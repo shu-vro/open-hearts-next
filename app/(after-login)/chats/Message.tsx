@@ -1,15 +1,14 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, normalizeTimeFormat } from "@/lib/utils";
 import Avatar from "@mui/material/Avatar";
 import React, { useState } from "react";
-import { AiOutlineMessage } from "react-icons/ai";
-import { Popover, useTheme } from "@mui/material";
+import { AiOutlineMessage, AiOutlinePlus } from "react-icons/ai";
+import { Box, Chip, IconButton, Popover, useTheme } from "@mui/material";
 import EmojiPicker, {
     EmojiStyle,
     Theme,
     EmojiClickData,
-    Emoji,
 } from "emoji-picker-react";
 import Link from "next/link";
 import ImagePreviewModal from "./ImagePreviewModal";
@@ -18,36 +17,89 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import Chips from "./Chips";
+import { RiVoiceprintFill } from "react-icons/ri";
+import {
+    useMessage,
+    defaultMessage,
+    TypesOfMessage,
+} from "@/contexts/MessageContext";
+import { MessageType } from "@/app";
 
 type Props = {
     by: "me" | "him";
-    type?: "text" | "image" | "emoji";
+    type?: TypesOfMessage;
+    msg: MessageType;
+    time: number;
+    avatarURL: string;
+    metadata: null; // for now.
 };
 
-function getRandomImage() {
-    let images = [
-        "https://images.unsplash.com/photo-1668162692136-9c490f102de2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1926&q=80",
-        "https://images.unsplash.com/photo-1682685797857-97de838c192e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
-        "https://plus.unsplash.com/premium_photo-1693155671457-e97a909b5fc8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-        "https://plus.unsplash.com/premium_photo-1666648220960-da4b99a3a17f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80",
-        "https://images.unsplash.com/photo-1693588312088-a37c2a329982?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2127&q=80",
-        "https://images.unsplash.com/photo-1692284759956-ad1330507a1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
-        "https://images.unsplash.com/photo-1682685797406-97f364419b4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    ];
-    return images[Math.floor(Math.random() * images.length)];
-}
-
-function MessageBox({ by, type }: Props) {
-    const {
-        palette: {
-            mySwatch: { messageBG },
-            primary: { main },
-        },
-    } = useTheme();
+export function MessageBox({
+    by,
+    type,
+    msg,
+}: {
+    by: Props["by"];
+    type: Props["type"];
+    msg: Props["msg"];
+}) {
+    const [voiceMessageDone, setVoiceMessageDone] = useState(0);
 
     const [showImageModal, setShowImageModal] = useState("");
-    if (type === "emoji") {
+    if (type === "voice") {
+        return (
+            <Box
+                className={cn(
+                    "message text-sm m-2 p-3 rounded-lg flex justify-center items-center flex-row gap-2",
+                    by === "me" ? "justify-self-end" : ""
+                )}
+                sx={{
+                    bgcolor: (theme) =>
+                        by === "him"
+                            ? theme.palette.mySwatch.messageBG
+                            : theme.palette.primary.main,
+                    gridArea: "message",
+                }}
+            >
+                <span className="start font-bold">
+                    {normalizeTimeFormat(0)}
+                </span>
+                <div
+                    className="relative text-3xl max-[865px]:text-2xl overflow-hidden"
+                    onClick={(e) => {
+                        let rect = e.currentTarget.getBoundingClientRect();
+                        setVoiceMessageDone(
+                            ((e.clientX - rect.x) / rect.width) * 100
+                        );
+                    }}
+                >
+                    <div className="base opacity-40">
+                        {Array(6)
+                            .fill("")
+                            .map((_, i) => (
+                                <RiVoiceprintFill key={i} />
+                            ))}
+                    </div>
+                    <div
+                        className="slider absolute top-0 left-0 w-full h-full"
+                        style={{
+                            clipPath: `polygon(0 0, ${voiceMessageDone}% 0, ${voiceMessageDone}% 100%, 0% 100%)`,
+                        }}
+                    >
+                        {Array(6)
+                            .fill("")
+                            .map((_, i) => (
+                                <RiVoiceprintFill key={i} />
+                            ))}
+                    </div>
+                </div>
+                <span className="end font-bold">
+                    {normalizeTimeFormat(400)}
+                </span>
+            </Box>
+        );
+    } else if (type === "emoji") {
+        let unified = "1f601";
         return (
             <>
                 <div
@@ -56,41 +108,35 @@ function MessageBox({ by, type }: Props) {
                         by === "me" ? "justify-self-end" : ""
                     )}
                     style={{
-                        // TODO: afterwards, we will get how many images we have to show, then, we can tell column-count: min(3, images.length).
                         gridArea: "message",
                     }}
                 >
-                    <Emoji
-                        unified="1f601"
-                        size={50}
-                        emojiStyle={EmojiStyle.FACEBOOK}
-                    />
+                    <GetEmojiLink unified={unified} />
                 </div>
             </>
         );
     } else if (type === "image") {
-        let images = Array(10)
-            .fill("")
-            .map((_) => getRandomImage());
-
         const handleClose = () => {
             setShowImageModal("");
         };
         return (
-            <div
+            <Box
                 className={cn(
                     "message text-sm m-2 rounded-lg max-w-[70%]",
                     by === "me" ? "justify-self-end" : ""
                 )}
-                style={{
+                sx={{
                     // TODO: afterwards, we will get how many images we have to show, then, we can tell column-count: min(3, images.length).
                     gridArea: "message",
-                    background: by === "him" ? messageBG : main,
+                    background: (theme) =>
+                        by === "him"
+                            ? theme.palette.mySwatch.messageBG
+                            : theme.palette.primary.main,
                     gap: 0,
                 }}
             >
                 <div className="columns-3 gap-0">
-                    {images.map((src, i) => (
+                    {msg.imageLink.map((src, i) => (
                         <a
                             href={`#${i + 1}`}
                             key={i}
@@ -107,7 +153,7 @@ function MessageBox({ by, type }: Props) {
                         </a>
                     ))}
                     <ImagePreviewModal
-                        images={images}
+                        images={msg.imageLink}
                         handleClose={handleClose}
                         showImageModal={showImageModal}
                     />
@@ -116,36 +162,47 @@ function MessageBox({ by, type }: Props) {
                 fuga quos nihil, similique voluptatem, aspernatur id qui
                 voluptatum excepturi, culpa minima impedit repellat iste cum
                 repudiandae amet eos. Aliquam, a.
-            </div>
+            </Box>
         );
     } else {
         return (
-            <div
+            <Box
                 className={cn(
                     "message text-sm m-2 p-3 rounded-lg",
                     by === "me" ? "text-right" : ""
                 )}
-                style={{
+                sx={{
                     gridArea: "message",
-                    background: by === "him" ? messageBG : main,
+                    background: (theme) =>
+                        by === "him"
+                            ? theme.palette.mySwatch.messageBG
+                            : theme.palette.primary.main,
                 }}
             >
                 Lorem ipsum dolor sit, amet consectetur adipisicing elit.
                 Nesciunt provident nisi perferendis laudantium beatae inventore
                 consectetur ea, nostrum soluta rerum et vero eum iste ipsum
                 incidunt debitis optio recusandae molestias.
-            </div>
+            </Box>
         );
     }
 }
 
-export function MessageSent({ by, type = "text" }: Props) {
+export default function Message({
+    by,
+    type = "text",
+    msg,
+    avatarURL,
+    time,
+    metadata,
+}: Props) {
     const [anchorElForMessagesPopover, setAnchorElForMessagesPopover] =
         useState<null | HTMLElement>(null);
     const [selectedEmoji, setSelectedEmoji] = useState("");
     const {
         palette: { mode: themeMode },
     } = useTheme();
+    const { setReplyMessage, setMessage } = useMessage();
     return (
         <div
             className={cn(
@@ -175,7 +232,7 @@ export function MessageSent({ by, type = "text" }: Props) {
                 style={{ gridArea: "name" }}
             >
                 <Avatar
-                    src="https://mui.com/static/images/avatar/3.jpg"
+                    src={avatarURL}
                     alt="shirshen shuvro"
                     component={by === "him" ? Link : "div"}
                     href="#profile"
@@ -187,34 +244,88 @@ export function MessageSent({ by, type = "text" }: Props) {
                 className="time justify-self-end text-xs text-gray-500"
                 style={{ gridArea: "time" }}
             >
-                {new Date(1693755271197).toLocaleString()}
+                {new Date(time).toLocaleString()}
             </div>
-            <MessageBox by={by} type={type} />
+            <MessageBox by={by} type={type} msg={msg} />
             <div
                 className="likes flex justify-start items-center flex-row gap-2"
                 style={{ gridArea: "likes" }}
             >
-                <Chips icon={"❤️"} text="2" selected />
-                <Chips icon={"❤️"} text="2" />
-                <Chips icon={"❤️"} text="2" />
-                <Chips
-                    icon={"➕"}
-                    text=""
+                <Chip
+                    icon={<span>❤️</span>}
+                    label={2}
+                    color="primary"
+                    variant="filled"
+                    clickable
+                />
+                <Chip
+                    icon={<span>❤️</span>}
+                    label={2}
+                    color="primary"
+                    variant="outlined"
+                    clickable
+                />
+                <Chip
+                    icon={<span>❤️</span>}
+                    label={2}
+                    color="primary"
+                    variant="outlined"
+                    clickable
+                />
+                <IconButton
                     onClick={(e) => {
                         setAnchorElForMessagesPopover(e.currentTarget);
                     }}
-                />
+                    size="small"
+                    color="primary"
+                    sx={{
+                        border: "1px solid currentcolor",
+                    }}
+                >
+                    <AiOutlinePlus />
+                </IconButton>
             </div>
             <div
                 className="reply justify-self-end"
                 style={{ gridArea: "reply" }}
             >
-                <Chips icon={<AiOutlineMessage />} text="Reply" />
+                <Chip
+                    icon={<AiOutlineMessage />}
+                    label="Reply"
+                    onClick={() => {
+                        setReplyMessage({
+                            type,
+                            to: "shirshen dada",
+                            message: {
+                                ...defaultMessage,
+                                text: "shuvro is the best",
+                            },
+                        });
+                        setMessage((prev) => {
+                            return {
+                                ...prev,
+                                reply: {
+                                    message: msg,
+                                    to: "shirshen dada",
+                                    type,
+                                },
+                            };
+                        });
+                    }}
+                />
             </div>
 
             <Popover
                 open={Boolean(anchorElForMessagesPopover)}
                 anchorEl={anchorElForMessagesPopover}
+                anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "left",
+                }}
+                transformOrigin={{
+                    vertical: "top",
+                    horizontal: "left",
+                }}
                 onClose={() => setAnchorElForMessagesPopover(null)}
             >
                 <EmojiPicker
@@ -233,5 +344,23 @@ export function MessageSent({ by, type = "text" }: Props) {
                 />
             </Popover>
         </div>
+    );
+}
+export function GetEmojiLink({
+    unified,
+    size = 50,
+}: {
+    unified: string;
+    size?: number;
+}) {
+    return (
+        <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+                src={`https://cdn.jsdelivr.net/npm/emoji-datasource-facebook/img/facebook/64/${unified}.png`}
+                alt=""
+                width={size}
+            />
+        </>
     );
 }

@@ -12,8 +12,16 @@ declare module "@mui/material/styles" {
         }; // or any other type that suits your needs
     }
 }
-declare type Message = {
+declare type MessageType = {
     text: string;
     imageLink: string[];
     emoji: string;
+    voice: string;
+    reply: IReplyMessage | null;
 };
+
+declare interface IReplyMessage {
+    message: MessageType;
+    type: TypesOfMessage;
+    to: string;
+}

@@ -1,26 +1,21 @@
 "use client";
 
-import { Message } from "@/app";
 import { useTheme } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Popover from "@mui/material/Popover";
 import GifPicker, { Theme } from "gif-picker-react";
 import { useState } from "react";
 import { PiGifFill } from "react-icons/pi";
+import { defaultMessage, useMessage } from "@/contexts/MessageContext";
 
-export default function GifButton({
-    setMessage,
-    form,
-}: {
-    setMessage: React.Dispatch<React.SetStateAction<Message>>;
-    form: HTMLFormElement;
-}) {
+export default function GifButton({ form }: { form: HTMLFormElement }) {
     const [anchorElPopover, setAnchorElPopover] = useState<null | HTMLElement>(
         null
     );
     const {
         palette: { mode },
     } = useTheme();
+    const { setMessage } = useMessage();
     return (
         <>
             <Popover
@@ -39,10 +34,10 @@ export default function GifButton({
             >
                 <GifPicker
                     onGifClick={(e) => {
-                        setMessage((prev) => {
+                        setMessage(() => {
                             return {
-                                ...prev,
-                                imageLink: prev.imageLink.concat([e.url]),
+                                ...defaultMessage,
+                                imageLink: [e.url],
                             };
                         });
                         setTimeout(() => {
