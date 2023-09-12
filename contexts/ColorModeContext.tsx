@@ -5,12 +5,14 @@ import ThemeControl from "./ThemeControl";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { PaletteMode } from "@mui/material";
 
-const Context = createContext({});
-
-export function useColorMode(): {
+interface IColorMode {
     mode?: PaletteMode;
     setMode?: React.Dispatch<React.SetStateAction<PaletteMode>>;
-} {
+}
+
+const Context = createContext({} as IColorMode);
+
+export function useColorMode() {
     return useContext(Context);
 }
 

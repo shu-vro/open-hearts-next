@@ -87,7 +87,6 @@ function DisplayRow({ file, setFiles, k, setImageLink }: DisplayRowProps) {
                         setDeleting(true);
                         setTimeout(() => {
                             setFiles((prev) => {
-                                console.log(prev, k);
                                 return prev.filter((el) => k !== el.id);
                             });
                         }, 500);
@@ -351,7 +350,7 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
                                 };
                             });
                             setTimeout(() => {
-                                form.dispatchEvent(
+                                form?.dispatchEvent(
                                     new Event("submit", {
                                         bubbles: true,
                                     })

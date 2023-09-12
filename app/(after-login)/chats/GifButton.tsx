@@ -41,7 +41,7 @@ export default function GifButton({ form }: { form: HTMLFormElement }) {
                             };
                         });
                         setTimeout(() => {
-                            form.dispatchEvent(
+                            form?.dispatchEvent(
                                 new Event("submit", {
                                     bubbles: true,
                                 })

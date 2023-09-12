@@ -22,10 +22,16 @@ export default function AppBarChat() {
             <span className="grow text-2xl capitalize font-semibold">
                 My name
             </span>
-            <IconButton LinkComponent={Link} href="/chats/call?mode=audio">
+            <IconButton
+                LinkComponent={Link}
+                href="/chats/call?mode=audio&groupId=room-1"
+            >
                 <BsTelephone />
             </IconButton>
-            <IconButton LinkComponent={Link} href="/chats/call?mode=video">
+            <IconButton
+                LinkComponent={Link}
+                href="/chats/call?mode=video&groupId=room-1"
+            >
                 <BsCameraVideo />
             </IconButton>
         </AppBar>

@@ -40,8 +40,6 @@ export default function ImagePreviewModal({
                 scrollbar={{
                     draggable: true,
                 }}
-                onSwiper={(swiper) => console.log(swiper)}
-                onSlideChange={() => console.log("slide change")}
                 className="w-[100vw]"
                 centeredSlides
                 grabCursor

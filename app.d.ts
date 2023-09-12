@@ -1,5 +1,7 @@
 import "@mui/material/styles";
 
+declare module "adapterjs" {}
+
 declare module "@mui/material/styles" {
     interface Palette {
         mySwatch: {
