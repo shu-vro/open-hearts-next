@@ -140,7 +140,7 @@ export default function VideoComponent() {
                 let call = peer.call(userId, mediaStream);
                 call.on("stream", (stream) => {
                     setVideos((prev) => {
-                        prev[id] = {
+                        prev[userId] = {
                             srcObject: stream,
                         };
                         return { ...prev };

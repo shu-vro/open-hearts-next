@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "next-telemetry": "next telemetry"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -17,6 +18,7 @@
     "autoprefixer": "10.4.14",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "dayjs": "^1.11.9",
     "emoji-picker-react": "^4.4.12",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.13",

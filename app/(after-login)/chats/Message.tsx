@@ -24,6 +24,7 @@ import {
     TypesOfMessage,
 } from "@/contexts/MessageContext";
 import { MessageType } from "@/app";
+import HoverWrapper from "./HoverWrapper";
 
 type Props = {
     by: "me" | "him";
@@ -33,6 +34,19 @@ type Props = {
     avatarURL: string;
     metadata: null; // for now.
 };
+
+function NativeHoverWrapper({ children }: { children: React.ReactElement }) {
+    return (
+        <HoverWrapper
+            className="my-2"
+            style={{
+                gridArea: "message",
+            }}
+        >
+            {children}
+        </HoverWrapper>
+    );
+}
 
 export function MessageBox({
     by,
@@ -48,55 +62,56 @@ export function MessageBox({
     const [showImageModal, setShowImageModal] = useState("");
     if (type === "voice") {
         return (
-            <Box
-                className={cn(
-                    "message text-sm m-2 p-3 rounded-lg flex justify-center items-center flex-row gap-2",
-                    by === "me" ? "justify-self-end" : ""
-                )}
-                sx={{
-                    bgcolor: (theme) =>
-                        by === "him"
-                            ? theme.palette.mySwatch.messageBG
-                            : theme.palette.primary.main,
-                    gridArea: "message",
-                }}
-            >
-                <span className="start font-bold">
-                    {normalizeTimeFormat(0)}
-                </span>
-                <div
-                    className="relative text-3xl max-[865px]:text-2xl overflow-hidden"
-                    onClick={(e) => {
-                        let rect = e.currentTarget.getBoundingClientRect();
-                        setVoiceMessageDone(
-                            ((e.clientX - rect.x) / rect.width) * 100
-                        );
+            <NativeHoverWrapper>
+                <Box
+                    className={cn(
+                        "message text-sm p-3 rounded-lg flex justify-center items-center flex-row gap-2",
+                        by === "me" ? "justify-self-end" : ""
+                    )}
+                    sx={{
+                        bgcolor: (theme) =>
+                            by === "him"
+                                ? theme.palette.mySwatch.messageBG
+                                : theme.palette.primary.main,
                     }}
                 >
-                    <div className="base opacity-40">
-                        {Array(6)
-                            .fill("")
-                            .map((_, i) => (
-                                <RiVoiceprintFill key={i} />
-                            ))}
-                    </div>
+                    <span className="start font-bold">
+                        {normalizeTimeFormat(0)}
+                    </span>
                     <div
-                        className="slider absolute top-0 left-0 w-full h-full"
-                        style={{
-                            clipPath: `polygon(0 0, ${voiceMessageDone}% 0, ${voiceMessageDone}% 100%, 0% 100%)`,
+                        className="relative text-3xl max-[865px]:text-2xl overflow-hidden"
+                        onClick={(e) => {
+                            let rect = e.currentTarget.getBoundingClientRect();
+                            setVoiceMessageDone(
+                                ((e.clientX - rect.x) / rect.width) * 100
+                            );
                         }}
                     >
-                        {Array(6)
-                            .fill("")
-                            .map((_, i) => (
-                                <RiVoiceprintFill key={i} />
-                            ))}
+                        <div className="base opacity-40">
+                            {Array(6)
+                                .fill("")
+                                .map((_, i) => (
+                                    <RiVoiceprintFill key={i} />
+                                ))}
+                        </div>
+                        <div
+                            className="slider absolute top-0 left-0 w-full h-full"
+                            style={{
+                                clipPath: `polygon(0 0, ${voiceMessageDone}% 0, ${voiceMessageDone}% 100%, 0% 100%)`,
+                            }}
+                        >
+                            {Array(6)
+                                .fill("")
+                                .map((_, i) => (
+                                    <RiVoiceprintFill key={i} />
+                                ))}
+                        </div>
                     </div>
-                </div>
-                <span className="end font-bold">
-                    {normalizeTimeFormat(400)}
-                </span>
-            </Box>
+                    <span className="end font-bold">
+                        {normalizeTimeFormat(400)}
+                    </span>
+                </Box>
+            </NativeHoverWrapper>
         );
     } else if (type === "emoji") {
         let unified = "1f601";
@@ -120,70 +135,74 @@ export function MessageBox({
             setShowImageModal("");
         };
         return (
-            <Box
-                className={cn(
-                    "message text-sm m-2 rounded-lg max-w-[70%]",
-                    by === "me" ? "justify-self-end" : ""
-                )}
-                sx={{
-                    // TODO: afterwards, we will get how many images we have to show, then, we can tell column-count: min(3, images.length).
-                    gridArea: "message",
-                    background: (theme) =>
-                        by === "him"
-                            ? theme.palette.mySwatch.messageBG
-                            : theme.palette.primary.main,
-                    gap: 0,
-                }}
-            >
-                <div className="columns-3 gap-0">
-                    {msg.imageLink.map((src, i) => (
-                        <a
-                            href={`#${i + 1}`}
-                            key={i}
-                            onClick={() => {
-                                setShowImageModal(i.toString());
-                            }}
-                        >
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src={src}
-                                alt={src}
-                                className="break-inside-avoid w-full"
-                            />
-                        </a>
-                    ))}
-                    <ImagePreviewModal
-                        images={msg.imageLink}
-                        handleClose={handleClose}
-                        showImageModal={showImageModal}
-                    />
-                </div>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus
-                fuga quos nihil, similique voluptatem, aspernatur id qui
-                voluptatum excepturi, culpa minima impedit repellat iste cum
-                repudiandae amet eos. Aliquam, a.
-            </Box>
+            <NativeHoverWrapper>
+                <Box
+                    className={cn(
+                        "message text-sm rounded-lg",
+                        by === "me" ? "justify-self-end" : ""
+                    )}
+                    sx={{
+                        // TODO: afterwards, we will get how many images we have to show, then, we can tell column-count: min(3, images.length).
+                        gridArea: "message",
+                        background: (theme) =>
+                            by === "him"
+                                ? theme.palette.mySwatch.messageBG
+                                : theme.palette.primary.main,
+                        gap: 0,
+                    }}
+                >
+                    <div className="columns-3 gap-0">
+                        {msg.imageLink.map((src, i) => (
+                            <a
+                                href={`#${i + 1}`}
+                                key={i}
+                                onClick={() => {
+                                    setShowImageModal(i.toString());
+                                }}
+                            >
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src={src}
+                                    alt={src}
+                                    className="break-inside-avoid w-full"
+                                />
+                            </a>
+                        ))}
+                        <ImagePreviewModal
+                            images={msg.imageLink}
+                            handleClose={handleClose}
+                            showImageModal={showImageModal}
+                        />
+                    </div>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Ducimus fuga quos nihil, similique voluptatem, aspernatur id
+                    qui voluptatum excepturi, culpa minima impedit repellat iste
+                    cum repudiandae amet eos. Aliquam, a.
+                </Box>
+            </NativeHoverWrapper>
         );
     } else {
         return (
-            <Box
-                className={cn(
-                    "message text-sm m-2 p-3 rounded-lg",
-                    by === "me" ? "text-right" : ""
-                )}
-                sx={{
-                    gridArea: "message",
-                    background: (theme) =>
-                        by === "him"
-                            ? theme.palette.mySwatch.messageBG
-                            : theme.palette.primary.main,
-                }}
-            >
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                Nesciunt provident nisi perferendis laudantium beatae inventore
-                consectetur ea, nostrum soluta rerum et vero eum iste ipsum
-                incidunt debitis optio recusandae molestias.
-            </Box>
+            <NativeHoverWrapper>
+                <Box
+                    className={cn(
+                        "message text-sm p-3 rounded-lg",
+                        by === "me" ? "text-right" : ""
+                    )}
+                    sx={{
+                        gridArea: "message",
+                        background: (theme) =>
+                            by === "him"
+                                ? theme.palette.mySwatch.messageBG
+                                : theme.palette.primary.main,
+                    }}
+                >
+                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+                    Nesciunt provident nisi perferendis laudantium beatae
+                    inventore consectetur ea, nostrum soluta rerum et vero eum
+                    iste ipsum incidunt debitis optio recusandae molestias.
+                </Box>
+            </NativeHoverWrapper>
         );
     }
 }

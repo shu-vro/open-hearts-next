@@ -23,7 +23,6 @@ import { IoCloseCircle } from "react-icons/io5";
 import { MdDelete, MdKeyboardVoice } from "react-icons/md";
 import numeral from "numeral";
 import { cn } from "@/lib/utils";
-import { MessageType } from "@/app";
 import { defaultMessage, useMessage } from "@/contexts/MessageContext";
 
 interface DisplayRowProps {

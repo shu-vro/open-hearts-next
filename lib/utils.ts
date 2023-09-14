@@ -1,6 +1,24 @@
+"use client";
+
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
+
+// export function differenceInTimeUnits(firstTime: number) {
+//     if (Date.now() < firstTime) {
+//         return " ";
+//     }
+//     return dayjs(firstTime).fromNow();
+// }
+
+export function normalizeTimeFormat(number: number) {
+    let a: string = numeral(number).format("00:00:00");
+    if (a.substring(0, 2) === "0:") {
+        a = a.substring(2, a.length);
+        return a;
+    }
+    return a;
+}
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -54,13 +72,4 @@ export function clarify_rows<T>(rows: T[], primary_key: keyof T): T[] {
     });
 
     return reorderedRows;
-}
-
-export function normalizeTimeFormat(number: number) {
-    let a: string = numeral(number).format("00:00:00");
-    if (a.substring(0, 2) === "0:") {
-        a = a.substring(2, a.length);
-        return a;
-    }
-    return a;
 }
