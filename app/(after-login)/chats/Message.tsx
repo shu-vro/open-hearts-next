@@ -4,7 +4,15 @@ import { cn, normalizeTimeFormat } from "@/lib/utils";
 import Avatar from "@mui/material/Avatar";
 import React, { useState } from "react";
 import { AiOutlineMessage, AiOutlinePlus } from "react-icons/ai";
-import { Box, Chip, IconButton, Popover, useTheme } from "@mui/material";
+import {
+    Box,
+    Chip,
+    IconButton,
+    ImageList,
+    ImageListItem,
+    Popover,
+    useTheme,
+} from "@mui/material";
 import EmojiPicker, {
     EmojiStyle,
     Theme,
@@ -24,7 +32,7 @@ import {
     TypesOfMessage,
 } from "@/contexts/MessageContext";
 import { MessageType } from "@/app";
-import HoverWrapper from "./HoverWrapper";
+import HoverWrapper, { HoverWrapperProps } from "./HoverWrapper";
 
 type Props = {
     by: "me" | "him";
@@ -35,12 +43,19 @@ type Props = {
     metadata: null; // for now.
 };
 
-function NativeHoverWrapper({ children }: { children: React.ReactElement }) {
+function NativeHoverWrapper({
+    children,
+    classNameInner,
+    className,
+    style,
+}: HoverWrapperProps) {
     return (
         <HoverWrapper
-            className="my-2"
+            className={cn("my-2", className)}
+            classNameInner={cn(classNameInner)}
             style={{
                 gridArea: "message",
+                ...style,
             }}
         >
             {children}
@@ -135,7 +150,12 @@ export function MessageBox({
             setShowImageModal("");
         };
         return (
-            <NativeHoverWrapper>
+            <NativeHoverWrapper
+                style={{
+                    width: "70%",
+                    justifySelf: by === "me" ? "flex-end" : "flex-start",
+                }}
+            >
                 <Box
                     className={cn(
                         "message text-sm rounded-lg",
@@ -143,7 +163,6 @@ export function MessageBox({
                     )}
                     sx={{
                         // TODO: afterwards, we will get how many images we have to show, then, we can tell column-count: min(3, images.length).
-                        gridArea: "message",
                         background: (theme) =>
                             by === "him"
                                 ? theme.palette.mySwatch.messageBG
@@ -151,7 +170,36 @@ export function MessageBox({
                         gap: 0,
                     }}
                 >
-                    <div className="columns-3 gap-0">
+                    <ImageList
+                        variant="masonry"
+                        cols={3}
+                        gap={8}
+                        className="mt-0 rounded-[inherit]"
+                    >
+                        {msg.imageLink.map((src, i) => (
+                            <ImageListItem
+                                key={i}
+                                component="a"
+                                href={`#${i + 1}`}
+                                onClick={() => {
+                                    setShowImageModal(i.toString());
+                                }}
+                            >
+                                <img
+                                    src={`${src}?w=248&fit=crop&auto=format`}
+                                    srcSet={`${src}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                                    alt={src}
+                                    loading="lazy"
+                                />
+                            </ImageListItem>
+                        ))}
+                        <ImagePreviewModal
+                            images={msg.imageLink}
+                            handleClose={handleClose}
+                            showImageModal={showImageModal}
+                        />
+                    </ImageList>
+                    {/* <div className="columns-3 gap-0">
                         {msg.imageLink.map((src, i) => (
                             <a
                                 href={`#${i + 1}`}
@@ -160,7 +208,6 @@ export function MessageBox({
                                     setShowImageModal(i.toString());
                                 }}
                             >
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img
                                     src={src}
                                     alt={src}
@@ -173,7 +220,7 @@ export function MessageBox({
                             handleClose={handleClose}
                             showImageModal={showImageModal}
                         />
-                    </div>
+                    </div> */}
                     Lorem ipsum dolor sit amet consectetur adipisicing elit.
                     Ducimus fuga quos nihil, similique voluptatem, aspernatur id
                     qui voluptatum excepturi, culpa minima impedit repellat iste

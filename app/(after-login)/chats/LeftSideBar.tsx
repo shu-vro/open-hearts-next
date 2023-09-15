@@ -5,6 +5,7 @@ import HoverWrapper from "./HoverWrapper";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 dayjs.extend(relativeTime);
 
@@ -12,10 +13,13 @@ dayjs.extend(relativeTime);
 
 function FriendList() {
     const [timeDiff, setTimeDiff] = useState(dayjs(1694720446951).fromNow());
+    const isActive = true;
     return (
         <HoverWrapper className="mb-2 mx-1">
             <Box
-                className="grid p-2"
+                component="a"
+                href="#"
+                className="grid p-2 text-inherit hover:no-underline"
                 sx={{
                     gridTemplateAreas: `
                         'avatar name time'
@@ -32,7 +36,10 @@ function FriendList() {
                     sx={{
                         gridArea: "avatar",
                     }}
-                    className="self-center mr-1"
+                    className={cn(
+                        "self-center mr-2 border-3 border-solid w-11 h-11",
+                        isActive ? "border-green-600" : "border-red-500"
+                    )}
                 />
                 <Typography
                     noWrap
@@ -73,28 +80,11 @@ export default function LeftSideBar() {
     return (
         <div className="w-1/4 max-[712px]:hidden flex justify-start items-start flex-col h-full">
             <div className="w-full overflow-y-auto h-full">
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
-                <FriendList />
+                {Array(20)
+                    .fill("")
+                    .map((_, i) => (
+                        <FriendList key={i} />
+                    ))}
             </div>
         </div>
     );

@@ -3,22 +3,13 @@
 import { cn } from "@/lib/utils";
 import { FormHelperText, Button } from "@mui/material";
 import { useState } from "react";
-import { sendPasswordResetEmail } from "firebase/auth";
 import LinearProgress from "@mui/material/LinearProgress";
 import AlertBox from "../AlertBox";
 import EmailInputField from "../EmailInputField";
 import Link from "next/link";
-import { auth } from "@/firebase";
+import { auth, sendPasswordResetEmail } from "@/firebase";
 import AuthForm from "../AuthForm";
 
-/**
- * TODO:
- * Add loading screen on account creation - done
- * Add verify password check - done
- * Add redirect if user exists but not verified
- * Add strong password check - half done
- * Add fadeout animation for all page, including this.
- */
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
     const [submitted, setSubmitted] = useState(false);

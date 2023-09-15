@@ -8,7 +8,10 @@ export default function ConfigComponent() {
     const theme = useTheme();
     const { setMode } = useColorMode();
     useEffect(() => {
-        window.theme = theme;
+        if (process.env.NODE_ENV === "development") {
+            // @ts-ignore
+            window.theme = theme;
+        }
         if (
             localStorage.theme === "dark" ||
             (!("theme" in localStorage) &&

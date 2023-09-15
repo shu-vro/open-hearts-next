@@ -15,9 +15,11 @@ import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
     updateProfile,
+    sendPasswordResetEmail,
 } from "firebase/auth";
 import { getDatabase, connectDatabaseEmulator } from "firebase/database";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
+import encoding from "encoding";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -95,3 +97,5 @@ export async function signInWithGoogle() {
     });
     return user;
 }
+
+export { sendPasswordResetEmail };

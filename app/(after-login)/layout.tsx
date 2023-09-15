@@ -14,7 +14,7 @@ export default function RootLayout({
             onMouseMove={(e) => {
                 for (const card of document.getElementsByClassName(
                     "hover-card"
-                )) {
+                ) as HTMLCollectionOf<HTMLDivElement>) {
                     const rect = card.getBoundingClientRect(),
                         x = e.clientX - rect.left,
                         y = e.clientY - rect.top;

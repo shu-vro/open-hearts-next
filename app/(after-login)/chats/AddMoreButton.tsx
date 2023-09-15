@@ -246,10 +246,12 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
         null
     );
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-    const handleVoiceInput = async (el: HTMLButtonElement) => {
+    const navigator = globalThis?.navigator || null;
+    async function handleVoiceInput(el: HTMLButtonElement) {
         try {
             if (el.dataset.open === "true") {
-                // // Request access to the user's microphone
+                // Request access to the user's microphone
+                if (!navigator) return;
                 let tempMediaStream = await navigator.mediaDevices.getUserMedia(
                     {
                         video: false,
@@ -290,7 +292,7 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
             console.log(e);
             alert(JSON.stringify(e, null, 4));
         }
-    };
+    }
 
     return (
         <>

@@ -3,7 +3,6 @@
 import { ClientToServerEvents, ServerToClientEvents } from "@/pages/api/socket";
 import { createContext, useContext, useEffect, useState } from "react";
 import { type Socket, io } from "socket.io-client";
-import adapter from "adapterjs";
 
 interface ISocketContext {
     socket: Socket<ServerToClientEvents, ClientToServerEvents> | null;

@@ -21,7 +21,7 @@ export function ReplySection() {
     } = useTheme();
     return (
         <Box
-            className="replyBar absolute bottom-full left-0 w-full p-3 rounded-[.75rem_.75rem_0_0]"
+            className="replyBar absolute bottom-full left-0 w-full p-3 rounded-[.75rem_.75rem_0_0] z-10"
             sx={{
                 background: (theme) => theme.palette.mySwatch.messageBG,
                 gridArea: "message",

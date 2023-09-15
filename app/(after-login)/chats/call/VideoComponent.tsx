@@ -52,6 +52,8 @@ export default function VideoComponent() {
     const [socketDoneOnce, setSocketDoneOnce] = React.useState(false);
     const { socket } = useSocket();
 
+    const navigator = globalThis.navigator || null;
+
     React.useEffect(() => {
         if (!socket) return;
 
@@ -101,6 +103,8 @@ export default function VideoComponent() {
         // })();
 
         (async () => {
+            if (!navigator) return;
+
             let mediaStream = await navigator.mediaDevices.getUserMedia({
                 video: true,
                 audio: true,

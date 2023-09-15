@@ -6,7 +6,7 @@ export default async function Notifications() {
 
     return (
         <div className="w-full h-full flex flex-col justify-start items-start gap-4 max-[668px]:gap-2">
-            {data.map((e: unknown, i: number) => (
+            {data.map((e: any, i: number) => (
                 <Notification
                     name={e.slug}
                     photoURL={e.thumbnail}
