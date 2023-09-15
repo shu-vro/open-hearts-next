@@ -42,7 +42,6 @@ export default function Signup() {
             return setSubmitted(false);
         }
         let m = testPassword(password1);
-        console.log(m, !m);
         if (!!m) {
             setMessage(m);
             return setSubmitted(false);

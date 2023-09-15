@@ -2,20 +2,39 @@
 
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { PaletteMode } from "@mui/material";
 
-const darkTheme = createTheme({
+export const darkTheme = createTheme({
     palette: {
         mode: "dark",
+        primary: {
+            main: "#1E90FF",
+        },
+        mySwatch: {
+            messageBG: "#2a2d3a",
+        },
+    },
+});
+export const lightTheme = createTheme({
+    palette: {
+        mode: "light",
+        primary: {
+            main: "#1E90FF",
+        },
+        mySwatch: {
+            messageBG: "rgb(186 199 255)",
+        },
     },
 });
 
 type Props = {
     children: React.ReactElement;
+    theme: PaletteMode;
 };
 
-function App({ children }: Props) {
+function App({ children, theme }: Props) {
     return (
-        <ThemeProvider theme={darkTheme}>
+        <ThemeProvider theme={theme === "dark" ? darkTheme : lightTheme}>
             <CssBaseline /> {children}
         </ThemeProvider>
     );

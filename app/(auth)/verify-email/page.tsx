@@ -17,7 +17,7 @@ export default function VerifyEmail() {
                 setEmailVerified(user.emailVerified);
             }
         });
-        return unsubscribe();
+        return unsubscribe;
     }, []);
 
     if (emailVerified) {
