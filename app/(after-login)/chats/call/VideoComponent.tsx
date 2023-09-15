@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import { useState, useEffect, useRef } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -8,7 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { BsFillChatLeftTextFill } from "react-icons/bs";
 import VideoCallDrawer from "./VideoCallDrawer";
-import Peer from "peerjs";
+import { type Peer } from "peerjs";
 import { Toolbar } from "@mui/material";
 import { useSocket } from "@/contexts/SocketContext";
 
@@ -19,8 +19,8 @@ type VideoElementProps = {
 } & React.HTMLProps<HTMLVideoElement>;
 
 function VideoElement({ srcObject, ...rest }: VideoElementProps) {
-    const video = React.useRef<HTMLVideoElement>(null);
-    React.useEffect(() => {
+    const video = useRef<HTMLVideoElement>(null);
+    useEffect(() => {
         if (video.current) {
             video.current.srcObject = srcObject;
         }
@@ -44,25 +44,40 @@ function VideoElement({ srcObject, ...rest }: VideoElementProps) {
 }
 
 export default function VideoComponent() {
-    const [mobileOpen, setMobileOpen] = React.useState(false);
-    const [peer, setPeer] = React.useState<Peer | null>();
-    const [Videos, setVideos] = React.useState<{
+    const [mobileOpen, setMobileOpen] = useState(false);
+    const [peer, setPeer] = useState<Peer>();
+    const [Videos, setVideos] = useState<{
         [x: string]: VideoElementProps;
     }>({});
-    const [socketDoneOnce, setSocketDoneOnce] = React.useState(false);
+    const [socketDoneOnce, setSocketDoneOnce] = useState(false);
     const { socket } = useSocket();
+    const [mediaStream, setMediaStream] = useState<MediaStream>();
 
-    const navigator = globalThis.navigator || null;
+    useEffect(() => {
+        if (!socket) return;
+        if (!peer && typeof navigator !== "undefined") {
+            (async () => {
+                const PeerJs = (await import("peerjs")).default;
+                socket?.on("connect", () => {
+                    setPeer(new PeerJs(socket?.id));
+                });
+            })();
+        }
 
-    React.useEffect(() => {
+        return () => {
+            if (peer) {
+                peer.disconnect();
+            }
+        };
+    }, [socket]);
+
+    useEffect(() => {
         if (!socket) return;
 
         if (!peer) {
-            socket?.on("connect", () => {
-                setPeer(new Peer(socket?.id, {}));
-            });
             return;
         }
+        if (!mediaStream) return;
         if (socketDoneOnce) {
             return;
         }
@@ -102,61 +117,63 @@ export default function VideoComponent() {
         //     });
         // })();
 
-        (async () => {
-            if (!navigator) return;
+        peer.on("call", (call) => {
+            console.log(call);
+            call.answer(mediaStream);
+            call.on("stream", (stream) => {
+                setVideos((prev) => {
+                    prev[call.connectionId] = {
+                        srcObject: stream,
+                    };
+                    return { ...prev };
+                });
+            });
+        });
+        socket.on("user:friend_joined", (userId) => {
+            console.log("userId", userId);
+            let call = peer.call(userId, mediaStream);
+            call.on("stream", (stream) => {
+                setVideos((prev) => {
+                    prev[userId] = {
+                        srcObject: stream,
+                    };
+                    return { ...prev };
+                });
+            });
+        });
+        peer.on("open", function (id) {
+            console.log(peer, id);
+            setSocketDoneOnce(true);
+        });
+    }, [peer, socket, mediaStream]);
 
-            let mediaStream = await navigator.mediaDevices.getUserMedia({
+    useEffect(() => {
+        navigator.mediaDevices
+            .getUserMedia({
                 video: true,
                 audio: true,
-            });
-            setVideos((prev) => {
-                prev["my_connection"] = {
-                    srcObject: mediaStream,
-                    muted: true,
-                };
-                return { ...prev };
-            });
-            peer.on("call", (call) => {
-                console.log(call);
-                call.answer(mediaStream);
-                call.on("stream", (stream) => {
-                    setVideos((prev) => {
-                        prev[call.connectionId] = {
-                            srcObject: stream,
-                        };
-                        return { ...prev };
-                    });
+            })
+            .then((mediaStream) => {
+                setMediaStream(mediaStream);
+
+                setVideos((prev) => {
+                    prev["my_connection"] = {
+                        srcObject: mediaStream,
+                        muted: true,
+                    };
+                    return { ...prev };
                 });
-            });
-            // let otherId = prompt("another id: ");
-            // let otherId = "";
-            // if (otherId) {
-            //     let call = peer.call(otherId, mediaStream);
-            //     call.on("stream", (stream) => {
-            //         setVideos((prev) => {
-            //             prev.push({ srcObject: stream });
-            //             return [...prev];
-            //         });
-            //     });
-            // }
-            socket.on("user:friend_joined", (userId) => {
-                console.log("userId", userId);
-                let call = peer.call(userId, mediaStream);
-                call.on("stream", (stream) => {
-                    setVideos((prev) => {
-                        prev[userId] = {
-                            srcObject: stream,
-                        };
-                        return { ...prev };
-                    });
+            })
+            .catch(alert);
+
+        return () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach((track) => {
+                    track.stop();
                 });
-            });
-            peer.on("open", function (id) {
-                console.log(peer, id);
-                setSocketDoneOnce(true);
-            });
-        })();
-    }, [peer, socket]);
+            }
+        };
+    }, []);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);

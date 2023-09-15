@@ -12,6 +12,19 @@ import VideoComponent from "./VideoComponent";
 import { useRouter } from "next/navigation";
 import { SocketContext } from "@/contexts/SocketContext";
 
+function AudioComponent() {
+    return (
+        <div className="flex justify-center items-center w-full h-full flex-col">
+            <Avatar
+                src="https://mui.com/static/images/avatar/3.jpg"
+                className="w-[200px] h-[200px] mt-auto"
+            />
+            <h1>Some Name</h1>
+            <div className="mb-auto">Calling...</div>
+        </div>
+    );
+}
+
 export default function Page({
     searchParams,
 }: {
@@ -27,26 +40,15 @@ export default function Page({
             primary: { main },
         },
     } = useTheme();
-    const AudioCall = (
-        <div className="flex justify-center items-center w-full h-full flex-col">
-            <Avatar
-                src="https://mui.com/static/images/avatar/3.jpg"
-                className="w-[200px] h-[200px] mt-auto"
-            />
-            <h1>Some Name</h1>
-            <div className="mb-auto">Calling...</div>
-        </div>
-    );
-    const VideoCall = (
-        <>
-            <VideoComponent />
-        </>
-    );
 
     return (
         <SocketContext>
             <main className="grow w-full flex justify-start items-start flex-col h-full">
-                {searchParams?.mode === "audio" ? AudioCall : VideoCall}
+                {searchParams?.mode === "audio" ? (
+                    <AudioComponent />
+                ) : (
+                    <VideoComponent />
+                )}
                 <Box
                     className="buttons flex justify-around items-center flex-row flex-nowrap rounded-full w-[400px] max-w-full fixed left-1/2 bottom-4"
                     sx={{

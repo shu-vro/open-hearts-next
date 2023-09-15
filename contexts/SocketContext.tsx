@@ -21,10 +21,6 @@ export function SocketContext({ children }: { children: React.ReactElement }) {
     > | null>(null);
 
     useEffect(() => {
-        // if (!searchParams.mode || !searchParams.groupId) {
-        //     router.back();
-        //     return;
-        // }
         (async () => {
             if (!socket) {
                 await fetch("/api/socket");
