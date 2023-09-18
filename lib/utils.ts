@@ -4,12 +4,15 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
 
-// export function differenceInTimeUnits(firstTime: number) {
-//     if (Date.now() < firstTime) {
-//         return " ";
-//     }
-//     return dayjs(firstTime).fromNow();
-// }
+export function repeat(text: string, count: number = 1) {
+    let result = "";
+    for (let i = 0; i < count; i++) {
+        if (i === count - 1) {
+            result += text;
+        } else result += text + " ";
+    }
+    return result;
+}
 
 export function normalizeTimeFormat(number: number) {
     let a: string = numeral(number).format("00:00:00");

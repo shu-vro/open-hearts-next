@@ -111,7 +111,7 @@ export default function MessageForm() {
                 multiline
                 maxRows={4}
                 fullWidth
-                className="grow"
+                className="grow z-50"
                 name="message"
                 value={message.text}
                 onChange={(e) => {

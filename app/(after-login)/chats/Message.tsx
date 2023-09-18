@@ -20,6 +20,7 @@ import EmojiPicker, {
 } from "emoji-picker-react";
 import Link from "next/link";
 import ImagePreviewModal from "./ImagePreviewModal";
+import { IoMdPause } from "react-icons/io";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -90,6 +91,9 @@ export function MessageBox({
                                 : theme.palette.primary.main,
                     }}
                 >
+                    <IconButton size="small">
+                        <IoMdPause />
+                    </IconButton>
                     <span className="start font-bold">
                         {normalizeTimeFormat(0)}
                     </span>
@@ -102,7 +106,7 @@ export function MessageBox({
                             );
                         }}
                     >
-                        <div className="base opacity-40">
+                        <div className="base opacity-40 flex justify-center items-center flex-row">
                             {Array(6)
                                 .fill("")
                                 .map((_, i) => (
@@ -199,32 +203,13 @@ export function MessageBox({
                             showImageModal={showImageModal}
                         />
                     </ImageList>
-                    {/* <div className="columns-3 gap-0">
-                        {msg.imageLink.map((src, i) => (
-                            <a
-                                href={`#${i + 1}`}
-                                key={i}
-                                onClick={() => {
-                                    setShowImageModal(i.toString());
-                                }}
-                            >
-                                <img
-                                    src={src}
-                                    alt={src}
-                                    className="break-inside-avoid w-full"
-                                />
-                            </a>
-                        ))}
-                        <ImagePreviewModal
-                            images={msg.imageLink}
-                            handleClose={handleClose}
-                            showImageModal={showImageModal}
-                        />
-                    </div> */}
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Ducimus fuga quos nihil, similique voluptatem, aspernatur id
-                    qui voluptatum excepturi, culpa minima impedit repellat iste
-                    cum repudiandae amet eos. Aliquam, a.
+                    <div className="p-3 pt-0">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Ducimus fuga quos nihil, similique voluptatem,
+                        aspernatur id qui voluptatum excepturi, culpa minima
+                        impedit repellat iste cum repudiandae amet eos. Aliquam,
+                        a.
+                    </div>
                 </Box>
             </NativeHoverWrapper>
         );
@@ -355,30 +340,32 @@ export default function Message({
                 className="reply justify-self-end"
                 style={{ gridArea: "reply" }}
             >
-                <Chip
-                    icon={<AiOutlineMessage />}
-                    label="Reply"
-                    onClick={() => {
-                        setReplyMessage({
-                            type,
-                            to: "shirshen dada",
-                            message: {
-                                ...defaultMessage,
-                                text: "shuvro is the best",
-                            },
-                        });
-                        setMessage((prev) => {
-                            return {
-                                ...prev,
-                                reply: {
-                                    message: msg,
-                                    to: "shirshen dada",
-                                    type,
+                <HoverWrapper className="rounded-full">
+                    <Chip
+                        icon={<AiOutlineMessage />}
+                        label="Reply"
+                        onClick={() => {
+                            setReplyMessage({
+                                type,
+                                to: "shirshen dada",
+                                message: {
+                                    ...defaultMessage,
+                                    text: "shuvro is the best",
                                 },
-                            };
-                        });
-                    }}
-                />
+                            });
+                            setMessage((prev) => {
+                                return {
+                                    ...prev,
+                                    reply: {
+                                        message: msg,
+                                        to: "shirshen dada",
+                                        type,
+                                    },
+                                };
+                            });
+                        }}
+                    />
+                </HoverWrapper>
             </div>
 
             <Popover

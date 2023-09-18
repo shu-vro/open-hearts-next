@@ -3,7 +3,7 @@
 import { AppBar, Avatar, IconButton } from "@mui/material";
 import Link from "next/link";
 import React from "react";
-import { BsCameraVideo, BsTelephone } from "react-icons/bs";
+import { BsCameraVideo, BsInfoLg, BsTelephone } from "react-icons/bs";
 
 export default function AppBarChat() {
     return (
@@ -33,6 +33,13 @@ export default function AppBarChat() {
                 href="/chats/call?mode=video&groupId=room-1"
             >
                 <BsCameraVideo />
+            </IconButton>
+            <IconButton
+                className="hidden max-[962px]:flex"
+                LinkComponent={Link}
+                href={`/chats/group_info?groupId=${123456789}`}
+            >
+                <BsInfoLg />
             </IconButton>
         </AppBar>
     );

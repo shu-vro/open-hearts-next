@@ -5,7 +5,7 @@ import HoverWrapper from "./HoverWrapper";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, repeat } from "@/lib/utils";
 
 dayjs.extend(relativeTime);
 
@@ -15,19 +15,16 @@ function FriendList() {
     const [timeDiff, setTimeDiff] = useState(dayjs(1694720446951).fromNow());
     const isActive = true;
     return (
-        <HoverWrapper className="mb-2 mx-1">
+        <HoverWrapper className="mb-2 mx-1 w-[calc(100%-.5rem)]">
             <Box
                 component="a"
                 href="#"
                 className="grid p-2 text-inherit hover:no-underline"
                 sx={{
                     gridTemplateAreas: `
-                        'avatar name time'
-                        'avatar message message'
+                        'avatar ${repeat("name   ", 50)} ${repeat("time", 51)}'
+                        'avatar ${repeat("message", 100)} message'
                         `,
-
-                    bgcolor: (theme) =>
-                        theme.palette.mode === "light" ? "" : "",
                 }}
             >
                 <Avatar
@@ -65,11 +62,11 @@ function FriendList() {
                         gridArea: "message",
                     }}
                 >
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                    Eum, voluptate dolorem laudantium commodi odio adipisci
-                    quasi quas incidunt fugiat blanditiis facere neque
-                    accusantium nesciunt dolore ullam exercitationem deserunt
-                    nam! Sit.
+                    Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                    Sed perspiciatis, quia, tenetur iusto labore, soluta
+                    consectetur laboriosam voluptatem aliquid distinctio hic
+                    eligendi earum vero error incidunt corporis odit? Nam,
+                    explicabo!
                 </Typography>
             </Box>
         </HoverWrapper>
@@ -78,7 +75,7 @@ function FriendList() {
 
 export default function LeftSideBar() {
     return (
-        <div className="w-1/4 max-[712px]:hidden flex justify-start items-start flex-col h-full">
+        <div className="w-1/4 max-[962px]:hidden flex justify-start items-start flex-col h-full">
             <div className="w-full overflow-y-auto h-full">
                 {Array(20)
                     .fill("")

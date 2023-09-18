@@ -15,8 +15,17 @@ export default function HoverWrapper({
     style = {},
 }: HoverWrapperProps) {
     return (
-        <div className={cn("hover-card", className)} style={style}>
-            <div className={cn("hover-card-content", classNameInner)}>
+        <div
+            className={cn("hover-card", "w-fit rounded-lg", className)}
+            style={style}
+        >
+            <div
+                className={cn(
+                    "hover-card-content",
+                    "bg-[color:#e7e7e7] dark:bg-[color:#262626]",
+                    classNameInner
+                )}
+            >
                 {children}
             </div>
         </div>
