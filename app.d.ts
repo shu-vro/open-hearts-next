@@ -19,6 +19,8 @@ declare type MessageType = {
     imageLink: string[];
     emoji: string;
     voice: string;
+    deleted: boolean;
+    hash: string | null;
     reply: IReplyMessage | null;
 };
 
@@ -27,3 +29,5 @@ declare interface IReplyMessage {
     type: TypesOfMessage;
     to: string;
 }
+
+export type TypesOfMessage = "text" | "image" | "emoji" | "voice";

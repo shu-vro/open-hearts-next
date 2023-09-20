@@ -44,7 +44,7 @@ export const defaultMessage: MessageType = Object.freeze({
     text: "",
     imageLink: [],
     voice: "",
+    deleted: true,
+    hash: null,
     reply: null,
 });
-
-export type TypesOfMessage = "text" | "image" | "emoji" | "voice";

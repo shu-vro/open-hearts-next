@@ -19,13 +19,13 @@ export default function SharedLink({ link }: { link: string }) {
                 method: "post",
                 body: JSON.stringify({
                     url: link,
-                }),
+                    get: ["favicon", "ogDescription", "ogTitle"],
+                } as { url: string; get: (keyof OgObject)[] }),
             });
             const json = (await res.json()) as {
                 data: OgObject;
                 error: boolean;
             };
-            console.log(json);
             if (json.error) {
                 setPreview(
                     <Typography

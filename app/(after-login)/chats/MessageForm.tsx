@@ -3,13 +3,14 @@
 import TextField from "@mui/material/TextField";
 import GifButton from "./GifButton";
 import { useRef } from "react";
-import { Box, IconButton, useTheme } from "@mui/material";
+import { Box, Chip, IconButton, useTheme } from "@mui/material";
 import { MdSend } from "react-icons/md";
 import AddMoreButton from "./AddMoreButton";
 import { GetEmojiLink } from "./Message";
 import { defaultMessage, useMessage } from "@/contexts/MessageContext";
 import { VscClose } from "react-icons/vsc";
 import lo_ from "lodash";
+import { BiImages } from "react-icons/bi";
 
 export function ReplySection() {
     const { replyMessage, setReplyMessage, setMessage } = useMessage();
@@ -73,9 +74,14 @@ export function ReplySection() {
                 >
                     {replyMessage.type === "text" && replyMessage.message.text}
                     {replyMessage.type === "image" &&
-                        (replyMessage.message.text
-                            ? replyMessage.message.text
-                            : "Replying to images")}
+                        (replyMessage.message.text ? (
+                            <>
+                                <Chip icon={<BiImages />} label="Images" /> +{" "}
+                                {replyMessage.message.text}
+                            </>
+                        ) : (
+                            "Replying to images"
+                        ))}
                     {replyMessage.type === "voice" && "Replying to voice"}
                     {replyMessage.type === "emoji" && (
                         <GetEmojiLink unified="1f601" size={28} />
