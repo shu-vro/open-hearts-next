@@ -145,10 +145,7 @@ export default function GroupInfo({}: Props) {
                     }}
                 >
                     <SwiperSlide>
-                        <HoverWrapper
-                            // classNameInner="overflow-y-auto h-[50vh]"
-                            className=" w-[calc(100%-2rem)] mx-auto"
-                        >
+                        <HoverWrapper className=" w-[calc(100%-2rem)] mx-auto">
                             <ImageList
                                 variant="masonry"
                                 cols={3}
