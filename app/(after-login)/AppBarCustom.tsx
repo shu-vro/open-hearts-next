@@ -13,6 +13,7 @@ import { BsSun, BsThreeDotsVertical } from "react-icons/bs";
 import MobileNotificationItem from "./MobileNotificationItem";
 import DesktopNotificationItem from "./DesktopNotificationItem";
 import { useColorMode } from "@/contexts/ColorModeContext";
+import HoverWrapper from "./chats/HoverWrapper";
 
 export default function AppBarCustom() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -93,64 +94,68 @@ export default function AppBarCustom() {
     const { mode, setMode } = useColorMode();
 
     return (
-        <Box sx={{ flexGrow: 1, width: "100%" }}>
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="div"
-                        sx={{ display: "block", fontSize: "1.5rem" }}
-                    >
-                        💖
-                    </Typography>
-                    <Box sx={{ flexGrow: 1 }} />
-                    <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                        <IconButton
-                            size="large"
-                            onClick={() => {
-                                if (mode === "dark") {
-                                    document.documentElement.classList.remove(
+        <HoverWrapper className="rounded-none w-full" classNameInner="bg-none">
+            <Box sx={{ flexGrow: 1, width: "100%" }}>
+                <AppBar position="static">
+                    <Toolbar>
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component="div"
+                            sx={{ display: "block", fontSize: "1.5rem" }}
+                        >
+                            💖
+                        </Typography>
+                        <Box sx={{ flexGrow: 1 }} />
+                        <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                            <IconButton
+                                size="large"
+                                onClick={() => {
+                                    if (mode === "dark") {
+                                        document.documentElement.classList.remove(
+                                            "dark"
+                                        );
+                                        localStorage.theme = "light";
+                                        setMode!("light");
+                                        return;
+                                    }
+                                    document.documentElement.classList.add(
                                         "dark"
                                     );
-                                    localStorage.theme = "light";
-                                    setMode!("light");
-                                    return;
-                                }
-                                document.documentElement.classList.add("dark");
-                                localStorage.theme = "dark";
-                                setMode!("dark");
-                            }}
-                        >
-                            <BsSun />
-                        </IconButton>
-                        <DesktopNotificationItem />
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                        >
-                            <VscAccount />
-                        </IconButton>
-                    </Box>
-                    <Box sx={{ display: { xs: "flex", md: "none" } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="show more"
-                            aria-controls={mobileMenuId}
-                            aria-haspopup="true"
-                            onClick={handleMobileMenuOpen}
-                        >
-                            <BsThreeDotsVertical />
-                        </IconButton>
-                    </Box>
-                </Toolbar>
-            </AppBar>
-            {renderMobileMenu}
-            {renderMenu}
-        </Box>
+                                    localStorage.theme = "dark";
+                                    setMode!("dark");
+                                }}
+                            >
+                                <BsSun />
+                            </IconButton>
+                            <DesktopNotificationItem />
+                            <IconButton
+                                size="large"
+                                edge="end"
+                                aria-label="account of current user"
+                                aria-controls={menuId}
+                                aria-haspopup="true"
+                                onClick={handleProfileMenuOpen}
+                            >
+                                <VscAccount />
+                            </IconButton>
+                        </Box>
+                        <Box sx={{ display: { xs: "flex", md: "none" } }}>
+                            <IconButton
+                                size="large"
+                                aria-label="show more"
+                                aria-controls={mobileMenuId}
+                                aria-haspopup="true"
+                                onClick={handleMobileMenuOpen}
+                            >
+                                <BsThreeDotsVertical />
+                            </IconButton>
+                        </Box>
+                    </Toolbar>
+                </AppBar>
+                {renderMobileMenu}
+                {renderMenu}
+            </Box>
+        </HoverWrapper>
     );
 }

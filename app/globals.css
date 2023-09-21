@@ -5,6 +5,8 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    height: 100vh;
+    overflow-y: hidden;
 }
 
 @layer utilities {
@@ -15,10 +17,10 @@ body {
         opacity: 1;
     }
     .hover-card {
-        @apply relative w-fit p-[1px] rounded-lg hover:before:opacity-100 before:z-[4] after:z-[2];
+        @apply relative p-[1px] hover:before:opacity-100 before:z-[4] after:z-[2];
     }
     .hover-card .hover-card-content {
-        @apply bg-[color:#e7e7e7] dark:bg-[color:#262626] relative z-[3] rounded-[inherit];
+        @apply relative z-[3] rounded-[inherit];
     }
     .hover-card::before,
     .hover-card::after {
@@ -26,21 +28,21 @@ body {
     }
     .dark .hover-card::before {
         background: radial-gradient(
-            600px circle at var(--mouse-x) var(--mouse-y),
+            800px circle at var(--mouse-x) var(--mouse-y),
             rgba(255, 255, 255, 0.1),
             transparent 40%
         );
     }
     .dark .hover-card::after {
         background: radial-gradient(
-            500px circle at var(--mouse-x) var(--mouse-y),
+            600px circle at var(--mouse-x) var(--mouse-y),
             rgba(255, 255, 255, 0.4),
             transparent 40%
         );
     }
     .hover-card::before {
         background: radial-gradient(
-            600px circle at var(--mouse-x) var(--mouse-y),
+            800px circle at var(--mouse-x) var(--mouse-y),
             rgba(0, 0, 0, 0.06),
             transparent 40%
         );
@@ -48,7 +50,7 @@ body {
     .hover-card::after {
         @apply opacity-100;
         background: radial-gradient(
-            500px circle at var(--mouse-x) var(--mouse-y),
+            600px circle at var(--mouse-x) var(--mouse-y),
             rgba(0, 0, 0, 0.4),
             transparent 40%
         );

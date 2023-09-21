@@ -39,3 +39,4 @@ playground.ts
 /playground
 **/*.Zone.Identifier
 **/tempCodeRunnerFile.js
+app/test/**

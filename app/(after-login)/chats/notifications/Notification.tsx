@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { IconButton, useTheme } from "@mui/material";
 import { BsCheck2All } from "react-icons/bs";
-import { cn } from "@/lib/utils";
+import { cn, repeat } from "@/lib/utils";
 
 type Props = {
     name: string;
@@ -51,8 +51,8 @@ export default function Notification({
                 gridTemplateAreas:
                     matches668 && !iconOnly
                         ? `
-                'avatar info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info info'
-                '.    button   .  time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time time'`
+                'avatar ${repeat("info", 100)}'
+                '.    button   .  ${repeat("time", 98)}'`
                         : `'avatar info info info info info button'
                         '.       .     .   .  time  time  time'`,
             }}

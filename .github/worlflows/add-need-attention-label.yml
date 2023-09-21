@@ -1,0 +1,21 @@
+name: Add need-attention label to all issues
+
+on:
+    issues:
+        types: [opened, reopened]
+
+jobs:
+    add-label:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Add need-attention label
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      github.issues.addLabels({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        labels: ["need-attention"]
+                      })
