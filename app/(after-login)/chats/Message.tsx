@@ -1,40 +1,29 @@
 "use client";
 
-import { cn, normalizeTimeFormat } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import Avatar from "@mui/material/Avatar";
 import React, { useState } from "react";
 import { AiOutlineMessage, AiOutlinePlus } from "react-icons/ai";
-import {
-    Box,
-    Chip,
-    IconButton,
-    ImageList,
-    ImageListItem,
-    Popover,
-    Typography,
-    useTheme,
-} from "@mui/material";
+import { Chip, IconButton, Popover, useTheme } from "@mui/material";
 import EmojiPicker, {
     EmojiStyle,
     Theme,
     EmojiClickData,
 } from "emoji-picker-react";
 import Link from "next/link";
-import ImagePreviewModal from "./ImagePreviewModal";
-import { IoMdPause } from "react-icons/io";
-
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import { RiDeleteBin6Fill, RiVoiceprintFill } from "react-icons/ri";
+import { RiDeleteBin6Fill } from "react-icons/ri";
 import { useMessage, defaultMessage } from "@/contexts/MessageContext";
 import { MessageType, TypesOfMessage } from "@/app";
 import HoverWrapper, { HoverWrapperProps } from "./HoverWrapper";
-import { BiImages } from "react-icons/bi";
-import { MdKeyboardVoice } from "react-icons/md";
+import GetEmojiLink from "./GetEmojiLink";
+import DeletedMessageBox from "./DeletedMessageBox";
+import { MessageBox } from "./MessageBox";
 
-type Props = {
+export type Props = {
     by: "me" | "him";
     type?: TypesOfMessage;
     msg: MessageType;
@@ -43,7 +32,7 @@ type Props = {
     metadata: null; // for now.
 };
 
-function NativeHoverWrapper({
+export function NativeHoverWrapper({
     children,
     classNameInner,
     style,
@@ -60,330 +49,6 @@ function NativeHoverWrapper({
         >
             {children}
         </HoverWrapper>
-    );
-}
-
-function ReplyBox({
-    by,
-    reply,
-}: {
-    by: Props["by"];
-    reply: MessageType["reply"];
-}) {
-    return reply ? (
-        <Box
-            component={Link}
-            href={`#${"hello"}`}
-            className={cn(
-                "relative py-2 px-3 rounded-lg opacity-60 cursor-pointer hover:no-underline text-inherit block mt-2 pb-5"
-            )}
-            sx={{
-                transform: "translateY(1rem)",
-                bgcolor: (theme) => theme.palette.mySwatch.messageBG,
-            }}
-        >
-            <div className="text-xs">
-                {by === "him" ? reply.to : "you"} replied to{" "}
-                {by === "me" ? reply.to : "you"}
-            </div>
-            {reply.message.deleted ? (
-                <Typography
-                    noWrap
-                    className="message truncate w-full text-sm p-3 rounded-lg"
-                    style={{
-                        maxWidth: "300px",
-                        gridArea: "message",
-                    }}
-                >
-                    This message was deleted by sender
-                </Typography>
-            ) : (
-                <Typography
-                    noWrap
-                    className="message truncate w-full text-sm"
-                    style={{
-                        maxWidth: "300px",
-                        gridArea: "message",
-                    }}
-                >
-                    {reply.type === "text" && reply.message.text}
-                    {reply.type === "image" &&
-                        (reply.message.text ? (
-                            <>
-                                <Chip icon={<BiImages />} label="Images" /> +{" "}
-                                {reply.message.text}
-                            </>
-                        ) : (
-                            <Chip
-                                icon={<BiImages />}
-                                label="Replying to images"
-                            />
-                        ))}
-                    {reply.type === "voice" && (
-                        <Chip
-                            icon={<MdKeyboardVoice size="20px" />}
-                            label="Replying to Voice"
-                        />
-                    )}
-                    {reply.type === "emoji" && <GetEmojiLink unified="1f601" />}
-                </Typography>
-            )}
-        </Box>
-    ) : (
-        <></>
-    );
-}
-
-export function MessageBox({
-    by,
-    type,
-    msg,
-}: {
-    by: Props["by"];
-    type: Props["type"];
-    msg: Props["msg"];
-}) {
-    const [voiceMessageDone, setVoiceMessageDone] = useState(0);
-    const [showImageModal, setShowImageModal] = useState("");
-
-    if (type === "voice") {
-        return (
-            <div
-                className={cn(by === "me" ? "justify-self-end" : "")}
-                style={{
-                    gridArea: "message",
-                }}
-            >
-                <ReplyBox by={by} reply={msg.reply} />
-                <NativeHoverWrapper replied={!!msg.reply}>
-                    <Box
-                        className={cn(
-                            "message text-sm p-3 rounded-[inherit] flex justify-center items-center flex-row gap-2",
-                            by === "me" && "float-right"
-                        )}
-                        sx={{
-                            bgcolor: (theme) =>
-                                by === "him"
-                                    ? theme.palette.mySwatch.messageBG
-                                    : theme.palette.primary.main,
-                        }}
-                    >
-                        <IconButton size="small">
-                            <IoMdPause />
-                        </IconButton>
-                        <span className="start font-bold">
-                            {normalizeTimeFormat(0)}
-                        </span>
-                        <div
-                            className="relative text-3xl max-[865px]:text-2xl overflow-hidden"
-                            onClick={(e) => {
-                                let rect =
-                                    e.currentTarget.getBoundingClientRect();
-                                setVoiceMessageDone(
-                                    ((e.clientX - rect.x) / rect.width) * 100
-                                );
-                            }}
-                        >
-                            <div className="base opacity-40 flex justify-center items-center flex-row">
-                                {Array(6)
-                                    .fill("")
-                                    .map((_, i) => (
-                                        <RiVoiceprintFill key={i} />
-                                    ))}
-                            </div>
-                            <div
-                                className="slider absolute top-0 left-0 w-full h-full"
-                                style={{
-                                    clipPath: `polygon(0 0, ${voiceMessageDone}% 0, ${voiceMessageDone}% 100%, 0% 100%)`,
-                                }}
-                            >
-                                {Array(6)
-                                    .fill("")
-                                    .map((_, i) => (
-                                        <RiVoiceprintFill key={i} />
-                                    ))}
-                            </div>
-                        </div>
-                        <span className="end font-bold">
-                            {normalizeTimeFormat(400)}
-                        </span>
-                    </Box>
-                </NativeHoverWrapper>
-            </div>
-        );
-    } else if (type === "emoji") {
-        let unified = "1f601";
-        return (
-            <div
-                className={cn(by === "me" ? "justify-self-end" : "")}
-                style={{
-                    gridArea: "message",
-                }}
-            >
-                <ReplyBox by={by} reply={msg.reply} />
-                <div
-                    className={cn(
-                        "message text-sm rounded-lg",
-                        by === "me" ? "float-right" : ""
-                    )}
-                >
-                    <GetEmojiLink unified={unified} />
-                </div>
-            </div>
-        );
-    } else if (type === "image") {
-        const handleClose = () => {
-            setShowImageModal("");
-        };
-        return (
-            <div
-                className={cn(by === "me" ? "justify-self-end" : "")}
-                style={{
-                    gridArea: "message",
-                }}
-            >
-                <ReplyBox
-                    by={by} // stupidity for now.
-                    reply={msg.reply}
-                />
-                <NativeHoverWrapper
-                    replied={!!msg.reply}
-                    style={{
-                        width: "70%",
-                        float: by === "me" ? "right" : undefined,
-                    }}
-                >
-                    <Box
-                        className={cn(
-                            "message text-sm rounded-lg",
-                            by === "me" ? "justify-self-end" : ""
-                        )}
-                        sx={{
-                            // TODO: afterwards, we will get how many images we have to show, then, we can tell column-count: min(3, images.length).
-                            background: (theme) =>
-                                by === "him"
-                                    ? theme.palette.mySwatch.messageBG
-                                    : theme.palette.primary.main,
-                            gap: 0,
-                        }}
-                    >
-                        <ImageList
-                            variant="masonry"
-                            cols={3}
-                            gap={8}
-                            className="mt-0 rounded-[inherit]"
-                        >
-                            {msg.imageLink.map((src, i) => (
-                                <ImageListItem
-                                    key={i}
-                                    component="a"
-                                    href={`#${i + 1}`}
-                                    onClick={() => {
-                                        setShowImageModal(i.toString());
-                                    }}
-                                >
-                                    <img
-                                        src={`${src}?w=248&fit=crop&auto=format`}
-                                        srcSet={`${src}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                                        alt={src}
-                                        loading="lazy"
-                                    />
-                                </ImageListItem>
-                            ))}
-                            <ImagePreviewModal
-                                images={msg.imageLink}
-                                handleClose={handleClose}
-                                showImageModal={showImageModal}
-                            />
-                        </ImageList>
-                        <div className="p-3 pt-0">
-                            Lorem ipsum dolor sit amet consectetur adipisicing
-                            elit. Ducimus fuga quos nihil, similique voluptatem,
-                            aspernatur id qui voluptatum excepturi, culpa minima
-                            impedit repellat iste cum repudiandae amet eos.
-                            Aliquam, a.
-                        </div>
-                    </Box>
-                </NativeHoverWrapper>
-            </div>
-        );
-    } else {
-        return (
-            <div
-                className={cn(
-                    "flex justify-start flex-col",
-                    by === "me" ? "items-end" : "items-start"
-                )}
-                style={{
-                    gridArea: "message",
-                }}
-            >
-                <ReplyBox
-                    by={by} // stupidity for now.
-                    reply={msg.reply}
-                />
-                <NativeHoverWrapper replied={!!msg.reply}>
-                    <Box
-                        className={cn(
-                            "message text-sm p-3 rounded-lg",
-                            by === "me" && "text-right"
-                        )}
-                        sx={{
-                            background: (theme) =>
-                                by === "him"
-                                    ? theme.palette.mySwatch.messageBG
-                                    : theme.palette.primary.main,
-                        }}
-                    >
-                        {msg.text}
-                    </Box>
-                </NativeHoverWrapper>
-            </div>
-        );
-    }
-}
-
-function DeletedMessageBox({
-    by,
-    reply,
-}: {
-    by: Props["by"];
-    reply: MessageType["reply"];
-}) {
-    return (
-        <div
-            className={cn(
-                "flex justify-start flex-col",
-                by === "me" ? "items-end" : "items-start"
-            )}
-            style={{
-                gridArea: "message",
-            }}
-        >
-            <ReplyBox
-                by={by} // stupidity for now.
-                reply={reply}
-            />
-            <NativeHoverWrapper
-                replied={!!reply}
-                className={cn(by === "me" && "float-right")}
-            >
-                <Box
-                    className={cn(
-                        "text-sm p-3 rounded-lg bg-[#fdeded] dark:bg-[#210b0b] text-[#5f2120] dark:text-[#f4c7c7]",
-                        by === "me" ? "text-right ml-auto" : ""
-                    )}
-                    sx={{
-                        background: (theme) =>
-                            by === "him"
-                                ? theme.palette.mySwatch.messageBG
-                                : theme.palette.primary.main,
-                    }}
-                >
-                    This message was deleted by sender
-                </Box>
-            </NativeHoverWrapper>
-        </div>
     );
 }
 
@@ -583,26 +248,5 @@ export default function Message({
                 />
             </Popover>
         </div>
-    );
-}
-export function GetEmojiLink({
-    unified,
-    size = 50,
-    style = {},
-}: {
-    unified: string;
-    size?: number;
-    style?: React.CSSProperties;
-}) {
-    return (
-        <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-                src={`https://cdn.jsdelivr.net/npm/emoji-datasource-facebook/img/facebook/64/${unified}.png`}
-                alt=""
-                style={{ ...style }}
-                width={size}
-            />
-        </>
     );
 }

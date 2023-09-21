@@ -20,7 +20,7 @@ export default function Chats() {
             "https://images.unsplash.com/photo-1682685797406-97f364419b4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
             "https://images.unsplash.com/photo-1693588312088-a37c2a329982?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2127&q=80",
         ],
-        text: "Lorem ipsum dolor sit",
+        text: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Delectus eius https://mui.com dolores adipisci dolorum libero corrupti veritatis doloremque https://tailwindcss.com/docs/responsive-design#arbitrary-values ea eaque, quis exercitationem dolorem cum nostrum error laudantium qui saepe rem unde?",
         voice: "",
         deleted: false,
         hash: null,

@@ -6,7 +6,7 @@ import { useRef } from "react";
 import { Box, Chip, IconButton, useTheme } from "@mui/material";
 import { MdSend } from "react-icons/md";
 import AddMoreButton from "./AddMoreButton";
-import { GetEmojiLink } from "./Message";
+import GetEmojiLink from "./GetEmojiLink";
 import { defaultMessage, useMessage } from "@/contexts/MessageContext";
 import { VscClose } from "react-icons/vsc";
 import lo_ from "lodash";
