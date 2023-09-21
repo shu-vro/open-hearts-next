@@ -45,8 +45,7 @@ export default function ReplyBox({
                 </Typography>
             ) : (
                 <Typography
-                    noWrap
-                    className="message truncate w-full text-sm"
+                    className="message line-clamp-3 w-full text-sm"
                     style={{
                         maxWidth: "300px",
                         gridArea: "message",

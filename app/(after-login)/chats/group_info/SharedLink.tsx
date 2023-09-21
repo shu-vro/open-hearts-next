@@ -98,6 +98,7 @@ export default function SharedLink({ link }: { link: string }) {
                 component="a"
                 href={link}
                 target="_blank"
+                rel="noopener noreferrer"
                 className="grid p-2 text-inherit hover:no-underline"
                 sx={{
                     /**

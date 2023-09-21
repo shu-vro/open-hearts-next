@@ -3,8 +3,8 @@
 import TextField from "@mui/material/TextField";
 import GifButton from "./GifButton";
 import { useRef } from "react";
-import { Box, Chip, IconButton, useTheme } from "@mui/material";
-import { MdSend } from "react-icons/md";
+import { Box, Chip, IconButton, Typography, useTheme } from "@mui/material";
+import { MdKeyboardVoice, MdSend } from "react-icons/md";
 import AddMoreButton from "./AddMoreButton";
 import GetEmojiLink from "./GetEmojiLink";
 import { defaultMessage, useMessage } from "@/contexts/MessageContext";
@@ -13,13 +13,8 @@ import lo_ from "lodash";
 import { BiImages } from "react-icons/bi";
 
 export function ReplySection() {
-    const { replyMessage, setReplyMessage, setMessage } = useMessage();
-    const {
-        palette: {
-            primary: { dark },
-            mySwatch: { messageBG },
-        },
-    } = useTheme();
+    const { replyMessage: reply, setReplyMessage, setMessage } = useMessage();
+
     return (
         <Box
             className="replyBar absolute bottom-full left-0 w-full p-3 rounded-[.75rem_.75rem_0_0] z-10"
@@ -43,7 +38,7 @@ export function ReplySection() {
                         gridArea: "name",
                     }}
                 >
-                    {replyMessage.to}
+                    {reply.to}
                 </b>
                 <VscClose
                     style={{
@@ -66,27 +61,49 @@ export function ReplySection() {
                         });
                     }}
                 />
-                <i
-                    className="message truncate"
-                    style={{
-                        gridArea: "message",
-                    }}
-                >
-                    {replyMessage.type === "text" && replyMessage.message.text}
-                    {replyMessage.type === "image" &&
-                        (replyMessage.message.text ? (
-                            <>
-                                <Chip icon={<BiImages />} label="Images" /> +{" "}
-                                {replyMessage.message.text}
-                            </>
-                        ) : (
-                            "Replying to images"
-                        ))}
-                    {replyMessage.type === "voice" && "Replying to voice"}
-                    {replyMessage.type === "emoji" && (
-                        <GetEmojiLink unified="1f601" size={28} />
-                    )}
-                </i>
+                {reply.message.deleted ? (
+                    <Typography
+                        noWrap
+                        className="message truncate w-full text-sm p-3 rounded-lg"
+                        style={{
+                            maxWidth: "300px",
+                            gridArea: "message",
+                        }}
+                    >
+                        This message was deleted by sender
+                    </Typography>
+                ) : (
+                    <Typography
+                        className="message line-clamp-3 w-full text-sm"
+                        style={{
+                            maxWidth: "300px",
+                            gridArea: "message",
+                        }}
+                    >
+                        {reply.type === "text" && reply.message.text}
+                        {reply.type === "image" &&
+                            (reply.message.text ? (
+                                <>
+                                    <Chip icon={<BiImages />} label="Images" />{" "}
+                                    + {reply.message.text}
+                                </>
+                            ) : (
+                                <Chip
+                                    icon={<BiImages />}
+                                    label="Replying to images"
+                                />
+                            ))}
+                        {reply.type === "voice" && (
+                            <Chip
+                                icon={<MdKeyboardVoice size="20px" />}
+                                label="Replying to Voice"
+                            />
+                        )}
+                        {reply.type === "emoji" && (
+                            <GetEmojiLink unified="1f601" />
+                        )}
+                    </Typography>
+                )}
             </Box>
         </Box>
     );

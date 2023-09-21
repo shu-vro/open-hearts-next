@@ -17,16 +17,21 @@ import ReplyBox from "./ReplyBox";
 import { Props, NativeHoverWrapper } from "./Message";
 import { OgObject } from "open-graph-scraper/dist/lib/types";
 import HoverWrapper from "./HoverWrapper";
+import { sanitize } from "isomorphic-dompurify";
 
-/**
- * TASK:
- * 1. find links
- *      1. /\b(https?|ftp|file):\/\/\S+/g
- *      2. /(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/gi
- *      3. /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/ig
- * 2. fetch the url from api ---- already done.
- * 3. add some changes to text and image types to make them compatible with an image in bottom
- */
+function DangerousHtml(text: string, array: string[] = []) {
+    let result = text;
+    for (let i = 0; i < array.length; i++) {
+        result = result.replaceAll(
+            array[i],
+            `<a href="${array[i]}" target="_blank" rel="noopener noreferrer">${array[i]}</a>`
+        );
+    }
+    return sanitize(result, {
+        ALLOWED_TAGS: ["a"],
+        ALLOWED_ATTR: ["href", "target", "rel"],
+    });
+}
 
 export function MessageBox({
     by,
@@ -42,8 +47,9 @@ export function MessageBox({
     const [urls, setUrls] = useState<RegExpMatchArray | null>(null);
     useEffect(() => {
         let urls = msg.text.match(
-            /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/gi
+            /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-]*)(?:\?[-\+=&;%@.\w_]*)?(?:#[-.\!\/\\\w]*))?)/gi
         );
+        console.log(urls);
         setUrls(urls);
     }, []);
 
@@ -141,7 +147,10 @@ export function MessageBox({
         };
         return (
             <div
-                className={cn(by === "me" ? "justify-self-end" : "")}
+                className={cn(
+                    "flex justify-start flex-col",
+                    by === "me" ? "justify-self-end items-end" : "items-start"
+                )}
                 style={{
                     gridArea: "message",
                 }}
@@ -163,7 +172,6 @@ export function MessageBox({
                             by === "me" ? "justify-self-end" : ""
                         )}
                         sx={{
-                            // TODO: afterwards, we will get how many images we have to show, then, we can tell column-count: min(3, images.length).
                             background: (theme) =>
                                 by === "him"
                                     ? theme.palette.mySwatch.messageBG
@@ -200,9 +208,31 @@ export function MessageBox({
                                 showImageModal={showImageModal}
                             />
                         </ImageList>
-                        <div className="p-3 pt-0">{msg.text}</div>
+                        <Box
+                            className="p-3 pt-0"
+                            sx={{
+                                "& > a": {
+                                    color: "inherit",
+                                    textDecoration: "underline",
+                                },
+                            }}
+                            dangerouslySetInnerHTML={{
+                                __html: DangerousHtml(msg.text, urls || []),
+                            }}
+                        ></Box>
                     </Box>
                 </NativeHoverWrapper>
+
+                <div
+                    className={cn(
+                        "flex items-start flex-wrap gap-1.5",
+                        by === "me" ? "justify-end" : "justify-start"
+                    )}
+                >
+                    {urls?.map((url, i) => (
+                        <WebsiteInfoCard url={url} key={i} />
+                    ))}
+                </div>
             </div>
         );
     } else {
@@ -228,12 +258,23 @@ export function MessageBox({
                                 by === "him"
                                     ? theme.palette.mySwatch.messageBG
                                     : theme.palette.primary.main,
+
+                            "& > a": {
+                                color: "inherit",
+                                textDecoration: "underline",
+                            },
                         }}
-                    >
-                        {msg.text}
-                    </Box>
+                        dangerouslySetInnerHTML={{
+                            __html: DangerousHtml(msg.text, urls || []),
+                        }}
+                    ></Box>
                 </NativeHoverWrapper>
-                <div className="flex justify-start items-center flex-wrap gap-1.5">
+                <div
+                    className={cn(
+                        "flex items-start flex-wrap gap-1.5",
+                        by === "me" ? "justify-end" : "justify-start"
+                    )}
+                >
                     {urls?.map((url, i) => (
                         <WebsiteInfoCard url={url} key={i} />
                     ))}
@@ -256,6 +297,8 @@ function WebsiteInfoCard({ url }: { url: string }) {
                     } as { url: string; get: (keyof OgObject)[] }),
                 });
                 let data = await res.json();
+                if (typeof data.data !== "object") return;
+                if (data.error) return;
                 setMetadata(data.data);
             } catch (error) {
                 console.info(error);
@@ -265,41 +308,54 @@ function WebsiteInfoCard({ url }: { url: string }) {
     return metadata ? (
         <HoverWrapper className="mb-2">
             <Box
-                className="text-inherit hover:no-underline grid overflow-hidden"
+                className="text-inherit hover:no-underline grid overflow-hidden max-w-xs w-full p-2"
                 component="a"
                 href={url}
                 target="_blank"
+                title={url}
                 sx={{
-                    width: `clamp(200px, 250px, 300px)`,
                     gridTemplateAreas: `
                         'icon ${repeat("title", 50)} title'
                         'icon ${repeat("url", 50)}   url'
                         'poster ${repeat("poster", 50)} poster'
+                        '${repeat("description", 52)}'
                         `,
                 }}
             >
                 <Avatar
                     sx={{
+                        display: metadata?.favicon ? "block" : "none",
                         gridArea: "icon",
                     }}
-                    src={new URL(url).origin + metadata.favicon}
-                    alt={new URL(url).host}
+                    src={new URL(url)?.origin + metadata.favicon || ""}
+                    alt={new URL(url)?.host}
                 />
                 <Typography noWrap gridArea="title">
                     {metadata.ogTitle || url}
                 </Typography>
-                <Typography noWrap gridArea="url">
+                <Typography
+                    noWrap
+                    gridArea="url"
+                    display={metadata?.ogImage?.[0]?.url ? "block" : "none"}
+                >
                     {url}
                 </Typography>
                 <img
+                    className="w-full mb-1"
                     src={metadata?.ogImage?.[0].url || ""}
                     alt="website poster"
                     style={{
                         display: metadata?.ogImage?.[0]?.url ? "block" : "none",
                         gridArea: "poster",
-                        width: `clamp(200px, 250px, 300px)`,
                     }}
                 />
+                <Typography
+                    className="line-clamp-2 opacity-60"
+                    gridArea="description"
+                    display={metadata?.ogDescription ? "block" : "none"}
+                >
+                    {metadata.ogDescription || ""}
+                </Typography>
             </Box>
         </HoverWrapper>
     ) : (
