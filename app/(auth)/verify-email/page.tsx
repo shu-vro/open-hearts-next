@@ -1,6 +1,6 @@
 "use client";
 
-import { auth } from "@/firebase.js";
+import { auth } from "@/firebase";
 import VerifyButton from "../VerifyButton";
 import Logout from "../Logout";
 import { useEffect, useState } from "react";

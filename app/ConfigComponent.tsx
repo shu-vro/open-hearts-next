@@ -1,17 +1,18 @@
 "use client";
 
 import { useColorMode } from "@/contexts/ColorModeContext";
-import { useTheme } from "@mui/material";
+import { auth } from "@/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 export default function ConfigComponent() {
-    const theme = useTheme();
     const { setMode } = useColorMode();
+    const { push } = useRouter();
     useEffect(() => {
-        if (process.env.NODE_ENV === "development") {
-            // @ts-ignore
-            window.theme = theme;
-        }
+        let unsubscribe = onAuthStateChanged(auth, (user) => {
+            user ? push("/chats") : push("/signup");
+        });
         if (
             localStorage.theme === "dark" ||
             (!("theme" in localStorage) &&
@@ -23,6 +24,7 @@ export default function ConfigComponent() {
             document.documentElement.classList.remove("dark");
             setMode!("light");
         }
+        return unsubscribe;
     }, []);
 
     return <></>;

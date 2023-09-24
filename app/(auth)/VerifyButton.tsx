@@ -1,5 +1,5 @@
 "use client";
-import { auth } from "@/firebase.js";
+import { auth } from "@/firebase";
 import { sendEmailVerification } from "firebase/auth";
 import { Button } from "@mui/material";
 

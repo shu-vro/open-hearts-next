@@ -4,6 +4,7 @@ import { Montserrat } from "next/font/google";
 import TransitionEffect from "./TransitionEffects";
 import { ColorModeContext } from "@/contexts/ColorModeContext";
 import ConfigComponent from "./ConfigComponent";
+import { AuthContextProvider } from "@/contexts/AuthContext";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -30,7 +31,11 @@ export default function RootLayout({
                 <ColorModeContext>
                     <>
                         <ConfigComponent />
-                        <TransitionEffect>{children}</TransitionEffect>
+                        <TransitionEffect>
+                            <AuthContextProvider>
+                                {children}
+                            </AuthContextProvider>
+                        </TransitionEffect>
                     </>
                 </ColorModeContext>
             </body>

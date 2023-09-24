@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { FormHelperText, Button } from "@mui/material";
 import { useState } from "react";
-import { loginWithPassword } from "@/firebase.js";
+import { loginWithPassword } from "@/firebase";
 import { useRouter } from "next/navigation";
 import LinearProgress from "@mui/material/LinearProgress";
 import AlertBox from "../AlertBox";
@@ -35,7 +35,7 @@ export default function Login() {
             const user = await loginWithPassword(email, password1);
             setMessage(`User ${email} login successfully`);
             setSubmitted(false);
-            if (!user.emailVerified) {
+            if (!user!.emailVerified) {
                 return router.push("/verify-email");
             }
             return router.push("/chats");
