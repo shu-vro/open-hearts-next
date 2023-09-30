@@ -22,7 +22,7 @@ export default function VerifyEmail() {
 
     if (emailVerified) {
         router.push("/chats");
-        return <>Email verified. redirecting to chat.</>;
+        return <>Email verified. redirecting to chats.</>;
     }
     return verificationEmailSent ? (
         <h3>

@@ -2,19 +2,19 @@
 
 import { useTheme } from "@mui/material";
 import React, { useEffect, useRef } from "react";
-import * as three from "three";
+import * as THREE from "three";
 
 function generateStars(zPos = 100) {
-    const sphere = new three.Mesh(
-        new three.SphereGeometry(0.05, 32, 32),
-        new three.MeshStandardMaterial({
+    const sphere = new THREE.Mesh(
+        new THREE.SphereGeometry(0.05, 32, 32),
+        new THREE.MeshStandardMaterial({
             color: 0xffffff,
         })
     );
-    const z = three.MathUtils.randFloat(-zPos, 0);
+    const z = THREE.MathUtils.randFloat(-zPos, 0);
     const [x, y] = Array(2)
         .fill("")
-        .map(() => three.MathUtils.randFloatSpread(100));
+        .map(() => THREE.MathUtils.randFloatSpread(100));
     sphere.position.set(x, y, z);
     return sphere;
 }
@@ -27,28 +27,25 @@ export default function CanvasDark() {
 
     useEffect(() => {
         if (!canvas.current) return;
-        const scene = new three.Scene();
-        const camera = new three.PerspectiveCamera(
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
             45,
-            canvas.current.clientWidth / canvas.current.clientHeight,
+            window.innerWidth / window.innerHeight,
             0.1,
             2000
         );
 
-        const renderer = new three.WebGLRenderer({
+        const renderer = new THREE.WebGLRenderer({
             canvas: canvas.current,
             antialias: true,
         });
         renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(
-            canvas.current.clientWidth,
-            canvas.current.clientHeight
-        );
+        renderer.setSize(window.innerWidth, window.innerHeight);
 
         camera.position.z = 10;
         let animation: number;
 
-        scene.background = new three.Color(0, 0, 0);
+        scene.background = new THREE.Color(0, 0, 0);
         let stars = Array(1000)
             .fill("")
             .map(() => {
@@ -57,7 +54,7 @@ export default function CanvasDark() {
         stars.forEach((star) => {
             scene.add(star);
         });
-        let dirLight = new three.DirectionalLight(0xffffff, 2);
+        let dirLight = new THREE.DirectionalLight(0xffffff, 2);
         dirLight.position.set(0, 1, 1).normalize();
         scene.add(dirLight);
         function animate() {
@@ -76,14 +73,15 @@ export default function CanvasDark() {
         // RESPONSIVE.
         const resizeEvent = () => {
             if (!canvas.current) return;
-            camera.aspect = window.innerWidth / canvas.current.clientHeight;
-            renderer.setSize(window.innerWidth, canvas.current.clientHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            renderer.setSize(window.innerWidth, window.innerHeight);
             camera.updateProjectionMatrix();
         };
         window.addEventListener("resize", resizeEvent);
         return () => {
             window.removeEventListener("resize", resizeEvent);
             cancelAnimationFrame(animation);
+            renderer.dispose();
         };
     }, [canvas, mode]);
 
@@ -91,7 +89,7 @@ export default function CanvasDark() {
         <>
             <canvas
                 ref={canvas}
-                className="absolute top-0 left-0 w-full h-full"
+                className="fixed top-0 left-0 w-full h-full"
             ></canvas>
         </>
     );

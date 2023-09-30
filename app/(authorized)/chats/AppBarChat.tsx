@@ -38,6 +38,11 @@ export default function AppBarChat() {
                     className="hidden max-[962px]:flex"
                     LinkComponent={Link}
                     href={`/chats/group_info?groupId=${0}`}
+                    sx={{
+                        display: {
+                            "962px": "none",
+                        },
+                    }}
                 >
                     <BsInfoLg />
                 </IconButton>

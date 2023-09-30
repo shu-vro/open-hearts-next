@@ -8,6 +8,7 @@ import {
 } from "react";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import firebase_app from "@/firebase";
+import { Box, CircularProgress } from "@mui/material";
 
 // Initialize Firebase auth instance
 const auth = getAuth(firebase_app);
@@ -50,7 +51,25 @@ export function AuthContextProvider({
     // Provide the authentication context to child components
     return (
         <AuthContext.Provider value={{ user }}>
-            {loading ? <div>Loading...</div> : children}
+            {loading ? <Loading /> : children}
         </AuthContext.Provider>
+    );
+}
+
+function Loading() {
+    return (
+        <Box
+            position="fixed"
+            width="100%"
+            height="100vh"
+            zIndex="1000"
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            bgcolor="dodgerblue"
+            color="orangered"
+        >
+            <CircularProgress size={60} color="inherit" />
+        </Box>
     );
 }

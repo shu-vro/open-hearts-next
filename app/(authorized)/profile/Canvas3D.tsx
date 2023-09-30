@@ -10,5 +10,5 @@ export default function Canvas3D() {
         palette: { mode },
     } = useTheme();
 
-    return <>{mode === "dark" ? <CanvasDark /> : <CanvasLight />}</>;
+    return mode === "dark" ? <CanvasDark /> : <CanvasLight />;
 }

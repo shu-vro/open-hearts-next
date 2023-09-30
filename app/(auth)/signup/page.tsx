@@ -16,15 +16,7 @@ import GoogleSignInButton from "../GoogleSignInButton";
 import Link from "next/link";
 import AuthForm from "../AuthForm";
 
-/**
- * TODOS:
- * Add loading screen on account creation - done
- * Add verify password check - done
- * Add redirect if user exists but not verified - done
- * Add strong password check - done
- * Add fadeout animation for all page, including this.
- */
-export default function Signup() {
+export default function SignUp() {
     const [name, setName] = useState("");
     const [photoURL, setPhotoURL] = useState("");
     const [email, setEmail] = useState("");

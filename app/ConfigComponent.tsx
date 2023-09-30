@@ -11,7 +11,9 @@ export default function ConfigComponent() {
     const { push } = useRouter();
     useEffect(() => {
         let unsubscribe = onAuthStateChanged(auth, (user) => {
-            user ? push("/chats") : push("/signup");
+            if (!user && process.env.NODE_ENV !== "development") {
+                push("/login");
+            }
         });
         if (
             localStorage.theme === "dark" ||
