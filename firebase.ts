@@ -6,6 +6,11 @@ import {
     connectFirestoreEmulator,
     doc,
     setDoc,
+    getDoc,
+    query,
+    collection,
+    where,
+    getDocs,
 } from "firebase/firestore";
 import {
     getAuth,
@@ -16,10 +21,11 @@ import {
     signInWithEmailAndPassword,
     updateProfile,
     sendPasswordResetEmail,
+    signOut,
 } from "firebase/auth";
 import { getDatabase, connectDatabaseEmulator } from "firebase/database";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
-import { DefaultUserConfig } from "@/lib/utils";
+import { DATABASE_PATH, DefaultUserConfig } from "@/lib/utils";
 // @ts-ignore
 import encoding from "encoding";
 import { UserType } from "./app";
@@ -64,12 +70,12 @@ async function setDocumentToUsersCollection(
     obj: { [x: string]: any }
 ) {
     try {
-        await setDoc(doc(firestoreDb, "users", uid), obj, {
+        await setDoc(doc(firestoreDb, DATABASE_PATH.users, uid), obj, {
             merge: true,
         });
         return;
     } catch (error) {
-        console.info(error);
+        console.warn(error);
         return alert("there was an error on setDocumentToUsersCollection");
     }
 }
@@ -98,8 +104,9 @@ export async function createUserWithPassword(
         });
         return user;
     } catch (e) {
-        console.info(e);
+        console.warn(e);
         alert("There was an error at createUserWithPassword");
+        await signOut(auth);
     }
 }
 
@@ -108,7 +115,7 @@ export async function loginWithPassword(email: string, password: string) {
         let { user } = await signInWithEmailAndPassword(auth, email, password);
         return user;
     } catch (e) {
-        console.info(e);
+        console.warn(e);
         alert("There was an error at loginWithPassword");
     }
 }
@@ -117,6 +124,17 @@ export async function signInWithGoogle() {
     try {
         let provider = new GoogleAuthProvider();
         let { user } = await signInWithPopup(auth, provider);
+
+        const userExists = await getDocs(
+            query(
+                collection(firestoreDb, DATABASE_PATH.users),
+                where("uid", "==", user.uid)
+            )
+        );
+        if (userExists.size !== 0) {
+            return user;
+        }
+        console.log(userExists.size);
         await setDocumentToUsersCollection(user.uid, {
             ...DefaultUserConfig,
             uid: user.uid,
@@ -126,8 +144,9 @@ export async function signInWithGoogle() {
         } as UserType);
         return user;
     } catch (e) {
-        console.info(e);
+        console.warn(e);
         alert("There was an error at signInWithGoogle");
+        await signOut(auth);
     }
 }
 

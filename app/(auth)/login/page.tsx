@@ -13,14 +13,6 @@ import GoogleSignInButton from "../GoogleSignInButton";
 import Link from "next/link";
 import AuthForm from "../AuthForm";
 
-/**
- * TODO:
- * Add loading screen on account creation - done
- * Add verify password check - done
- * Add redirect if user exists but not verified
- * Add strong password check - half done
- * Add fadeout animation for all page, including this.
- */
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password1, setPassword1] = useState("");
@@ -89,7 +81,6 @@ export default function Login() {
                     </FormHelperText>
                     <FormHelperText className="text-base italic my-2">
                         New Here? <Link href="/signup">Sign Up</Link>
-                        <Link href="/chats">Chat</Link>
                     </FormHelperText>
                 </>
             </AuthForm>

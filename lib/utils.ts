@@ -87,3 +87,5 @@ export const DefaultUserConfig = {
     uid: "",
     studies: [],
 } as UserType;
+
+export enum DATABASE_PATH {users="users"}

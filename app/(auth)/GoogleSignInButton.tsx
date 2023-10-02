@@ -33,7 +33,7 @@ export default function GoogleSignInButton({
                         `User ${user?.displayName} created successfully`
                     );
                     setSubmitted(false);
-                    return push("/verify-email");
+                    return push("/chats");
                 } catch (e) {
                     console.log(e);
                     return setSubmitted(false);

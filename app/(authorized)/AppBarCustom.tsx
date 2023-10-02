@@ -14,8 +14,13 @@ import MobileNotificationItem from "./MobileNotificationItem";
 import DesktopNotificationItem from "./DesktopNotificationItem";
 import { useColorMode } from "@/contexts/ColorModeContext";
 import HoverWrapper from "./chats/HoverWrapper";
+import { signOut } from "firebase/auth";
+import { auth } from "@/firebase";
+import { Divider } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 export default function AppBarCustom() {
+    const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
@@ -57,7 +62,24 @@ export default function AppBarCustom() {
             onClose={handleMenuClose}
         >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+            <Divider />
+            <MenuItem onClick={handleMenuClose}>Chats</MenuItem>
+            <Divider />
+            <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+            <Divider />
+            <MenuItem
+                onClick={async () => {
+                    try {
+                        await signOut(auth);
+                        router.push("/login");
+                    } catch (e) {
+                        console.warn(e);
+                    }
+                    handleMenuClose();
+                }}
+            >
+                Logout
+            </MenuItem>
         </Menu>
     );
 
