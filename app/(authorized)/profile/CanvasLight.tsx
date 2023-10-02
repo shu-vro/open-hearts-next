@@ -3,7 +3,9 @@
 import { useTheme } from "@mui/material";
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
-import cloudT from "./download.png";
+import cloudT from "./cloud.png";
+
+export const canvasClasses = "fixed top-0 left-0 w-full h-full z-[-1]";
 
 function generateClouds(
     zPos = 100,
@@ -142,10 +144,7 @@ export default function CanvasDark() {
 
     return (
         <>
-            <canvas
-                ref={canvas}
-                className="fixed top-0 left-0 w-full h-full"
-            ></canvas>
+            <canvas ref={canvas} className={canvasClasses}></canvas>
         </>
     );
 }

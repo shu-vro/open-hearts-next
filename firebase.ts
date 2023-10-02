@@ -19,8 +19,10 @@ import {
 } from "firebase/auth";
 import { getDatabase, connectDatabaseEmulator } from "firebase/database";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
+import { DefaultUserConfig } from "@/lib/utils";
 // @ts-ignore
 import encoding from "encoding";
+import { UserType } from "./app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -84,7 +86,12 @@ export async function createUserWithPassword(
             email,
             password
         );
-        await setDocumentToUsersCollection(user.uid, { name, email });
+        await setDocumentToUsersCollection(user.uid, {
+            ...DefaultUserConfig,
+            uid: user.uid,
+            name,
+            email,
+        } as UserType);
         await updateProfile(auth.currentUser!, {
             displayName: name,
             photoURL,
@@ -111,10 +118,12 @@ export async function signInWithGoogle() {
         let provider = new GoogleAuthProvider();
         let { user } = await signInWithPopup(auth, provider);
         await setDocumentToUsersCollection(user.uid, {
+            ...DefaultUserConfig,
+            uid: user.uid,
             name: user.displayName,
             email: user.email,
             photoURL: user.photoURL,
-        });
+        } as UserType);
         return user;
     } catch (e) {
         console.info(e);

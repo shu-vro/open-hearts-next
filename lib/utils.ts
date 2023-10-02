@@ -3,6 +3,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
+import { UserType } from "@/app";
 
 export function repeat(text: string, count: number = 1) {
     let result = "";
@@ -76,3 +77,13 @@ export function clarify_rows<T>(rows: T[], primary_key: keyof T): T[] {
 
     return reorderedRows;
 }
+
+export const DefaultUserConfig = {
+    name: "",
+    email: "",
+    photoURL: "",
+    description: "",
+    hometown: "",
+    uid: "",
+    studies: [],
+} as UserType;

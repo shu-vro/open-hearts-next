@@ -31,3 +31,13 @@ declare interface IReplyMessage {
 }
 
 export type TypesOfMessage = "text" | "image" | "emoji" | "voice";
+
+export interface UserType {
+    name: string;
+    email: string;
+    photoURL: string;
+    description: string;
+    hometown: string;
+    uid: string;
+    studies: (string | never)[];
+}

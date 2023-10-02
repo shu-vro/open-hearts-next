@@ -3,6 +3,7 @@
 import { useTheme } from "@mui/material";
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { canvasClasses } from "./CanvasLight";
 
 function generateStars(zPos = 100) {
     const sphere = new THREE.Mesh(
@@ -87,10 +88,7 @@ export default function CanvasDark() {
 
     return (
         <>
-            <canvas
-                ref={canvas}
-                className="fixed top-0 left-0 w-full h-full"
-            ></canvas>
+            <canvas ref={canvas} className={canvasClasses}></canvas>
         </>
     );
 }

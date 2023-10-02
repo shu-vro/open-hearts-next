@@ -89,6 +89,7 @@ export default function Login() {
                     </FormHelperText>
                     <FormHelperText className="text-base italic my-2">
                         New Here? <Link href="/signup">Sign Up</Link>
+                        <Link href="/chats">Chat</Link>
                     </FormHelperText>
                 </>
             </AuthForm>
