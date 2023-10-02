@@ -1,8 +1,8 @@
 "use client";
-import { auth } from "@/firebase.js";
+import { auth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { Button } from "@mui/material";
-import {useRouter} from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function Logout() {
     const router = useRouter();
@@ -13,7 +13,7 @@ export default function Logout() {
             onClick={async () => {
                 try {
                     await signOut(auth);
-                    router.push('/login');
+                    router.push("/login");
                 } catch (e) {
                     console.log(e);
                 }

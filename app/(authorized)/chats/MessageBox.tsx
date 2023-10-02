@@ -49,7 +49,6 @@ export function MessageBox({
         let urls = msg.text.match(
             /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-]*)(?:\?[-\+=&;%@.\w_]*)?(?:#[-.\!\/\\\w]*))?)/gi
         );
-        console.log(urls);
         setUrls(urls);
     }, []);
 

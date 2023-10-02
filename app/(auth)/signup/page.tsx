@@ -6,7 +6,7 @@ import InputField from "../InputField";
 // @ts-ignore
 import Identicon from "react-identicons";
 import { useEffect, useState, useMemo } from "react";
-import { createUserWithPassword } from "@/firebase.js";
+import { createUserWithPassword } from "@/firebase";
 import { useRouter } from "next/navigation";
 import LinearProgress from "@mui/material/LinearProgress";
 import EmailInputField from "../EmailInputField";
@@ -16,15 +16,7 @@ import GoogleSignInButton from "../GoogleSignInButton";
 import Link from "next/link";
 import AuthForm from "../AuthForm";
 
-/**
- * TODOS:
- * Add loading screen on account creation - done
- * Add verify password check - done
- * Add redirect if user exists but not verified - done
- * Add strong password check - done
- * Add fadeout animation for all page, including this.
- */
-export default function Signup() {
+export default function SignUp() {
     const [name, setName] = useState("");
     const [photoURL, setPhotoURL] = useState("");
     const [email, setEmail] = useState("");
@@ -53,7 +45,7 @@ export default function Signup() {
                 email,
                 password1
             );
-            setMessage(`User ${user.email} created successfully`);
+            setMessage(`User ${user!.email} created successfully`);
             setSubmitted(false);
             router.push("/verify-email");
         } catch (e: unknown) {

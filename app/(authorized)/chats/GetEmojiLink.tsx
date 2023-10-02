@@ -15,6 +15,7 @@ export default function GetEmojiLink({
                 alt=""
                 style={{ ...style }}
                 width={size}
+                loading="lazy"
             />
         </>
     );

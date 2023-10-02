@@ -1,0 +1,71 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+    // match every single document inside `restaurant` collection
+    match /restaurants/{restaurantId} {
+      // this is a nested collection named `reviews`.
+      // the top level rules don't interfere with the inner level rules.
+      // so, what's allowing restaurant documents would not allow reviews if 
+      // you don't wish to.
+
+      allow update: if get(/database/$(database)/documents/restaurants/$(restaurantId)/private_data/private).data.roles[request.auth.uid] in ["editor", "owner"];
+      // above rule is saying, go to another document and get a specific field named `roles`. check if 
+      // this user has a role of editor or owner.
+
+      match /reviews/{reviewId} {
+        // now, let's make firestore a bit schemafull. 
+        allow create: if request.resource.data.score is number && 
+                         request.resource.data.score >= 1 &&
+                         request.resource.data["headline"] is string &&
+                         request.resource.data["headline"].size() >= 2 && 
+                         request.resource.data["headline"].size() <= 200 &&
+                         request.resource.data.reviewerId == request.auth.uid;
+        // what this above rule is saying is allow users to create if score they provided
+        // is a number and between 1 and 5. also their headline should be a string
+        // and between 2 and 200 characters in size. finally, we check if the reviewerId
+        // that we sent by our frontend is the same as the requested reviewer. otherwise 
+        // hacker can send shuvro's review saying it's shuvro sent.
+
+        allow update: if resource.data.reviewerId == request.auth.uid;
+        // user can only update if reviewerId is request's authId .
+
+        allow read: if resource.data.state == "published" || resource.data.reviewers == request.auth.uid;
+        // allowing read if review is not a draft or the creator is trying to read it.
+
+      }
+    }
+    match /users/{restOfPath=**} {
+      // matches every single document inside the users collection.
+    }
+    match /users/{userId}/privateData/{privateDoc} {
+      // Doesn't matter what you write. rules wont be changed if the top level 
+      // is allowing it.
+    }
+    match /publicData/{publicDoc} {
+      allow read; // allows everyone for read operation
+      allow write: if false; // denies everyone for write operation
+    }
+    match /privateData/{privateDoc} {
+      allow read: if userCanReadPrivateData(request);
+      // we wrote a custom function. go, navigate to that.
+
+      allow write: if request.auth.uid=="shu-vro"; // only userId named 'shu-vro' can write this.
+    }
+  }
+}
+
+// request has two important objects. auth and resource.
+// request.auth-> who sent it. request.resource.data-> what he sent.
+// request.resource is the data user's trying to write
+// resource is the data that user wants
+
+function userCanReadPrivateData(request) {
+  return request.auth != null && request.auth.token.email.matches(".*google[.]com$") && request.auth.token.email.email_verified;
+      // The above code is saying, read this private document if user is authenticated,
+      // user's email is signed in with google (their email has google.com domain)
+      // and if their email is verified by app
+}

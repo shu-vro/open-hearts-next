@@ -1,5 +1,5 @@
 "use client";
-import { auth } from "@/firebase.js";
+import { auth } from "@/firebase";
 import { sendEmailVerification } from "firebase/auth";
 import { Button } from "@mui/material";
 
@@ -17,10 +17,18 @@ export default function VerifyButton({
             type="button"
             variant="contained"
             onClick={async () => {
-                await sendEmailVerification(auth.currentUser!, {
-                    url: location.origin + "/chat",
-                });
-                setVerificationEmailSent(true);
+                try {
+                    await sendEmailVerification(auth.currentUser!, {
+                        url: location.origin + "/chats",
+                    });
+                    setVerificationEmailSent(true);
+                } catch (error: any) {
+                    console.warn(error);
+                    alert(
+                        "there was an error sending verify email: " +
+                            error.message
+                    );
+                }
             }}
         >
             {text}

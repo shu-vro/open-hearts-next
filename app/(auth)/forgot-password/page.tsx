@@ -21,7 +21,7 @@ export default function ForgotPassword() {
         setSubmitted(true);
         try {
             await sendPasswordResetEmail(auth, email, {
-                url: location.origin + "/chat",
+                url: location.origin + "/chats",
             });
             setSubmitted(false);
             setSubmittedSuccess(true);
