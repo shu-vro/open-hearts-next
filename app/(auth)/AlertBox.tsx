@@ -11,14 +11,9 @@ import LinearProgress from "@mui/material/LinearProgress";
 type Props = {
     setMessage: React.Dispatch<React.SetStateAction<string>>;
     message: string;
-    props?: AlertProps[];
-};
+} & Partial<AlertProps>;
 
-export default function TransitionAlerts({
-    message,
-    setMessage,
-    ...props
-}: Props) {
+export default function AlertBox({ message, setMessage, ...props }: Props) {
     const [progress, setProgress] = React.useState(100);
 
     React.useEffect(() => {
@@ -47,13 +42,17 @@ export default function TransitionAlerts({
         <Box
             sx={{
                 w: "100%",
-                //  position: "relative", top: 0, left: 0
             }}
         >
             {!!message && (
                 <LinearProgress variant="determinate" value={progress} />
             )}
-            <Collapse in={!!message}>
+            <Collapse
+                in={!!message}
+                onExit={() => {
+                    setProgress(100);
+                }}
+            >
                 <Alert
                     action={
                         <IconButton

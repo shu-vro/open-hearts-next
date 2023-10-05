@@ -6,10 +6,12 @@ import { Button } from "@mui/material";
 type Props = {
     setVerificationEmailSent: React.Dispatch<React.SetStateAction<boolean>>;
     text?: string;
+    redirectTo?: string;
 };
 
 export default function VerifyButton({
     text = "Verify Email",
+    redirectTo = "/chats",
     setVerificationEmailSent,
 }: Props) {
     return (
@@ -19,7 +21,7 @@ export default function VerifyButton({
             onClick={async () => {
                 try {
                     await sendEmailVerification(auth.currentUser!, {
-                        url: location.origin + "/chats",
+                        url: location.origin + redirectTo,
                     });
                     setVerificationEmailSent(true);
                 } catch (error: any) {

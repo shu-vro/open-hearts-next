@@ -6,7 +6,6 @@ import {
     connectFirestoreEmulator,
     doc,
     setDoc,
-    getDoc,
     query,
     collection,
     where,

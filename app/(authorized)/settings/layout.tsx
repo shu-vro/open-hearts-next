@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -57,16 +57,31 @@ const Drawer = styled(MuiDrawer, {
     }),
 }));
 
+function true_or_false(string: string | boolean) {
+    if (typeof string === "string") {
+        if (string === "true") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    return string;
+}
+
 export default function Layout({ children }: { children: React.ReactNode }) {
     const [open, setOpen] = React.useState(
-        window.localStorage.settingsDrawer
-            ? window.localStorage.settingsDrawer
+        window?.localStorage?.settingsDrawer
+            ? true_or_false(window?.localStorage?.settingsDrawer)
             : false
     );
 
+    useEffect(() => {
+        console.log(open);
+    }, [open]);
+
     const handleDrawerToggle = () => {
+        window.localStorage.settingsDrawer = true_or_false(!open);
         setOpen(!open);
-        window.localStorage.settingsDrawer = !open;
     };
 
     return (

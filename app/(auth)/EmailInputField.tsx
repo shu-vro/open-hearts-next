@@ -1,13 +1,14 @@
 "use client";
+import { StandardTextFieldProps } from "@mui/material";
 import InputField from "./InputField";
 import { useState } from "react";
 
 type Props = {
-    email: string,
-    setEmail: React.Dispatch<React.SetStateAction<string>>
-}
+    email: string;
+    setEmail: React.Dispatch<React.SetStateAction<string>>;
+} & Partial<StandardTextFieldProps>;
 
-export default function EmailInputField({ email, setEmail }: Props) {
+export default function EmailInputField({ email, setEmail, ...rest }: Props) {
     const [emailVerifier, setEmailVerifier] = useState(true);
     return (
         <InputField
@@ -25,6 +26,7 @@ export default function EmailInputField({ email, setEmail }: Props) {
             }}
             helperText={emailVerifier ? "" : "Email is not well formatted"}
             error={!emailVerifier}
+            {...rest}
         />
     );
 }

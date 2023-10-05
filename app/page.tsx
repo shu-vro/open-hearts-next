@@ -1,6 +1,10 @@
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 function Home() {
+    if (process.env.NODE_ENV !== "production") {
+        redirect("/settings");
+    }
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-24">
             <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
