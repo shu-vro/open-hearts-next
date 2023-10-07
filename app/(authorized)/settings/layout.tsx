@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { styled, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -16,6 +15,7 @@ import { PiPasswordDuotone } from "react-icons/pi";
 import { RxAccessibility, RxCross1 } from "react-icons/rx";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useState } from "react";
 
 const drawerWidth = 240;
 
@@ -69,15 +69,11 @@ function true_or_false(string: string | boolean) {
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-    const [open, setOpen] = React.useState(
+    const [open, setOpen] = useState(
         window?.localStorage?.settingsDrawer
             ? true_or_false(window?.localStorage?.settingsDrawer)
             : false
     );
-
-    useEffect(() => {
-        console.log(open);
-    }, [open]);
 
     const handleDrawerToggle = () => {
         window.localStorage.settingsDrawer = true_or_false(!open);
