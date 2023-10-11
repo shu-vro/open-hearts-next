@@ -26,7 +26,7 @@ export default function RootLayout({
     children: React.ReactElement;
 }) {
     return (
-        <html lang="en">
+        <html lang="en" className="doodle">
             <body className={montserrat.className}>
                 <ColorModeContext>
                     <>

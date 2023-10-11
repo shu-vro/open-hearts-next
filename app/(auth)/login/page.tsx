@@ -10,8 +10,8 @@ import AlertBox from "../AlertBox";
 import PasswordInputField from "../PasswordInputField";
 import EmailInputField from "../EmailInputField";
 import GoogleSignInButton from "../GoogleSignInButton";
-import Link from "next/link";
 import AuthForm from "../AuthForm";
+import MuiLink from "@/app/MuiLink";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -77,10 +77,15 @@ export default function Login() {
                         setMessage={setMessage}
                     />
                     <FormHelperText className="text-base italic my-2">
-                        <Link href="/forgot-password">forgot password?</Link>
+                        <MuiLink href="/forgot-password">
+                            forgot password?
+                        </MuiLink>
                     </FormHelperText>
                     <FormHelperText className="text-base italic my-2">
-                        New Here? <Link href="/signup">Sign Up</Link>
+                        New Here?{" "}
+                        <MuiLink href="/signup">
+                            Sign Up
+                        </MuiLink>
                     </FormHelperText>
                 </>
             </AuthForm>

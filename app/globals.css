@@ -7,6 +7,23 @@ body {
     box-sizing: border-box;
     height: 100vh;
     overflow-y: hidden;
+    --bgColor: #fefefe;
+}
+
+html.dark body {
+    --bgColor: #1e1e1e;
+    background: var(--bgColor);
+    color: #fff;
+}
+
+html.doodle body {
+    background: url("../assets/doodle-light.png") repeat center center,
+        var(--bgColor);
+}
+
+html.doodle.dark body {
+    background: url("../assets/doodle-dark.jpg") repeat center center,
+        var(--bgColor);
 }
 
 @layer utilities {
@@ -58,7 +75,6 @@ body {
 }
 
 a {
-    color: dodgerblue;
     text-decoration: none;
 }
 
@@ -79,11 +95,6 @@ html ::-webkit-scrollbar-thumb {
 html.dark ::-webkit-scrollbar {
     width: 10px;
     background: #222;
-}
-
-html.dark body {
-    background: #121212 !important;
-    color: #fff;
 }
 
 html.dark ::-webkit-scrollbar-thumb {
