@@ -1,9 +1,14 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import Canvas3D from "./Canvas3D";
 import { Imbue } from "next/font/google";
 import { Avatar, Box, Typography } from "@mui/material";
-import { BsChevronCompactRight } from "react-icons/bs";
+import { auth, firestoreDb } from "@/firebase";
 import { FaRegHandPointRight } from "react-icons/fa";
+import { DocumentData, doc, getDoc } from "firebase/firestore";
+import { DATABASE_PATH } from "@/lib/utils";
+
 const imbue = Imbue({
     subsets: ["latin"],
     display: "swap",
@@ -12,21 +17,32 @@ const imbue = Imbue({
 // Meet [Name], a fantastic friend who's smart, compassionate, and full of life. They bring positivity wherever they go
 
 export default function Page() {
+    const [userData, setUserData] = useState<DocumentData>();
+    useEffect(() => {
+        (async () => {
+            if (!auth.currentUser) return;
+            const document = await getDoc(
+                doc(firestoreDb, DATABASE_PATH.users, auth.currentUser.uid)
+            );
+            setUserData(document.data());
+        })();
+    }, []);
+
     return (
         <div
             className={`w-full grow h-[calc(100%-4rem)] dark:text-[bisque] select-none pb-8 ${imbue.className}`}
         >
-            <Box className="chat-section w-full overflow-y-auto h-full relative p-4">
+            <Box className="chat-section overflow-y-auto h-full relative p-4">
                 <Canvas3D />
                 <Box
-                    className="flex w-full justify-center items-center flex-row gap-6"
+                    className="flex w-full justify-center items-center flex-row max-[600px]:flex-col gap-6"
                     sx={{
                         fontSize: "clamp(3rem, 6vw, 350px)",
                     }}
                 >
                     <Box className="flex justify-start items-start flex-col">
                         <Avatar
-                            src="https://mui.com/static/images/avatar/3.jpg"
+                            src={userData?.photoURL || ""}
                             alt="Shirshen Shuvro"
                             className="w-full max-w-xs max-h-xs min-w-[200px] min-h-[200px] h-fit rounded-2xl"
                         />
@@ -43,13 +59,12 @@ export default function Page() {
                                 fontSize="inherit"
                                 fontWeight="600"
                             >
-                                Shirshen Shuvro
+                                {userData?.name || ""}
                             </Typography>
                         </div>
                     </Box>
                     <div className="capitalize text-[1.5em] leading-[1.2] text-justify">
-                        a fantastic friend who&apos;s smart, compassionate, and
-                        full of life. They bring positivity wherever they go
+                        {userData?.description || ""}
                     </div>
                 </Box>
                 <Box className="ml-20 max-[811px]:ml-0">
@@ -57,12 +72,12 @@ export default function Page() {
                         .fill("")
                         .map((_, i) => (
                             <Box
-                                className="list text-[2rem] flex justify-start items-center flex-row gap-4 group"
+                                className="list text-[2rem] flex justify-start items-center flex-row mb-4 px-2 group rounded-md max-sm:bg-white max-sm:bg-opacity-20"
                                 key={i}
                             >
                                 <FaRegHandPointRight className="group-hover:ml-4 max-[811px]:group-hover:ml-0 duration-500" />
                                 <b>Hometown: </b>
-                                <span>
+                                <span className="ml-4">
                                     Lorem ipsum, dolor sit amet consectetur
                                     adipisicing elit.
                                 </span>

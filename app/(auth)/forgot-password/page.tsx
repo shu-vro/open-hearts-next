@@ -6,9 +6,9 @@ import { useState } from "react";
 import LinearProgress from "@mui/material/LinearProgress";
 import AlertBox from "../AlertBox";
 import EmailInputField from "../EmailInputField";
-import Link from "next/link";
 import { auth, sendPasswordResetEmail } from "@/firebase";
 import AuthForm from "../AuthForm";
+import MuiLink from "@/app/MuiLink";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -78,7 +78,7 @@ export default function ForgotPassword() {
                         Send forgot password email
                     </Button>
                     <FormHelperText className="text-base italic my-2">
-                        Feeling ready? <Link href="/login">Log in</Link>
+                        Feeling ready? <MuiLink href="/login">Log in</MuiLink>
                     </FormHelperText>
                 </>
             </AuthForm>

@@ -16,7 +16,10 @@ export default function RootLayout({
     useEffect(() => {
         let unsubscribe = onAuthStateChanged(auth, (user) => {
             if (!user) {
-                push("/login");
+                return push("/login");
+            }
+            if (!user?.emailVerified) {
+                return push("/verify-email");
             }
         });
         return unsubscribe;

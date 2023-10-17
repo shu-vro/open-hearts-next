@@ -40,4 +40,5 @@ export interface UserType {
     hometown: string;
     uid: string;
     studies: (string | never)[];
+    works: (string | never)[];
 }

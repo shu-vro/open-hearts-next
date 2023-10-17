@@ -9,15 +9,19 @@ import Typography from "@mui/material/Typography";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { VscAccount } from "react-icons/vsc";
-import { BsSun, BsThreeDotsVertical } from "react-icons/bs";
+import { BsCardList, BsSun, BsThreeDotsVertical } from "react-icons/bs";
 import MobileNotificationItem from "./MobileNotificationItem";
 import DesktopNotificationItem from "./DesktopNotificationItem";
 import { useColorMode } from "@/contexts/ColorModeContext";
 import HoverWrapper from "./chats/HoverWrapper";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase";
-import { Divider } from "@mui/material";
+import { Avatar, Divider, ListItemIcon, ListItemText } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { PiChatsTeardropDuotone } from "react-icons/pi";
+import { HiOutlineCog6Tooth } from "react-icons/hi2";
+import { IoIosLogOut } from "react-icons/io";
+import Link from "next/link";
 
 export default function AppBarCustom() {
     const router = useRouter();
@@ -61,11 +65,34 @@ export default function AppBarCustom() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+            <MenuItem
+                onClick={handleMenuClose}
+                component={Link}
+                href="/profile"
+            >
+                <ListItemIcon>
+                    <VscAccount />
+                </ListItemIcon>
+                <ListItemText>Profile</ListItemText>
+            </MenuItem>
             <Divider />
-            <MenuItem onClick={handleMenuClose}>Chats</MenuItem>
+            <MenuItem onClick={handleMenuClose} component={Link} href="/chats">
+                <ListItemIcon>
+                    <PiChatsTeardropDuotone />
+                </ListItemIcon>
+                <ListItemText>Chats</ListItemText>
+            </MenuItem>
             <Divider />
-            <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+            <MenuItem
+                onClick={handleMenuClose}
+                component={Link}
+                href="/settings/general"
+            >
+                <ListItemIcon>
+                    <HiOutlineCog6Tooth />
+                </ListItemIcon>
+                <ListItemText>Settings</ListItemText>
+            </MenuItem>
             <Divider />
             <MenuItem
                 onClick={async () => {
@@ -78,7 +105,10 @@ export default function AppBarCustom() {
                     handleMenuClose();
                 }}
             >
-                Logout
+                <ListItemIcon>
+                    <IoIosLogOut />
+                </ListItemIcon>
+                <ListItemText>Log out</ListItemText>
             </MenuItem>
         </Menu>
     );
@@ -100,7 +130,7 @@ export default function AppBarCustom() {
             onClose={handleMobileMenuClose}
         >
             <MobileNotificationItem badgeContent={17} />
-            <MenuItem onClick={handleProfileMenuOpen}>
+            <MenuItem>
                 <IconButton
                     size="large"
                     aria-label="account of current user"
@@ -110,6 +140,17 @@ export default function AppBarCustom() {
                     <VscAccount />
                 </IconButton>
                 <p>Profile</p>
+            </MenuItem>
+            <MenuItem onClick={handleProfileMenuOpen}>
+                <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                >
+                    <BsCardList />
+                </IconButton>
+                <p>More</p>
             </MenuItem>
         </Menu>
     );
@@ -129,7 +170,10 @@ export default function AppBarCustom() {
                             💖
                         </Typography>
                         <Box sx={{ flexGrow: 1 }} />
-                        <Box sx={{ display: { xs: "none", md: "flex" } }}>
+                        <Box
+                            sx={{ display: { xs: "none", md: "flex" } }}
+                            className="items-center"
+                        >
                             <IconButton
                                 size="large"
                                 onClick={() => {
@@ -159,7 +203,16 @@ export default function AppBarCustom() {
                                 aria-haspopup="true"
                                 onClick={handleProfileMenuOpen}
                             >
-                                <VscAccount />
+                                <Avatar
+                                    src={auth?.currentUser?.photoURL || ""}
+                                    alt={
+                                        auth?.currentUser?.displayName || "You"
+                                    }
+                                    sx={{
+                                        width: 28,
+                                        height: 28,
+                                    }}
+                                />
                             </IconButton>
                         </Box>
                         <Box sx={{ display: { xs: "flex", md: "none" } }}>

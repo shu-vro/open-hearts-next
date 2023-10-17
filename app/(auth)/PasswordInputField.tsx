@@ -1,24 +1,24 @@
 import React, { useState } from "react";
 import InputField from "./InputField";
 import { testPassword } from "@/lib/utils";
+import { StandardTextFieldProps } from "@mui/material";
 
 type Props = {
     password: string;
     setPassword: React.Dispatch<React.SetStateAction<string>>;
-    label: string;
-};
+} & StandardTextFieldProps;
 
 export default function PasswordInputField({
     password,
     setPassword,
-    label,
+    ...rest
 }: Props) {
     const [passwordPrompt, setPasswordPrompt] = useState(``);
     return (
         <InputField
             id="password"
             type="password"
-            label={label}
+            label="Password"
             value={password}
             onChange={(e) => {
                 setPassword(e.target.value);
@@ -26,6 +26,7 @@ export default function PasswordInputField({
             }}
             helperText={passwordPrompt}
             error={passwordPrompt !== ""}
+            {...rest}
         />
     );
 }

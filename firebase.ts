@@ -6,7 +6,6 @@ import {
     connectFirestoreEmulator,
     doc,
     setDoc,
-    getDoc,
     query,
     collection,
     where,
@@ -97,6 +96,7 @@ export async function createUserWithPassword(
             uid: user.uid,
             name,
             email,
+            photoURL,
         } as UserType);
         await updateProfile(auth.currentUser!, {
             displayName: name,

@@ -13,8 +13,8 @@ import EmailInputField from "../EmailInputField";
 import PasswordInputField from "../PasswordInputField";
 import AlertBox from "../AlertBox";
 import GoogleSignInButton from "../GoogleSignInButton";
-import Link from "next/link";
 import AuthForm from "../AuthForm";
+import MuiLink from "@/app/MuiLink";
 
 export default function SignUp() {
     const [name, setName] = useState("");
@@ -119,7 +119,8 @@ export default function SignUp() {
                         setMessage={setMessage}
                     />
                     <p>
-                        Been Here Before? <Link href="/login">Login.</Link>
+                        Been Here Before?{" "}
+                        <MuiLink href="/login">Login.</MuiLink>
                     </p>
                 </>
             </AuthForm>

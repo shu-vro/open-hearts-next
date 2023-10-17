@@ -7,6 +7,23 @@ body {
     box-sizing: border-box;
     height: 100vh;
     overflow-y: hidden;
+    --bgColor: #e5e5e5;
+}
+
+html.dark body {
+    --bgColor: #1e1e1e;
+    background: var(--bgColor);
+    color: #fff;
+}
+
+html.doodle body {
+    background: url("../assets/doodle-light.png") repeat center center,
+        var(--bgColor);
+}
+
+html.doodle.dark body {
+    background: url("../assets/doodle-dark.jpg") repeat center center,
+        var(--bgColor);
 }
 
 @layer utilities {
@@ -58,7 +75,6 @@ body {
 }
 
 a {
-    color: dodgerblue;
     text-decoration: none;
 }
 
@@ -81,11 +97,6 @@ html.dark ::-webkit-scrollbar {
     background: #222;
 }
 
-html.dark body {
-    background: #121212 !important;
-    color: #fff;
-}
-
 html.dark ::-webkit-scrollbar-thumb {
     background: #444;
     border-radius: 20px;
@@ -98,4 +109,13 @@ html.dark ::-webkit-scrollbar-thumb {
     to {
         transform: translateX(110%);
     }
+}
+
+button {
+    transition: transform 0.4s cubic-bezier(0.5, 0.01, 0.26, 1.91);
+}
+
+button:active {
+    transform: scale(0.9);
+    transition: transform 0.2s ease-in-out;
 }

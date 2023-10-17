@@ -1,10 +1,13 @@
-import { TextField, type StandardTextFieldProps } from "@mui/material";
+import {
+    TextField,
+    type StandardTextFieldProps,
+    TextFieldProps,
+} from "@mui/material";
 import React from "react";
 
-export default function InputField({
-    ...rest
-}: { label: string } & StandardTextFieldProps) {
+export default function InputField({ ...rest }: Partial<TextFieldProps>) {
     return (
+        // @ts-ignore
         <TextField
             type="text"
             variant="outlined"
