@@ -1,5 +1,3 @@
-"use client";
-
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
@@ -82,10 +80,11 @@ export const DefaultUserConfig = {
     name: "",
     email: "",
     photoURL: "",
-    description: "",
+    description: `a fantastic friend who's smart, compassionate, and full of life. They bring positivity wherever they go`,
     hometown: "",
     uid: "",
     studies: [],
+    works: [],
 } as UserType;
 
 export enum DATABASE_PATH {

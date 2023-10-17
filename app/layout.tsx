@@ -6,7 +6,7 @@ import { ColorModeContext } from "@/contexts/ColorModeContext";
 import ConfigComponent from "./ConfigComponent";
 import { AuthContextProvider } from "@/contexts/AuthContext";
 
-const montserrat = Montserrat({ subsets: ["latin"] });
+const font = Montserrat({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Open Hearts",
@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className="doodle">
-            <body className={montserrat.className}>
+            <body className={font.className}>
                 <ColorModeContext>
                     <>
                         <ConfigComponent />

@@ -9,7 +9,7 @@ export default function InputField({ ...rest }: Partial<TextFieldProps>) {
     return (
         // @ts-ignore
         <TextField
-            type="email"
+            type="text"
             variant="outlined"
             aria-describedby={rest.label || ""}
             sx={{

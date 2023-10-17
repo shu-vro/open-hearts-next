@@ -17,6 +17,11 @@ export default function ConfigComponent() {
             document.documentElement.classList.remove("dark");
             setMode!("light");
         }
+        if (localStorage.doodle === "true") {
+            document.documentElement.classList.add("doodle");
+        } else {
+            document.documentElement.classList.remove("doodle");
+        }
     }, []);
 
     return <></>;
