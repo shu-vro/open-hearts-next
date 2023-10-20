@@ -9,13 +9,11 @@ import { cn, repeat } from "@/lib/utils";
 
 dayjs.extend(relativeTime);
 
-// import { useEffect, useRef } from "react";
-
-function FriendList() {
+export function FriendList() {
     const [timeDiff, setTimeDiff] = useState(dayjs(1694720446951).fromNow());
     const isActive = true;
     return (
-        <HoverWrapper className="mb-2 mx-1 w-[calc(100%-.5rem)]">
+        <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
             <Box
                 component="a"
                 href="#"

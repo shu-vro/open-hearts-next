@@ -18,6 +18,7 @@ import { Props, NativeHoverWrapper } from "./Message";
 import { OgObject } from "open-graph-scraper/dist/lib/types";
 import HoverWrapper from "./HoverWrapper";
 import { sanitize } from "isomorphic-dompurify";
+import { URL_REGEX } from "@/lib/utils";
 
 function DangerousHtml(text: string, array: string[] = []) {
     let result = text;
@@ -46,17 +47,15 @@ export function MessageBox({
     const [showImageModal, setShowImageModal] = useState("");
     const [urls, setUrls] = useState<RegExpMatchArray | null>(null);
     useEffect(() => {
-        let urls = msg.text.match(
-            /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-]*)(?:\?[-\+=&;%@.\w_]*)?(?:#[-.\!\/\\\w]*))?)/gi
-        );
+        let urls = msg.text.match(URL_REGEX);
         setUrls(urls);
     }, []);
 
     if (type === "voice") {
         return (
-            <div
+            <Box
                 className={cn(by === "me" ? "justify-self-end" : "")}
-                style={{
+                sx={{
                     gridArea: "message",
                 }}
             >
@@ -115,7 +114,7 @@ export function MessageBox({
                         </span>
                     </Box>
                 </NativeHoverWrapper>
-            </div>
+            </Box>
         );
     } else if (type === "emoji") {
         let unified = "1f601";
@@ -236,7 +235,7 @@ export function MessageBox({
         );
     } else {
         return (
-            <div
+            <Box
                 className={cn(
                     "flex justify-start flex-col",
                     by === "me" ? "items-end" : "items-start"
@@ -258,6 +257,11 @@ export function MessageBox({
                                     ? theme.palette.mySwatch.messageBG
                                     : theme.palette.primary.main,
 
+                            color: (theme) =>
+                                by === "me"
+                                    ? theme.palette.text.primary
+                                    : "inherit",
+
                             "& > a": {
                                 color: "inherit",
                                 textDecoration: "underline",
@@ -278,7 +282,7 @@ export function MessageBox({
                         <WebsiteInfoCard url={url} key={i} />
                     ))}
                 </div>
-            </div>
+            </Box>
         );
     }
 }
@@ -298,6 +302,14 @@ function WebsiteInfoCard({ url }: { url: string }) {
                 let data = await res.json();
                 if (typeof data.data !== "object") return;
                 if (data.error) return;
+
+                if (data.data.favicon) {
+                    if (!data.data.favicon.match(URL_REGEX)) {
+                        data.data.favicon =
+                            new URL(url)?.origin + data.data.favicon ||
+                            data.data.ogTitle;
+                    }
+                }
                 setMetadata(data.data);
             } catch (error) {
                 console.info(error);
@@ -326,7 +338,7 @@ function WebsiteInfoCard({ url }: { url: string }) {
                         display: metadata?.favicon ? "block" : "none",
                         gridArea: "icon",
                     }}
-                    src={new URL(url)?.origin + metadata.favicon || ""}
+                    src={metadata.favicon}
                     alt={new URL(url)?.host}
                 />
                 <Typography noWrap gridArea="title">

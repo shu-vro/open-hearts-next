@@ -65,7 +65,7 @@ export default function GroupInfo({}: Props) {
     };
     return (
         <>
-            <div className="w-full overflow-y-auto h-full">
+            <Box className="w-full overflow-y-auto h-full">
                 <Avatar
                     src=""
                     alt="Some Avatar"
@@ -74,12 +74,7 @@ export default function GroupInfo({}: Props) {
                 <Typography variant="h5" align="center" className="my-2">
                     Shirshen Shuvro
                 </Typography>
-                <HoverWrapper
-                    className="mx-6"
-                    style={{
-                        width: `calc(100% - 3rem)`,
-                    }}
-                >
+                <HoverWrapper className="mx-4 w-[calc(100%-2.1rem)]">
                     <FormControl variant="filled" fullWidth>
                         <InputLabel
                             htmlFor="filled-adornment-password"
@@ -90,6 +85,7 @@ export default function GroupInfo({}: Props) {
                         <FilledInput
                             value={groupURL}
                             disabled
+                            fullWidth
                             endAdornment={
                                 <InputAdornment position="end">
                                     <Tooltip title="Copy">
@@ -110,7 +106,7 @@ export default function GroupInfo({}: Props) {
                         />
                     </FormControl>
                 </HoverWrapper>
-                <Box className="flex justify-between items-center my-1.5 mx-4 w-[calc(100%-2rem)] flex-row">
+                <Box className="flex justify-between items-center my-1.5 mx-4 w-[calc(100%-2.5em)] flex-row">
                     <GroupInfoTab
                         onClick={() => {
                             handleTabChange(0);
@@ -178,18 +174,18 @@ export default function GroupInfo({}: Props) {
                         </HoverWrapper>
                     </SwiperSlide>
                     <SwiperSlide>
-                        <div>
+                        <Box>
                             {Array(3)
                                 .fill("")
                                 .map((_, i) => {
                                     return (
                                         <SharedLink
-                                            link="https://mui.com/"
+                                            link="https://youtube.com/"
                                             key={i}
                                         />
                                     );
                                 })}
-                        </div>
+                        </Box>
                     </SwiperSlide>
                     <SwiperSlide>
                         {Array(2)
@@ -199,7 +195,7 @@ export default function GroupInfo({}: Props) {
                             ))}
                     </SwiperSlide>
                 </Swiper>
-            </div>
+            </Box>
         </>
     );
 }
@@ -219,7 +215,7 @@ function VoiceMessage({}) {
                 <span className="start font-bold">
                     {normalizeTimeFormat(0)}
                 </span>
-                <div
+                <Box
                     className="relative text-3xl max-[865px]:text-2xl overflow-hidden"
                     onClick={(e) => {
                         let rect = e.currentTarget.getBoundingClientRect();
@@ -228,14 +224,14 @@ function VoiceMessage({}) {
                         );
                     }}
                 >
-                    <div className="base opacity-40 flex justify-center items-center flex-row">
+                    <Box className="base opacity-40 flex justify-center items-center flex-row">
                         {Array(6)
                             .fill("")
                             .map((_, i) => (
                                 <RiVoiceprintFill key={i} />
                             ))}
-                    </div>
-                    <div
+                    </Box>
+                    <Box
                         className="slider absolute top-0 left-0 w-full h-full"
                         style={{
                             clipPath: `polygon(0 0, ${voiceMessageDone}% 0, ${voiceMessageDone}% 100%, 0% 100%)`,
@@ -246,8 +242,8 @@ function VoiceMessage({}) {
                             .map((_, i) => (
                                 <RiVoiceprintFill key={i} />
                             ))}
-                    </div>
-                </div>
+                    </Box>
+                </Box>
                 <span className="end font-bold">
                     {normalizeTimeFormat(400)}
                 </span>

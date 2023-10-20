@@ -7,6 +7,7 @@ import { OgObject } from "open-graph-scraper/dist/lib/types";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { URL_REGEX } from "@/lib/utils";
 
 dayjs.extend(relativeTime);
 
@@ -31,7 +32,6 @@ export default function SharedLink({ link }: { link: string }) {
                     setPreview(
                         <Typography
                             noWrap
-                            // variant="body2"
                             sx={{
                                 color: (theme) => theme.palette.primary.main,
                             }}
@@ -40,13 +40,20 @@ export default function SharedLink({ link }: { link: string }) {
                         </Typography>
                     );
                 } else {
+                    if (json.data.favicon) {
+                        if (!json.data.favicon.match(URL_REGEX)) {
+                            json.data.favicon =
+                                new URL(link)?.origin + json.data.favicon ||
+                                json.data.ogTitle;
+                        }
+                    }
                     const { favicon, ogTitle, ogDescription } = json.data;
 
                     setPreview(
                         <Box className="flex flex-row justify-start items-center w-full">
                             {favicon && (
                                 <img
-                                    src={new URL(link).origin + favicon}
+                                    src={favicon}
                                     alt={link}
                                     style={{
                                         width: "5rem",
