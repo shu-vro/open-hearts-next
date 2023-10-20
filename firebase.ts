@@ -134,7 +134,6 @@ export async function signInWithGoogle() {
         if (userExists.size !== 0) {
             return user;
         }
-        console.log(userExists.size);
         await setDocumentToUsersCollection(user.uid, {
             ...DefaultUserConfig,
             uid: user.uid,

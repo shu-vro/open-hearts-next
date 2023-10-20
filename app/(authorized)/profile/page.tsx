@@ -20,11 +20,18 @@ export default function Page() {
     const [userData, setUserData] = useState<DocumentData>();
     useEffect(() => {
         (async () => {
-            if (!auth.currentUser) return;
-            const document = await getDoc(
-                doc(firestoreDb, DATABASE_PATH.users, auth.currentUser.uid)
-            );
-            setUserData(document.data());
+            try {
+                if (!auth.currentUser) return;
+                const document = await getDoc(
+                    doc(firestoreDb, DATABASE_PATH.users, auth.currentUser.uid)
+                );
+                setUserData(document.data());
+            } catch (e) {
+                console.log(
+                    `%c${JSON.stringify(e, null, 2)}`,
+                    "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 1em;"
+                );
+            }
         })();
     }, []);
 

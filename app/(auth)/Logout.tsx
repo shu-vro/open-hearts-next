@@ -15,7 +15,10 @@ export default function Logout() {
                     await signOut(auth);
                     router.push("/login");
                 } catch (e) {
-                    console.log(e);
+                    console.log(
+                        `%c${JSON.stringify(e, null, 2)}`,
+                        "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 1.2em;"
+                    );
                 }
             }}
         >

@@ -28,7 +28,10 @@ export default function Email() {
                 router.push("/verify-email?redirectTo=/settings/email");
             }, 3500);
         } catch (error: any) {
-            console.log(JSON.parse(JSON.stringify(error)));
+            console.log(
+                "%cError occurred at authorized/settings/email",
+                "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 2em;"
+            );
             if (error.code === "auth/requires-recent-login") {
                 setReauthenticate(true);
                 return setMessage(

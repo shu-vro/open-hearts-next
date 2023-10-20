@@ -1,12 +1,21 @@
 "use client";
 
-import { AppBar, Avatar, IconButton, Toolbar, Tooltip } from "@mui/material";
+import {
+    AppBar,
+    Avatar,
+    IconButton,
+    Toolbar,
+    Tooltip,
+    Typography,
+    useMediaQuery,
+} from "@mui/material";
 import Link from "next/link";
 import React from "react";
 import { BsCameraVideo, BsInfoLg, BsTelephone } from "react-icons/bs";
 import { GrUnorderedList } from "react-icons/gr";
 
 export default function AppBarChat() {
+    const matches_535 = useMediaQuery("(max-width: 535px)");
     return (
         <AppBar
             position="static"
@@ -20,9 +29,12 @@ export default function AppBarChat() {
                     alt="avatar"
                     sx={{ width: 56, height: 56 }}
                 />
-                <span className="grow text-2xl capitalize font-semibold ml-3">
+                <Typography
+                    noWrap
+                    className="grow text-2xl max-[535px]:text-xl capitalize font-semibold ml-3"
+                >
                     My name
-                </span>
+                </Typography>
                 <Tooltip title="List Chats">
                     <IconButton
                         className="hidden max-[962px]:flex"
@@ -33,23 +45,27 @@ export default function AppBarChat() {
                                 "962px": "none",
                             },
                         }}
+                        size={matches_535 ? "small" : "medium"}
                     >
                         <GrUnorderedList />
                     </IconButton>
                 </Tooltip>
                 <IconButton
+                    size={matches_535 ? "small" : "medium"}
                     LinkComponent={Link}
                     href="/chats/call?mode=audio&groupId=room-1"
                 >
                     <BsTelephone />
                 </IconButton>
                 <IconButton
+                    size={matches_535 ? "small" : "medium"}
                     LinkComponent={Link}
                     href="/chats/call?mode=video&groupId=room-1"
                 >
                     <BsCameraVideo />
                 </IconButton>
                 <IconButton
+                    size={matches_535 ? "small" : "medium"}
                     className="hidden max-[962px]:flex"
                     LinkComponent={Link}
                     href={`/chats/group_info?groupId=${0}`}

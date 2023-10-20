@@ -35,7 +35,10 @@ export default function GoogleSignInButton({
                     setSubmitted(false);
                     return push("/chats");
                 } catch (e) {
-                    console.log(e);
+                    console.log(
+                        `%c${JSON.stringify(e, null, 2)}`,
+                        "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 1.2em;"
+                    );
                     return setSubmitted(false);
                 }
             }}
