@@ -74,7 +74,10 @@ export default function General() {
                             console.log("photo changed!", downloadUrl);
                         }
                     } catch (e) {
-                        console.warn(e);
+                        console.log(
+                            `%c${JSON.stringify(e, null, 2)}`,
+                            "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 1em;"
+                        );
                     }
                     canvas.remove();
                     image.remove();
@@ -92,7 +95,8 @@ export default function General() {
 
                 if (process.env.NODE_ENV !== "production") {
                     console.log(
-                        `new name: ${displayName} and photo: ${downloadUrl}`
+                        `%cnew name: ${displayName} and photo: ${downloadUrl}`,
+                        "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 2em;"
                     );
                 }
             }
@@ -107,13 +111,12 @@ export default function General() {
                     userInfo,
                     { merge: true }
                 );
-
-                if (process.env.NODE_ENV !== "production") {
-                    console.log("bio changed", userInfo);
-                }
             }
         } catch (e) {
-            console.warn(e, "fontSize: 2em;");
+            console.log(
+                `%c${JSON.stringify(e, null, 2)}`,
+                "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 1.2em;"
+            );
         }
     };
     useEffect(() => {
@@ -139,7 +142,7 @@ export default function General() {
                 multiple={false}
                 handleChange={handleFileChange}
                 name="file"
-                types={["jpeg", "png"]}
+                types={["jpeg", "jpg", "png"]}
                 // className="bg-white bg-opacity-20"
                 classes="h-36 cursor-pointer flex justify-start items-center flex-row bg-green-600 bg-opacity-20 w-[460px] max-w-full mb-4"
             >
@@ -294,7 +297,6 @@ function AdornmentInput({
             let n = { ...prev };
             if (!n[p]) return n;
             let index = n[p]!.findIndex((e) => e === rest.value);
-            console.log(index);
             if (index !== -1) {
                 n[p]?.splice(index, 1);
             }

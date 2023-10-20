@@ -66,14 +66,31 @@ export function MessageBox({
                             "message text-sm p-3 rounded-[inherit] flex justify-center items-center flex-row gap-2",
                             by === "me" && "float-right"
                         )}
+                        bgcolor="mySwatch.messageBG"
                         sx={{
                             bgcolor: (theme) =>
                                 by === "him"
                                     ? theme.palette.mySwatch.messageBG
                                     : theme.palette.primary.main,
+                            color: (theme) =>
+                                by === "me"
+                                    ? theme.palette.getContrastText(
+                                          theme.palette.primary.main
+                                      )
+                                    : "inherit",
                         }}
                     >
-                        <IconButton size="small">
+                        <IconButton
+                            size="small"
+                            sx={{
+                                color: (theme) =>
+                                    by === "me"
+                                        ? theme.palette.getContrastText(
+                                              theme.palette.primary.main
+                                          )
+                                        : "inherit",
+                            }}
+                        >
                             <IoMdPause />
                         </IconButton>
                         <span className="start font-bold">
@@ -174,6 +191,12 @@ export function MessageBox({
                                 by === "him"
                                     ? theme.palette.mySwatch.messageBG
                                     : theme.palette.primary.main,
+                            color: (theme) =>
+                                by === "me"
+                                    ? theme.palette.getContrastText(
+                                          theme.palette.primary.main
+                                      )
+                                    : "inherit",
                             gap: 0,
                         }}
                     >
@@ -259,7 +282,9 @@ export function MessageBox({
 
                             color: (theme) =>
                                 by === "me"
-                                    ? theme.palette.text.primary
+                                    ? theme.palette.getContrastText(
+                                          theme.palette.primary.main
+                                      )
                                     : "inherit",
 
                             "& > a": {

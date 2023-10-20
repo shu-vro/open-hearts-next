@@ -28,7 +28,6 @@ export default function Password() {
             await updatePassword(auth.currentUser, password);
             setMessage("Password Updated Successfully");
         } catch (error: any) {
-            console.log(JSON.parse(JSON.stringify(error)));
             if (error.code === "auth/requires-recent-login") {
                 setReauthenticate(true);
                 return setMessage(

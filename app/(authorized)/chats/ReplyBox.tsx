@@ -28,10 +28,10 @@ export default function ReplyBox({
                 bgcolor: (theme) => theme.palette.mySwatch.messageBG,
             }}
         >
-            <div className="text-xs">
+            <Box className="text-xs" color={"primary.main"}>
                 {by === "him" ? reply.to : "you"} replied to{" "}
                 {by === "me" ? reply.to : "you"}
-            </div>
+            </Box>
             {reply.message.deleted ? (
                 <Typography
                     noWrap
