@@ -1,12 +1,16 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     height: 100vh;
-    overflow-y: hidden;
+    overflow: hidden;
     --bgColor: #e5e5e5;
 }
 
@@ -118,4 +122,8 @@ button {
 button:active {
     transform: scale(0.9);
     transition: transform 0.2s ease-in-out;
+}
+
+.firebase-emulator-warning {
+    display: none !important;
 }
