@@ -8,13 +8,15 @@ on:
 jobs:
     update-labels:
         runs-on: ubuntu-latest
-
+        permissions:
+            issues: write
+            
         steps:
             - name: Remove need-attention label
               uses: actions/github-script@v6
               with:
                   script: |
-                      github.issues.removeLabel({
+                      github.rest.issues.removeLabel({
                         issue_number: context.issue.number,
                         owner: context.repo.owner,
                         repo: context.repo.repo,
@@ -25,7 +27,7 @@ jobs:
               uses: actions/github-script@v6
               with:
                   script: |
-                      github.issues.addLabels({
+                      github.rest.issues.addLabels({
                         issue_number: context.issue.number,
                         owner: context.repo.owner,
                         repo: context.repo.repo,
