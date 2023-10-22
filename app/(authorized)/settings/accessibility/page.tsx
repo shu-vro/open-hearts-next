@@ -14,6 +14,9 @@ export default function Accessibility() {
     return (
         <div>
             <h1>Accessibility</h1>
+            <p className="text-gray-600 dark:text-gray-400">
+                Settings are saved in device.
+            </p>
             <SettingsList>
                 <>
                     <Typography variant="h5">Dark Mode</Typography>

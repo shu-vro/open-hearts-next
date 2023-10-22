@@ -12,6 +12,7 @@ import EmailInputField from "../EmailInputField";
 import GoogleSignInButton from "../GoogleSignInButton";
 import AuthForm from "../AuthForm";
 import MuiLink from "@/app/MuiLink";
+import { SITEMAP } from "@/lib/variables";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -28,9 +29,13 @@ export default function Login() {
             setMessage(`User ${email} login successfully`);
             setSubmitted(false);
             if (!user!.emailVerified) {
-                return router.push("/verify-email");
+                return router.push(SITEMAP.verify_email);
             }
-            return router.push("/chats");
+            return router.push(
+                localStorage.deviceType === "desktop"
+                    ? SITEMAP.chats
+                    : SITEMAP.all_messages
+            );
         } catch (e: unknown) {
             setMessage(e as string);
             console.log(e);
@@ -77,15 +82,13 @@ export default function Login() {
                         setMessage={setMessage}
                     />
                     <FormHelperText className="text-base italic my-2">
-                        <MuiLink href="/forgot-password">
+                        <MuiLink href={SITEMAP.forgot_password}>
                             forgot password?
                         </MuiLink>
                     </FormHelperText>
                     <FormHelperText className="text-base italic my-2">
                         New Here?{" "}
-                        <MuiLink href="/signup">
-                            Sign Up
-                        </MuiLink>
+                        <MuiLink href={SITEMAP.signup}>Sign Up</MuiLink>
                     </FormHelperText>
                 </>
             </AuthForm>

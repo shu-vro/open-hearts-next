@@ -5,6 +5,7 @@ import AppBarCustom from "./AppBarCustom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase";
 import { useRouter, usePathname } from "next/navigation";
+import { SITEMAP } from "@/lib/variables";
 
 export default function RootLayout({
     children,
@@ -16,10 +17,10 @@ export default function RootLayout({
     useEffect(() => {
         let unsubscribe = onAuthStateChanged(auth, (user) => {
             if (!user) {
-                return push("/login");
+                return push(SITEMAP.login);
             }
             if (!user?.emailVerified) {
-                return push("/verify-email");
+                return push(SITEMAP.verify_email);
             }
         });
         return unsubscribe;

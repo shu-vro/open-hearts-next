@@ -8,6 +8,7 @@ import AlertBox from "@/app/(auth)/AlertBox";
 import { updateEmail } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import ReauthenticateDialog from "../ReauthenticateDialog";
+import { SITEMAP } from "@/lib/variables";
 
 export default function Email() {
     const router = useRouter();
@@ -25,7 +26,9 @@ export default function Email() {
                 "Email Updated Successfully. \nNext Step: Validate new email. \nRedirecting to validate-email page"
             );
             setTimeout(() => {
-                router.push("/verify-email?redirectTo=/settings/email");
+                router.push(
+                    `${SITEMAP.verify_email}?redirectTo=/settings/email`
+                );
             }, 3500);
         } catch (error: any) {
             console.log(

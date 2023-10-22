@@ -18,7 +18,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
-import { DATABASE_PATH } from "@/lib/utils";
+import { DATABASE_PATH } from "@/lib/variables";
 import { UserType } from "@/app";
 import { VscChromeClose } from "react-icons/vsc";
 import { updateProfile } from "firebase/auth";

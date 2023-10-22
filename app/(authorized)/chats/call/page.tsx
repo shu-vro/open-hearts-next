@@ -11,6 +11,7 @@ import Link from "next/link";
 import VideoComponent from "./VideoComponent";
 import { useRouter } from "next/navigation";
 import { SocketContext } from "@/contexts/SocketContext";
+import { SITEMAP } from "@/lib/variables";
 
 function AudioComponent() {
     return (
@@ -59,7 +60,7 @@ export default function Page({
                     <IconButton
                         size="large"
                         LinkComponent={Link}
-                        href={`/chats/call?mode=${
+                        href={`${SITEMAP.call_page}?mode=${
                             searchParams?.mode === "audio" ? "video" : "audio"
                         }&groupId=room-1`}
                     >

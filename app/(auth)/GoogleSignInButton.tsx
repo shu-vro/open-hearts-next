@@ -5,6 +5,7 @@ import { Button } from "@mui/material";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithGoogle } from "@/firebase";
 import { useRouter } from "next/navigation";
+import { SITEMAP } from "@/lib/variables";
 
 type Props = {
     submitted: boolean;
@@ -33,7 +34,11 @@ export default function GoogleSignInButton({
                         `User ${user?.displayName} created successfully`
                     );
                     setSubmitted(false);
-                    return push("/chats");
+                    return push(
+                        localStorage.deviceType === "desktop"
+                            ? SITEMAP.chats
+                            : SITEMAP.all_messages
+                    );
                 } catch (e) {
                     console.log(
                         `%c${JSON.stringify(e, null, 2)}`,
