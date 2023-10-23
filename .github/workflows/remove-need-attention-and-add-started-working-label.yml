@@ -10,14 +10,22 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             issues: write
-            
+
         steps:
+            - name: Get Issue Number
+              id: get_issue_num
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      const result = parseInt(github.ref_name.split("#")[1])
+                      return result
+
             - name: Remove need-attention label
               uses: actions/github-script@v6
               with:
                   script: |
                       github.rest.issues.removeLabel({
-                        issue_number: context.issue.number,
+                        issue_number: ${{steps.get_issue_num.outputs.result}},
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         label: "need-attention"
@@ -28,7 +36,7 @@ jobs:
               with:
                   script: |
                       github.rest.issues.addLabels({
-                        issue_number: context.issue.number,
+                        issue_number: ${{steps.get_issue_num.outputs.result}},
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         labels: ["started-working"]
