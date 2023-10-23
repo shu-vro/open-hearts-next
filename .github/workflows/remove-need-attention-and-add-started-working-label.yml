@@ -17,6 +17,7 @@ jobs:
               uses: actions/github-script@v6
               with:
                   script: |
+                      console.log(github)
                       const result = parseInt(github.ref_name.split("#")[1])
                       return result
 
