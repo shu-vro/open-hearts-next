@@ -17,8 +17,8 @@ jobs:
               uses: actions/github-script@v6
               with:
                   script: |
-                      console.log(github)
-                      const result = parseInt(github.ref_name.split("#")[1])
+                      console.log(github, context)
+                      const result = parseInt(github.ref.split("#")[1])
                       return result
 
             - name: Remove need-attention label
