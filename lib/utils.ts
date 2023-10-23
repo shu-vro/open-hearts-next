@@ -87,9 +87,5 @@ export const DefaultUserConfig = {
     works: [],
 } as UserType;
 
-export enum DATABASE_PATH {
-    users = "users",
-}
-
 export const URL_REGEX =
     /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-]*))?)(?:\?[-\+=&;%@.\w_]*)?(?:#[-.\!\/\\\w]*)?/gi;

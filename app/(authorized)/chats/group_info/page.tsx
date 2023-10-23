@@ -4,6 +4,7 @@ import { IconButton, SpeedDial } from "@mui/material";
 import GroupInfo from "./GroupInfo";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useRouter } from "next/navigation";
+import { SITEMAP } from "@/lib/variables";
 
 export default function Page() {
     const { push } = useRouter();
@@ -15,7 +16,7 @@ export default function Page() {
                 sx={{ position: "absolute", bottom: 16, right: 16 }}
                 icon={<RiArrowGoBackLine />}
                 onClick={() => {
-                    push("/chats");
+                    push(SITEMAP.chats);
                 }}
             />
         </div>

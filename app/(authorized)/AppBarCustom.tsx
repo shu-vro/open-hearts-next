@@ -22,6 +22,7 @@ import { PiChatsTeardropDuotone } from "react-icons/pi";
 import { HiOutlineCog6Tooth } from "react-icons/hi2";
 import { IoIosLogOut } from "react-icons/io";
 import Link from "next/link";
+import { SITEMAP } from "@/lib/variables";
 
 export default function AppBarCustom() {
     const router = useRouter();
@@ -68,7 +69,7 @@ export default function AppBarCustom() {
             <MenuItem
                 onClick={handleMenuClose}
                 component={Link}
-                href="/profile"
+                href={SITEMAP.profile}
             >
                 <ListItemIcon>
                     <VscAccount />
@@ -76,7 +77,11 @@ export default function AppBarCustom() {
                 <ListItemText>Profile</ListItemText>
             </MenuItem>
             <Divider />
-            <MenuItem onClick={handleMenuClose} component={Link} href="/chats">
+            <MenuItem
+                onClick={handleMenuClose}
+                component={Link}
+                href={SITEMAP.chats}
+            >
                 <ListItemIcon>
                     <PiChatsTeardropDuotone />
                 </ListItemIcon>
@@ -86,7 +91,7 @@ export default function AppBarCustom() {
             <MenuItem
                 onClick={handleMenuClose}
                 component={Link}
-                href="/settings/general"
+                href={SITEMAP.general_settings}
             >
                 <ListItemIcon>
                     <HiOutlineCog6Tooth />
@@ -98,7 +103,7 @@ export default function AppBarCustom() {
                 onClick={async () => {
                     try {
                         await signOut(auth);
-                        router.push("/login");
+                        router.push(SITEMAP.login);
                     } catch (e) {
                         console.warn(e);
                     }

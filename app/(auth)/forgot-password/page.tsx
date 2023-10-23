@@ -9,6 +9,7 @@ import EmailInputField from "../EmailInputField";
 import { auth, sendPasswordResetEmail } from "@/firebase";
 import AuthForm from "../AuthForm";
 import MuiLink from "@/app/MuiLink";
+import { SITEMAP } from "@/lib/variables";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -78,7 +79,8 @@ export default function ForgotPassword() {
                         Send forgot password email
                     </Button>
                     <FormHelperText className="text-base italic my-2">
-                        Feeling ready? <MuiLink href="/login">Log in</MuiLink>
+                        Feeling ready?{" "}
+                        <MuiLink href={SITEMAP.login}>Log in</MuiLink>
                     </FormHelperText>
                 </>
             </AuthForm>

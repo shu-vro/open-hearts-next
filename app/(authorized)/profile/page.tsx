@@ -7,7 +7,7 @@ import { Avatar, Box, Typography } from "@mui/material";
 import { auth, firestoreDb } from "@/firebase";
 import { FaRegHandPointRight } from "react-icons/fa";
 import { DocumentData, doc, getDoc } from "firebase/firestore";
-import { DATABASE_PATH } from "@/lib/utils";
+import { DATABASE_PATH } from "@/lib/variables";
 
 const imbue = Imbue({
     subsets: ["latin"],

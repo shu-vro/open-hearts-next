@@ -41,4 +41,11 @@ export interface UserType {
     uid: string;
     studies: (string | never)[];
     works: (string | never)[];
+    status: STATUS.active;
+}
+
+export enum STATUS {
+    active = "active",
+    away = "away",
+    inactive = "inactive",
 }

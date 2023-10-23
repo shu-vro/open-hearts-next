@@ -15,6 +15,7 @@ import AlertBox from "../AlertBox";
 import GoogleSignInButton from "../GoogleSignInButton";
 import AuthForm from "../AuthForm";
 import MuiLink from "@/app/MuiLink";
+import { SITEMAP } from "@/lib/variables";
 
 export default function SignUp() {
     const [name, setName] = useState("");
@@ -47,7 +48,7 @@ export default function SignUp() {
             );
             setMessage(`User ${user!.email} created successfully`);
             setSubmitted(false);
-            router.push("/verify-email");
+            router.push(SITEMAP.verify_email);
         } catch (e: unknown) {
             setMessage(JSON.stringify(e));
             console.log(e);
@@ -120,7 +121,7 @@ export default function SignUp() {
                     />
                     <p>
                         Been Here Before?{" "}
-                        <MuiLink href="/login">Login.</MuiLink>
+                        <MuiLink href={SITEMAP.login}>Login.</MuiLink>
                     </p>
                 </>
             </AuthForm>

@@ -5,6 +5,7 @@ import { FriendList } from "../chats/LeftSideBar";
 import { SpeedDial } from "@mui/material";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useRouter } from "next/navigation";
+import { SITEMAP } from "@/lib/variables";
 
 export default function All_Messages() {
     const { push } = useRouter();
@@ -23,7 +24,7 @@ export default function All_Messages() {
                 sx={{ position: "absolute", bottom: 16, right: 16 }}
                 icon={<RiArrowGoBackLine />}
                 onClick={() => {
-                    push("/chats");
+                    push(SITEMAP.chats);
                 }}
             />
         </div>

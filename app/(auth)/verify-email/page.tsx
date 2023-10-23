@@ -6,6 +6,7 @@ import Logout from "../Logout";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
+import { SITEMAP } from "@/lib/variables";
 
 export default function VerifyEmail() {
     const sp = useSearchParams();
@@ -22,7 +23,11 @@ export default function VerifyEmail() {
     }, []);
 
     if (emailVerified) {
-        router.push("/chats");
+        router.push(
+            localStorage.deviceType === "desktop"
+                ? SITEMAP.chats
+                : SITEMAP.all_messages
+        );
         return <>Email verified. redirecting to chats.</>;
     }
     return verificationEmailSent ? (
@@ -37,7 +42,15 @@ export default function VerifyEmail() {
         <>
             <h1>Dear {auth.currentUser?.displayName || "User"}, </h1>
             <h3>Verify your email by clicking the button below</h3>
-            <VerifyButton setVerificationEmailSent={setVerificationEmailSent} redirectTo={sp?.get("redirectTo") || "/chats"} />
+            <VerifyButton
+                setVerificationEmailSent={setVerificationEmailSent}
+                redirectTo={
+                    sp?.get("redirectTo") ||
+                    localStorage.deviceType === "desktop"
+                        ? SITEMAP.chats
+                        : SITEMAP.all_messages
+                }
+            />
             <i>or</i>
             <Logout />
         </>

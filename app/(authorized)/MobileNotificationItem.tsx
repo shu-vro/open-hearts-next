@@ -4,6 +4,7 @@ import { Badge, IconButton, MenuItem } from "@mui/material";
 import React from "react";
 import { MdOutlineNotifications } from "react-icons/md";
 import { useRouter } from "next/navigation";
+import { SITEMAP } from "@/lib/variables";
 
 export default function MobileNotificationItem({
     badgeContent,
@@ -15,7 +16,7 @@ export default function MobileNotificationItem({
         <>
             <MenuItem
                 onClick={() => {
-                    push("/chats/notifications");
+                    push(SITEMAP.notifications);
                 }}
             >
                 <IconButton

@@ -24,7 +24,8 @@ import {
 } from "firebase/auth";
 import { getDatabase, connectDatabaseEmulator } from "firebase/database";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
-import { DATABASE_PATH, DefaultUserConfig } from "@/lib/utils";
+import { DefaultUserConfig } from "@/lib/utils";
+import { DATABASE_PATH } from "@/lib/variables";
 // @ts-ignore
 import encoding from "encoding";
 import { UserType } from "./app";

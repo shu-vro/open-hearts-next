@@ -1,5 +1,6 @@
 "use client";
 
+import { SITEMAP } from "@/lib/variables";
 import {
     AppBar,
     Avatar,
@@ -39,7 +40,7 @@ export default function AppBarChat() {
                     <IconButton
                         className="hidden max-[962px]:flex"
                         LinkComponent={Link}
-                        href={`/all_messages`}
+                        href={SITEMAP.all_messages}
                         sx={{
                             display: {
                                 "962px": "none",
@@ -53,14 +54,14 @@ export default function AppBarChat() {
                 <IconButton
                     size={matches_535 ? "small" : "medium"}
                     LinkComponent={Link}
-                    href="/chats/call?mode=audio&groupId=room-1"
+                    href={`${SITEMAP.call_page}?mode=audio&groupId=room-1`}
                 >
                     <BsTelephone />
                 </IconButton>
                 <IconButton
                     size={matches_535 ? "small" : "medium"}
                     LinkComponent={Link}
-                    href="/chats/call?mode=video&groupId=room-1"
+                    href={`${SITEMAP.call_page}?mode=video&groupId=room-1`}
                 >
                     <BsCameraVideo />
                 </IconButton>
@@ -68,7 +69,7 @@ export default function AppBarChat() {
                     size={matches_535 ? "small" : "medium"}
                     className="hidden max-[962px]:flex"
                     LinkComponent={Link}
-                    href={`/chats/group_info?groupId=${0}`}
+                    href={`${SITEMAP.group_info}?groupId=${0}`}
                     sx={{
                         display: {
                             "962px": "none",
