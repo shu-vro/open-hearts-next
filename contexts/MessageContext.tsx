@@ -47,4 +47,5 @@ export const defaultMessage: MessageType = Object.freeze({
     deleted: false,
     hash: null,
     reply: null,
+    reactions: {},
 });

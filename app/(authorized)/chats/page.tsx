@@ -5,6 +5,7 @@ import RightSideBar from "./RightSideBar";
 import MessageContext from "@/contexts/MessageContext";
 import { MessageType } from "@/app";
 import AppBarChat from "./AppBarChat";
+import GroupContext from "@/contexts/GroupContext";
 
 export default function Chats() {
     const msgForNow: MessageType = {
@@ -24,9 +25,11 @@ export default function Chats() {
         voice: "",
         deleted: false,
         hash: null,
+        reactions: {},
         reply: {
             message: {
                 emoji: "1f601",
+                reactions: {},
                 imageLink: [
                     "https://images.unsplash.com/photo-1668162692136-9c490f102de2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1926&q=80",
                     "https://images.unsplash.com/photo-1692284759956-ad1330507a1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
@@ -50,7 +53,7 @@ export default function Chats() {
     };
     return (
         <div className="w-full grow flex flex-row h-[calc(100%-4rem)]">
-            <MessageContext>
+            <Wrapper>
                 <>
                     <LeftSideBar />
                     <main className="grow w-1/2 flex justify-start items-start flex-col h-full">
@@ -125,7 +128,15 @@ export default function Chats() {
                     </main>
                     <RightSideBar />
                 </>
-            </MessageContext>
+            </Wrapper>
         </div>
+    );
+}
+
+function Wrapper({ children }: { children: React.ReactElement }) {
+    return (
+        <GroupContext>
+            <MessageContext>{children}</MessageContext>
+        </GroupContext>
     );
 }

@@ -11,6 +11,86 @@ import { defaultMessage, useMessage } from "@/contexts/MessageContext";
 import { VscClose } from "react-icons/vsc";
 import lo_ from "lodash";
 import { BiImages } from "react-icons/bi";
+import { useGroup } from "@/contexts/GroupContext";
+
+export default function MessageForm() {
+    const { group } = useGroup();
+
+    const { message, setMessage, replyMessage } = useMessage();
+    const form = useRef<HTMLFormElement>(null);
+    const emojiUnified = "1f44d";
+    return (
+        <form
+            onSubmit={async (e) => {
+                e.preventDefault();
+                // await setDoc
+                setMessage(() => defaultMessage);
+            }}
+            ref={form}
+            className="input-area flex justify-end items-center w-full relative"
+            action="get"
+        >
+            {!lo_.isEqual(defaultMessage, replyMessage.message) && (
+                <ReplySection />
+            )}
+            <AddMoreButton form={form.current!} />
+            <TextField
+                label="Type something..."
+                variant="outlined"
+                multiline
+                maxRows={4}
+                fullWidth
+                className="grow z-50"
+                name="message"
+                value={message.text}
+                onChange={(e) => {
+                    setMessage((prev) => ({
+                        ...prev,
+                        text: e.currentTarget?.value,
+                    }));
+                }}
+                onKeyUp={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                        // Submit the form when Enter is pressed without Shift
+                        form.current?.dispatchEvent(
+                            new Event("submit", {
+                                bubbles: true,
+                            })
+                        );
+                        setMessage((prev) => ({ ...prev, text: "" }));
+                    }
+                }}
+            />
+            <GifButton form={form.current!} />
+            {message.text === "" &&
+            message.voice === "" &&
+            message.imageLink.length === 0 ? (
+                <IconButton
+                    size="large"
+                    type="button"
+                    onClick={() => {
+                        setMessage(() => {
+                            return { ...defaultMessage, emoji: emojiUnified };
+                        });
+                        setTimeout(() => {
+                            form.current?.dispatchEvent(
+                                new Event("submit", {
+                                    bubbles: true,
+                                })
+                            );
+                        }, 100);
+                    }}
+                >
+                    <GetEmojiLink unified={emojiUnified} size={28} />
+                </IconButton>
+            ) : (
+                <IconButton size="large" type="submit">
+                    <MdSend />
+                </IconButton>
+            )}
+        </form>
+    );
+}
 
 export function ReplySection() {
     const { replyMessage: reply, setReplyMessage, setMessage } = useMessage();
@@ -106,82 +186,5 @@ export function ReplySection() {
                 )}
             </Box>
         </Box>
-    );
-}
-
-export default function MessageForm() {
-    const { message, setMessage, replyMessage } = useMessage();
-    const form = useRef<HTMLFormElement>(null);
-    const emojiUnified = "1f601";
-    return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault();
-                console.log(message);
-                setMessage(() => defaultMessage);
-            }}
-            ref={form}
-            className="input-area flex justify-end items-center w-full relative"
-            action="get"
-        >
-            {!lo_.isEqual(defaultMessage, replyMessage.message) && (
-                <ReplySection />
-            )}
-            <AddMoreButton form={form.current!} />
-            <TextField
-                label="Type something..."
-                variant="outlined"
-                multiline
-                maxRows={4}
-                fullWidth
-                className="grow z-50"
-                name="message"
-                value={message.text}
-                onChange={(e) => {
-                    setMessage((prev) => ({
-                        ...prev,
-                        text: e.currentTarget?.value,
-                    }));
-                }}
-                onKeyUp={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                        // Submit the form when Enter is pressed without Shift
-                        form.current?.dispatchEvent(
-                            new Event("submit", {
-                                bubbles: true,
-                            })
-                        );
-                        setMessage((prev) => ({ ...prev, text: "" }));
-                    }
-                }}
-            />
-            <GifButton form={form.current!} />
-            {message.text === "" &&
-            message.voice === "" &&
-            message.imageLink.length === 0 ? (
-                <IconButton
-                    size="large"
-                    type="button"
-                    onClick={() => {
-                        setMessage(() => {
-                            return { ...defaultMessage, emoji: emojiUnified };
-                        });
-                        setTimeout(() => {
-                            form.current?.dispatchEvent(
-                                new Event("submit", {
-                                    bubbles: true,
-                                })
-                            );
-                        }, 100);
-                    }}
-                >
-                    <GetEmojiLink unified={emojiUnified} size={28} />
-                </IconButton>
-            ) : (
-                <IconButton size="large" type="submit">
-                    <MdSend />
-                </IconButton>
-            )}
-        </form>
     );
 }

@@ -28,7 +28,7 @@ export default function ReplyBox({
                 bgcolor: (theme) => theme.palette.mySwatch.messageBG,
             }}
         >
-            <Box className="text-xs" color={"primary.main"}>
+            <Box className="text-xs mb-2">
                 {by === "him" ? reply.to : "you"} replied to{" "}
                 {by === "me" ? reply.to : "you"}
             </Box>

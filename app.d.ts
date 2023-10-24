@@ -14,14 +14,18 @@ declare module "@mui/material/styles" {
         }; // or any other type that suits your needs
     }
 }
+
 declare type MessageType = {
     text: string;
-    imageLink: string[];
     emoji: string;
-    voice: string;
-    deleted: boolean;
     hash: string | null;
+    deleted: boolean;
+    imageLink: string[];
+    voice: string;
     reply: IReplyMessage | null;
+    reactions: {
+        [x: string]: number;
+    };
 };
 
 declare interface IReplyMessage {
