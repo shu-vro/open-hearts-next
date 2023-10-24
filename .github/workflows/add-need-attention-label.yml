@@ -12,13 +12,34 @@ jobs:
         permissions:
             issues: write
         steps:
-            - name: Add need-attention label
+            - name: check if task
+              id: check_if_task
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      const result = ${{startsWith(github.event.issue.title, '/task')}}
+                      return result
+
+            - name: add task label
+              if: steps.check_if_task.outputs.result
               uses: actions/github-script@v6
               with:
                   script: |
                       github.rest.issues.addLabels({
-                        issue_number: context.issue.number,
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        labels: ["need-attention"]
+                          issue_number: context.issue.number,
+                          owner: context.repo.owner,
+                          repo: context.repo.repo,
+                          labels: ["task"]
+                        })
+
+            - name: add_need_attention_label
+              if: steps.check_if_task.outputs.result != true
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      github.rest.issues.addLabels({
+                      issue_number: context.issue.number,
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      labels: ["need-attention"]
                       })
