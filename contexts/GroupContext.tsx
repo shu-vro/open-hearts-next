@@ -1,8 +1,8 @@
 "use client";
 
-import { FirstTimeOpeningGroup } from "@/lib/helpers/firebase-helpers";
+// import { FirstTimeOpeningGroup } from "@/lib/helpers/firebase-helpers";
 import { IGroupDetails, SITEMAP } from "@/lib/variables";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const Context = createContext({} as UseGroupProp);
@@ -27,14 +27,15 @@ export default function GroupContext({
         <>
             <Context.Provider value={{ group, setGroup }}>
                 {children}
-                <button
+                {/* <button
                     onClick={() => {
                         (async () => {
                             let tempGroup = await FirstTimeOpeningGroup(
+                                true,
+                                "my fancy group!",
                                 params
                                     ? (params.get("groupId") as string)
-                                    : group?.id,
-                                true
+                                    : group?.id
                             );
                             console.log(tempGroup);
                             if (!tempGroup) return;
@@ -45,7 +46,7 @@ export default function GroupContext({
                     className="absolute top-0 left-0 z-50"
                 >
                     create a collection (testing only)
-                </button>
+                </button> */}
             </Context.Provider>
         </>
     );

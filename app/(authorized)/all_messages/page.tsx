@@ -2,6 +2,7 @@
 
 import React from "react";
 import { FriendList } from "../chats/LeftSideBar";
+import SpeedDialTooltip from "./SpeedDialTooltip";
 import { SpeedDial } from "@mui/material";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useRouter } from "next/navigation";
@@ -27,6 +28,7 @@ export default function All_Messages() {
                     push(SITEMAP.chats);
                 }}
             />
+            <SpeedDialTooltip />
         </div>
     );
 }

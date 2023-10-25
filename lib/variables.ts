@@ -1,7 +1,6 @@
 export enum DATABASE_PATH {
     users = "users",
     groupDetails = "groupDetails",
-    chats = "chats",
 }
 
 export enum SITEMAP {
@@ -25,11 +24,10 @@ type KEY = string;
 
 export interface IGroupDetails {
     id: KEY;
+    name: string;
     emoji: string;
     inviteLink: string;
     groupMembers: (KEY | unknown)[];
-    chatIds: (string | unknown)[];
-    activeChatIndex: string;
     lastMessage: string;
     lastMessageSentBy: string;
     nickname: Partial<{
@@ -45,11 +43,10 @@ const id = nanoid();
 
 export const DEFAULT_GROUP_DETAILS = Object.freeze({
     id,
+    name: "",
     emoji: "1f44d",
     inviteLink: `https://localhost:3000/chats/${id}`,
     groupMembers: [],
-    chatIds: [],
-    activeChatIndex: "",
     lastMessage: "You joined this chat",
     lastMessageSentBy: "You",
     nickname: {},

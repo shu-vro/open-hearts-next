@@ -1,12 +1,12 @@
 "use client";
 
-import { Avatar, Box, SpeedDial, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import HoverWrapper from "./HoverWrapper";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useState } from "react";
 import { cn, repeat } from "@/lib/utils";
-import { RiArrowGoBackLine } from "react-icons/ri";
+import SpeedDialTooltip from "../all_messages/SpeedDialTooltip";
 
 dayjs.extend(relativeTime);
 
@@ -82,49 +82,7 @@ export default function LeftSideBar() {
                         <FriendList key={i} />
                     ))}
             </div>
-            <SpeedDialTooltipOpen />
+            <SpeedDialTooltip />
         </div>
-    );
-}
-
-import * as React from "react";
-import Backdrop from "@mui/material/Backdrop";
-import SpeedDialIcon from "@mui/material/SpeedDialIcon";
-import SpeedDialAction from "@mui/material/SpeedDialAction";
-
-const actions = [
-    { icon: <RiArrowGoBackLine />, name: "Copy" },
-    { icon: <RiArrowGoBackLine />, name: "Save" },
-    { icon: <RiArrowGoBackLine />, name: "Print" },
-    { icon: <RiArrowGoBackLine />, name: "Share" },
-];
-
-function SpeedDialTooltipOpen() {
-    const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
-    return (
-        <Box>
-            <SpeedDial
-                ariaLabel="SpeedDial tooltip example"
-                sx={{ position: "absolute", bottom: 16, left: 16 }}
-                icon={<SpeedDialIcon />}
-                onClose={handleClose}
-                onOpen={handleOpen}
-                open={open}
-            >
-                {actions.map((action) => (
-                    <SpeedDialAction
-                        key={action.name}
-                        icon={action.icon}
-                        tooltipTitle={action.name}
-                        tooltipOpen
-                        tooltipPlacement="right"
-                        onClick={handleClose}
-                    />
-                ))}
-            </SpeedDial>
-        </Box>
     );
 }

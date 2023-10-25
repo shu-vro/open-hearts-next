@@ -27,8 +27,12 @@ import { nanoid } from "nanoid";
  * @returns
  */
 export async function FirstTimeOpeningGroup(
-    groupId?: string,
-    redirectToAnotherGroupIdIfDoes_notExist?: boolean
+    redirectToAnotherGroupIdIfDoes_notExist?: boolean,
+    obj?: {
+        name: string;
+        invited: string[];
+    },
+    groupId?: string
 ) {
     try {
         if (!auth.currentUser) throw new Error("Not authenticated");
@@ -58,24 +62,12 @@ export async function FirstTimeOpeningGroup(
                 }
             }
         } else {
-            const chatId = nanoid();
             const groupId = nanoid();
-            await setDoc(
-                doc(firestoreDb, DATABASE_PATH.chats, chatId),
-                {
-                    controlledBy: groupId,
-                    id: chatId,
-                    chats: [],
-                } as IChatsCollection,
-                {
-                    merge: true,
-                }
-            );
             let setThisObject = {
                 ...DEFAULT_GROUP_DETAILS,
                 id: groupId,
-                groupMembers: [auth.currentUser.uid],
-                chatIds: [chatId],
+                name: obj?.name || "",
+                groupMembers: [auth.currentUser.uid, ...(obj?.invited || [])],
             } as IGroupDetails;
 
             await setDoc(
