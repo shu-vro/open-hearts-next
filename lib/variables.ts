@@ -30,6 +30,7 @@ export interface IGroupDetails {
     groupMembers: (KEY | unknown)[];
     lastMessage: string;
     lastMessageSentBy: string;
+    lastMessageSentTime: number;
     nickname: Partial<{
         id: string;
         nickname: string;
@@ -45,15 +46,10 @@ export const DEFAULT_GROUP_DETAILS = Object.freeze({
     id,
     name: "",
     emoji: "1f44d",
-    inviteLink: `https://localhost:3000/chats/${id}`,
+    inviteLink: `/chats/${id}`,
     groupMembers: [],
     lastMessage: "You joined this chat",
     lastMessageSentBy: "You",
     nickname: {},
+    lastMessageSentTime: Date.now(),
 } as IGroupDetails);
-
-export interface IChatsCollection {
-    controlledBy: string;
-    id: string; // primary
-    chats: MessageType[];
-}

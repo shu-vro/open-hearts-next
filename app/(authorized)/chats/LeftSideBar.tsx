@@ -4,14 +4,17 @@ import { Avatar, Box, Typography } from "@mui/material";
 import HoverWrapper from "./HoverWrapper";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn, repeat } from "@/lib/utils";
 import SpeedDialTooltip from "../all_messages/SpeedDialTooltip";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { auth, firestoreDb } from "@/firebase";
+import { DATABASE_PATH, IGroupDetails } from "@/lib/variables";
+import useFetchGroup from "@/lib/hooks/useFetchGroup";
 
 dayjs.extend(relativeTime);
 
-export function FriendList() {
-    const [timeDiff, setTimeDiff] = useState(dayjs(1694720446951).fromNow());
+export function GroupList({ group }: { group: IGroupDetails }) {
     const isActive = Math.random() <= 0.5 ? true : false;
     return (
         <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
@@ -44,7 +47,7 @@ export function FriendList() {
                         gridArea: "name",
                     }}
                 >
-                    Friend&apos;s name
+                    {group.name || ""}
                 </Typography>
                 <Typography
                     className="justify-self-end"
@@ -52,7 +55,7 @@ export function FriendList() {
                         gridArea: "time",
                     }}
                 >
-                    {timeDiff}
+                    {dayjs(group.lastMessageSentTime).fromNow()}
                 </Typography>
                 <Typography
                     noWrap
@@ -61,11 +64,7 @@ export function FriendList() {
                         gridArea: "message",
                     }}
                 >
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                    Sed perspiciatis, quia, tenetur iusto labore, soluta
-                    consectetur laboriosam voluptatem aliquid distinctio hic
-                    eligendi earum vero error incidunt corporis odit? Nam,
-                    explicabo!
+                    {group.lastMessage}
                 </Typography>
             </Box>
         </HoverWrapper>
@@ -73,16 +72,30 @@ export function FriendList() {
 }
 
 export default function LeftSideBar() {
+    const groups = useFetchGroup();
+
     return (
         <div className="w-1/4 max-[962px]:hidden flex justify-start items-start flex-col h-full relative">
             <div className="w-full overflow-y-auto h-full">
-                {Array(20)
-                    .fill("")
-                    .map((_, i) => (
-                        <FriendList key={i} />
-                    ))}
+                {groups.map((group, i) => (
+                    <GroupList key={group.id} group={group} />
+                ))}
+                {!groups.length && <NoGroupBanner />}
             </div>
             <SpeedDialTooltip />
+        </div>
+    );
+}
+
+export function NoGroupBanner() {
+    return (
+        <div className="w-full h-full flex justify-center items-center flex-col">
+            <div className="text-[max(3vw,3vh)] text-center">
+                ¯\_( ͡° ͜ʖ ͡°)_/¯
+            </div>
+            <span className="text-center capitalize">
+                Groups you are added will appear here
+            </span>
         </div>
     );
 }

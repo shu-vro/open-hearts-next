@@ -1,23 +1,24 @@
 "use client";
 
 import React from "react";
-import { FriendList } from "../chats/LeftSideBar";
+import { GroupList, NoGroupBanner } from "../chats/LeftSideBar";
 import SpeedDialTooltip from "./SpeedDialTooltip";
 import { SpeedDial } from "@mui/material";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import { SITEMAP } from "@/lib/variables";
+import useFetchGroup from "@/lib/hooks/useFetchGroup";
 
 export default function All_Messages() {
+    const groups = useFetchGroup();
     const { push } = useRouter();
     return (
         <div className="w-full flex justify-start items-start flex-col h-full">
             <div className="w-full overflow-y-auto h-full">
-                {Array(20)
-                    .fill("")
-                    .map((_, i) => (
-                        <FriendList key={i} />
-                    ))}
+                {groups.map((group, i) => (
+                    <GroupList key={group.id} group={group} />
+                ))}
+                {!groups.length && <NoGroupBanner />}
             </div>
 
             <SpeedDial
