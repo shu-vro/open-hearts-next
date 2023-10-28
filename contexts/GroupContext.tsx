@@ -1,7 +1,8 @@
 "use client";
 
 // import { FirstTimeOpeningGroup } from "@/lib/helpers/firebase-helpers";
-import { IGroupDetails, SITEMAP } from "@/lib/variables";
+import { SITEMAP } from "@/lib/variables";
+import { IGroupDetails } from "@/app";
 import React, { createContext, useContext, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 

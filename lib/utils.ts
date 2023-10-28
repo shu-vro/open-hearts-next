@@ -1,7 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
+import { STATUS } from "@/types/app";
 import { UserType } from "@/app";
+import { AlertColor } from "@mui/material";
 
 export function repeat(text: string, count: number = 1) {
     let result = "";
@@ -85,7 +87,24 @@ export const DefaultUserConfig = {
     uid: "",
     studies: [],
     works: [],
+    contacts: {},
+    status: STATUS.active,
 } as UserType;
 
 export const URL_REGEX =
     /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-]*))?)(?:\?[-\+=&;%@.\w_]*)?(?:#[-.\!\/\\\w]*)?/gi;
+
+// add this method to all alertboxes. will be implemented in next issue.
+export function computeSeverityMessage(text: string): AlertColor {
+    if (text.startsWith("error")) {
+        return "error";
+    }
+    if (text.startsWith("info")) {
+        return "info";
+    }
+    if (text.startsWith("warning")) {
+        return "warning";
+    } else {
+        return "success";
+    }
+}

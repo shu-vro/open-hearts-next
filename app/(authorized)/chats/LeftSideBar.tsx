@@ -4,12 +4,9 @@ import { Avatar, Box, Typography } from "@mui/material";
 import HoverWrapper from "./HoverWrapper";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useEffect, useState } from "react";
 import { cn, repeat } from "@/lib/utils";
 import SpeedDialTooltip from "../all_messages/SpeedDialTooltip";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { auth, firestoreDb } from "@/firebase";
-import { DATABASE_PATH, IGroupDetails } from "@/lib/variables";
+import { IGroupDetails } from "@/app";
 import useFetchGroup from "@/lib/hooks/useFetchGroup";
 
 dayjs.extend(relativeTime);

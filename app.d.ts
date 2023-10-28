@@ -1,6 +1,7 @@
 import "@mui/material/styles";
+import { STATUS } from "@/types/app";
 
-declare module "adapterjs" {}
+// declare module "adapterjs" {}
 
 declare module "@mui/material/styles" {
     interface Palette {
@@ -45,11 +46,23 @@ export interface UserType {
     uid: string;
     studies: (string | never)[];
     works: (string | never)[];
+    contacts: { [x: string]: any };
     status: STATUS.active;
 }
 
-export enum STATUS {
-    active = "active",
-    away = "away",
-    inactive = "inactive",
+type KEY = string;
+
+export interface IGroupDetails {
+    id: KEY;
+    name: string;
+    emoji: string;
+    inviteLink: string;
+    groupMembers: (KEY | unknown)[];
+    lastMessage: string;
+    lastMessageSentBy: string;
+    lastMessageSentTime: number;
+    nickname: Partial<{
+        id: string;
+        nickname: string;
+    }>;
 }

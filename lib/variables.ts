@@ -1,3 +1,6 @@
+import { IGroupDetails } from "@/app";
+import { nanoid } from "nanoid";
+
 export enum DATABASE_PATH {
     users = "users",
     groupDetails = "groupDetails",
@@ -19,26 +22,6 @@ export enum SITEMAP {
     group_info = "/chats/group_info",
     notifications = "/chats/notifications",
 }
-
-type KEY = string;
-
-export interface IGroupDetails {
-    id: KEY;
-    name: string;
-    emoji: string;
-    inviteLink: string;
-    groupMembers: (KEY | unknown)[];
-    lastMessage: string;
-    lastMessageSentBy: string;
-    lastMessageSentTime: number;
-    nickname: Partial<{
-        id: string;
-        nickname: string;
-    }>;
-}
-
-import { MessageType } from "@/app";
-import { nanoid } from "nanoid";
 
 const id = nanoid();
 

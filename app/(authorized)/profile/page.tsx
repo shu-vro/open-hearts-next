@@ -16,7 +16,8 @@ const imbue = Imbue({
 });
 // Meet [Name], a fantastic friend who's smart, compassionate, and full of life. They bring positivity wherever they go
 
-export default function Page() {
+export default function Page(props) {
+    console.log(props);
     const [userData, setUserData] = useState<DocumentData>();
     useEffect(() => {
         (async () => {

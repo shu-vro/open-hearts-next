@@ -3,7 +3,6 @@ import {
     Autocomplete,
     Box,
     Checkbox,
-    Slide,
     SpeedDial,
     TextField,
 } from "@mui/material";
@@ -18,7 +17,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { FirstTimeOpeningGroup } from "@/lib/helpers/firebase-helpers";
-import { TransitionProps } from "@mui/material/transitions";
 import { useGroup } from "@/contexts/GroupContext";
 
 const actions = [
@@ -108,15 +106,6 @@ export default function SpeedDialTooltip() {
     );
 }
 
-const Transition = React.forwardRef(function Transition(
-    props: TransitionProps & {
-        children: React.ReactElement<any, any>;
-    },
-    ref: React.Ref<unknown>
-) {
-    return <Slide direction="up" ref={ref} {...props} />;
-});
-
 function AlertDialog({
     open,
     setOpen,
@@ -136,8 +125,6 @@ function AlertDialog({
         <Dialog
             open={open}
             onClose={handleClose}
-            fullScreen
-            TransitionComponent={Transition}
             component="form"
             onSubmit={(e) => {
                 e.preventDefault();
@@ -160,7 +147,6 @@ function AlertDialog({
                         setValue(newValue);
                         console.log(newValue);
                     }}
-                    disablePortal
                     className="w-[500px] max-w-full mt-4"
                     options={["shirshen", `shuvro`, "purabi", "taposh"]}
                     multiple
