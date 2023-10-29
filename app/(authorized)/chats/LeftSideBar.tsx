@@ -8,6 +8,7 @@ import { cn, repeat } from "@/lib/utils";
 import SpeedDialTooltip from "../all_messages/SpeedDialTooltip";
 import { IGroupDetails } from "@/app";
 import useFetchGroup from "@/lib/hooks/useFetchGroup";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
@@ -16,8 +17,8 @@ export function GroupList({ group }: { group: IGroupDetails }) {
     return (
         <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
             <Box
-                component="a"
-                href="#"
+                component={Link}
+                href={group.inviteLink}
                 className="grid p-2 text-inherit hover:no-underline"
                 sx={{
                     gridTemplateAreas: `

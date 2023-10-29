@@ -49,7 +49,6 @@ export default function General() {
             return;
         }
         try {
-            let downloadUrl, displayName;
             e.preventDefault();
             if (file && file !== auth.currentUser?.photoURL) {
                 // downscale image
@@ -73,12 +72,23 @@ export default function General() {
                             canvas.toDataURL(),
                             "data_url"
                         );
-                        downloadUrl = await getDownloadURL(result.ref);
-                        setFile(downloadUrl);
+                        let photoURL = await getDownloadURL(result.ref);
+                        setFile(photoURL);
+
+                        setUserInfo((prev) => {
+                            let now = { ...prev };
+                            now.photoURL = photoURL;
+                            return now;
+                        });
+
+                        await updateProfile(auth.currentUser!, {
+                            photoURL,
+                        });
                         if (process.env.NODE_ENV !== "production") {
-                            console.log("photo changed!", downloadUrl);
+                            console.log("photo changed!", photoURL);
                         }
                     } catch (e) {
+                        setSnackbarMessage("error uploading image");
                         console.log(
                             `%c${JSON.stringify(e, null, 2)}`,
                             "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 1em;"
@@ -88,24 +98,23 @@ export default function General() {
                     image.remove();
                 };
             }
-            if (userInfo.name !== auth.currentUser?.displayName) {
-                displayName = userInfo.name;
-            }
 
-            if (downloadUrl || displayName) {
+            console.log(userInfo.photoURL, auth.currentUser.photoURL);
+
+            if (userInfo.name !== auth.currentUser?.displayName) {
                 await updateProfile(auth.currentUser!, {
-                    displayName,
-                    photoURL: downloadUrl,
+                    displayName: userInfo.name,
                 });
 
                 if (process.env.NODE_ENV !== "production") {
+                    console.log("hi", userInfo);
                     console.log(
-                        `%cnew name: ${displayName} and photo: ${downloadUrl}`,
+                        `%cnew name: ${userInfo.name} and photo: ${userInfo.photoURL}`,
                         "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 2em;"
                     );
                 }
             }
-            purifyUserInfo(setUserInfo, displayName, downloadUrl);
+            purifyUserInfo(setUserInfo);
             if (!isEqual(userInfoConst, userInfo)) {
                 console.log("not equal", userInfoConst, userInfo);
                 await setDoc(
@@ -126,6 +135,7 @@ ${JSON.stringify(e, null, 2)}`);
                 "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 1.2em;"
             );
         }
+        auth.currentUser.reload();
     };
     useEffect(() => {
         (async () => {
@@ -462,14 +472,12 @@ function AdornmentInput({
 }
 
 function purifyUserInfo(
-    setUserInfo: React.Dispatch<React.SetStateAction<Partial<UserType>>>,
-    name: string | undefined,
-    photoURL: string | undefined
+    setUserInfo: React.Dispatch<React.SetStateAction<Partial<UserType>>>
 ) {
     setUserInfo((prev) => {
         let n = prev;
-        n.name = name ? name : n.name;
-        n.photoURL = photoURL ? photoURL : n.photoURL;
+        n.name = n.name?.trim();
+        n.photoURL = n.photoURL?.trim();
         n.works = n.works?.filter((e) => e);
         n.studies = n.studies?.filter((e) => e);
 

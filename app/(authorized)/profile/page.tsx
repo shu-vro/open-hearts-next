@@ -6,27 +6,41 @@ import { Imbue } from "next/font/google";
 import { Avatar, Box, Typography } from "@mui/material";
 import { auth, firestoreDb } from "@/firebase";
 import { FaRegHandPointRight } from "react-icons/fa";
-import { DocumentData, doc, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { DATABASE_PATH } from "@/lib/variables";
+import { useSearchParams } from "next/navigation";
+import { UserType } from "@/app";
 
 const imbue = Imbue({
     subsets: ["latin"],
     display: "swap",
     weight: ["100", "600"],
 });
-// Meet [Name], a fantastic friend who's smart, compassionate, and full of life. They bring positivity wherever they go
 
-export default function Page(props) {
-    console.log(props);
-    const [userData, setUserData] = useState<DocumentData>();
+/**
+ * if url have a uid, then go to that uid.
+ * if it doesn't, show user's profile
+ * if url have a uid but it's not valid,
+ *      say sorry to user and request him to go back
+ */
+
+export default function Page() {
+    const searchParam = useSearchParams();
+    const [userData, setUserData] = useState<UserType>();
     useEffect(() => {
         (async () => {
             try {
-                if (!auth.currentUser) return;
+                let uid: string | null | undefined = auth.currentUser?.uid;
+                if (!auth.currentUser) {
+                    if (searchParam && searchParam.get("uid") !== null) {
+                        uid = searchParam.get("uid");
+                    }
+                    return;
+                }
                 const document = await getDoc(
-                    doc(firestoreDb, DATABASE_PATH.users, auth.currentUser.uid)
+                    doc(firestoreDb, DATABASE_PATH.users, uid || "")
                 );
-                setUserData(document.data());
+                setUserData(document.data() as UserType);
             } catch (e) {
                 console.log(
                     `%c${JSON.stringify(e, null, 2)}`,
@@ -76,23 +90,30 @@ export default function Page(props) {
                     </div>
                 </Box>
                 <Box className="ml-20 max-[811px]:ml-0">
-                    {Array(5)
+                    {userData?.email && (
+                        <ListItem key_="Email" value={userData.email} />
+                    )}
+                    {/* {Array(5)
                         .fill("")
                         .map((_, i) => (
-                            <Box
-                                className="list text-[2rem] flex justify-start items-center flex-row mb-4 px-2 group rounded-md max-sm:bg-white max-sm:bg-opacity-20"
+                            <ListItem
                                 key={i}
-                            >
-                                <FaRegHandPointRight className="group-hover:ml-4 max-[811px]:group-hover:ml-0 duration-500" />
-                                <b>Hometown: </b>
-                                <span className="ml-4">
-                                    Lorem ipsum, dolor sit amet consectetur
-                                    adipisicing elit.
-                                </span>
-                            </Box>
-                        ))}
+                                key_="hometown"
+                                value="Lorem ipsum dolor sit amet consectetur adipisicing elit."
+                            />
+                        ))} */}
                 </Box>
             </Box>
         </div>
+    );
+}
+
+function ListItem({ key_, value }: { key_: string; value: string }) {
+    return (
+        <Box className="list text-[2rem] flex justify-start items-center flex-row mb-4 px-2 group rounded-md max-sm:bg-white max-sm:bg-opacity-20">
+            <FaRegHandPointRight className="group-hover:ml-4 max-[811px]:group-hover:ml-0 duration-500" />
+            <b className="ml-3">{key_}: </b>
+            <span className="ml-4">{value}</span>
+        </Box>
     );
 }

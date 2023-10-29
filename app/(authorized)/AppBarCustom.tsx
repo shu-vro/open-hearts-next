@@ -17,7 +17,7 @@ import HoverWrapper from "./chats/HoverWrapper";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase";
 import { Avatar, Divider, ListItemIcon, ListItemText } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { PiChatsTeardropDuotone } from "react-icons/pi";
 import { HiOutlineCog6Tooth } from "react-icons/hi2";
 import { IoIosLogOut } from "react-icons/io";
@@ -25,7 +25,6 @@ import Link from "next/link";
 import { SITEMAP } from "@/lib/variables";
 
 export default function AppBarCustom() {
-    const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
@@ -103,7 +102,7 @@ export default function AppBarCustom() {
                 onClick={async () => {
                     try {
                         await signOut(auth);
-                        router.push(SITEMAP.login);
+                        redirect(SITEMAP.login);
                     } catch (e) {
                         console.warn(e);
                     }
