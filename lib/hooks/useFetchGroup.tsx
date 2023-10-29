@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { DATABASE_PATH, IGroupDetails } from "../variables";
+import { DATABASE_PATH } from "../variables";
+import { IGroupDetails } from "@/app";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
 

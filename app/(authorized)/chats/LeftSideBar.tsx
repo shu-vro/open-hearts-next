@@ -4,13 +4,11 @@ import { Avatar, Box, Typography } from "@mui/material";
 import HoverWrapper from "./HoverWrapper";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useEffect, useState } from "react";
 import { cn, repeat } from "@/lib/utils";
 import SpeedDialTooltip from "../all_messages/SpeedDialTooltip";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { auth, firestoreDb } from "@/firebase";
-import { DATABASE_PATH, IGroupDetails } from "@/lib/variables";
+import { IGroupDetails } from "@/app";
 import useFetchGroup from "@/lib/hooks/useFetchGroup";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
@@ -19,8 +17,8 @@ export function GroupList({ group }: { group: IGroupDetails }) {
     return (
         <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
             <Box
-                component="a"
-                href="#"
+                component={Link}
+                href={group.inviteLink}
                 className="grid p-2 text-inherit hover:no-underline"
                 sx={{
                     gridTemplateAreas: `

@@ -7,6 +7,7 @@ import Collapse from "@mui/material/Collapse";
 import { VscClose } from "react-icons/vsc";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
+import { computeSeverityMessage } from "@/lib/utils";
 
 type Props = {
     setMessage: React.Dispatch<React.SetStateAction<string>>;
@@ -68,7 +69,8 @@ export default function AlertBox({ message, setMessage, ...props }: Props) {
                         </IconButton>
                     }
                     sx={{ mb: 2, whiteSpace: "pre" }}
-                    severity="error"
+                    severity={computeSeverityMessage(message)}
+                    variant="filled"
                     {...props}
                 >
                     {message}

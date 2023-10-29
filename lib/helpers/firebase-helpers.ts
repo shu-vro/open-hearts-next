@@ -1,5 +1,6 @@
 import { firestoreDb, auth } from "@/firebase";
-import { DATABASE_PATH, IGroupDetails } from "@/lib/variables";
+import { DATABASE_PATH } from "@/lib/variables";
+import { IGroupDetails } from "@/app";
 import {
     collection,
     doc,
