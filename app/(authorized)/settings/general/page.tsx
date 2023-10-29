@@ -99,15 +99,12 @@ export default function General() {
                 };
             }
 
-            console.log(userInfo.photoURL, auth.currentUser.photoURL);
-
             if (userInfo.name !== auth.currentUser?.displayName) {
                 await updateProfile(auth.currentUser!, {
                     displayName: userInfo.name,
                 });
 
                 if (process.env.NODE_ENV !== "production") {
-                    console.log("hi", userInfo);
                     console.log(
                         `%cnew name: ${userInfo.name} and photo: ${userInfo.photoURL}`,
                         "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 2em;"

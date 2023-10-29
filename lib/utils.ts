@@ -93,6 +93,7 @@ export const DefaultUserConfig = {
 
 export const URL_REGEX =
     /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-]*))?)(?:\?[-\+=&;%@.\w_]*)?(?:#[-.\!\/\\\w]*)?/gi;
+export const MAIL_REGEX = /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm
 
 // add this method to all alertboxes. will be implemented in next issue.
 export function computeSeverityMessage(text: string): AlertColor {
