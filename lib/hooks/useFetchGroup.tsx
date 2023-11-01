@@ -10,7 +10,7 @@ export default function useFetchGroup() {
     useEffect(() => {
         const q = query(
             collection(firestoreDb, DATABASE_PATH.groupDetails),
-            where("groupMembers", "array-contains", auth.currentUser?.uid)
+            where("groupMembers", "array-contains", auth.currentUser?.uid || "")
         );
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             setGroups(

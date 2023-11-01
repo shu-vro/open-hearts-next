@@ -6,6 +6,8 @@ import ImagePreviewModal from "../ImagePreviewModal";
 import {
     Avatar,
     Box,
+    Button,
+    ButtonGroup,
     FilledInput,
     FormControl,
     IconButton,
@@ -28,7 +30,7 @@ import { cn, normalizeTimeFormat } from "@/lib/utils";
 type Props = {};
 
 export default function GroupInfo({}: Props) {
-    const [activeTab, setActiveTab] = useState(0);
+    const [activeTab, setActiveTab] = useState<0 | 1 | 2 | number>(0);
     const [swiper, setSwiper] = useState<SwiperType>();
     const [showImageModal, setShowImageModal] = useState("");
     const handleTabChange = (newValue: number) => {
@@ -106,32 +108,37 @@ export default function GroupInfo({}: Props) {
                         />
                     </FormControl>
                 </HoverWrapper>
-                <Box className="flex justify-between items-center my-1.5 mx-4 w-[calc(100%-2.5em)] flex-row">
-                    <GroupInfoTab
+                <ButtonGroup
+                    variant="outlined"
+                    aria-label="Group's sharing"
+                    fullWidth
+                    className="my-1.5 mx-4 w-[calc(100%-2.5em)] "
+                >
+                    <Button
                         onClick={() => {
                             handleTabChange(0);
                         }}
-                        selected={activeTab === 0}
+                        variant={activeTab === 0 ? "contained" : "outlined"}
                     >
                         Media
-                    </GroupInfoTab>
-                    <GroupInfoTab
+                    </Button>
+                    <Button
                         onClick={() => {
                             handleTabChange(1);
                         }}
-                        selected={activeTab === 1}
+                        variant={activeTab === 1 ? "contained" : "outlined"}
                     >
                         Links
-                    </GroupInfoTab>
-                    <GroupInfoTab
+                    </Button>
+                    <Button
                         onClick={() => {
                             handleTabChange(2);
                         }}
-                        selected={activeTab === 2}
+                        variant={activeTab === 2 ? "contained" : "outlined"}
                     >
                         Voice
-                    </GroupInfoTab>
-                </Box>
+                    </Button>
+                </ButtonGroup>
                 <Swiper
                     onSwiper={(swiper) => {
                         setSwiper(swiper);

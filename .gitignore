@@ -40,3 +40,6 @@ playground.ts
 **/*.Zone.Identifier
 **/tempCodeRunnerFile.js
 app/test/**
+
+# Database
+/firebaseBackup

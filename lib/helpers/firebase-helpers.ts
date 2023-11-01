@@ -48,7 +48,7 @@ export async function FirstTimeOpeningGroup(
                     where(
                         "groupMembers",
                         "array-contains",
-                        auth.currentUser.uid
+                        auth.currentUser.uid || ""
                     )
                 );
                 const snapshots = await getDocs(q);
@@ -65,6 +65,7 @@ export async function FirstTimeOpeningGroup(
                 id: groupId,
                 name: obj?.name || "",
                 groupMembers: [auth.currentUser.uid, ...(obj?.invited || [])],
+                inviteLink: `/chats/${groupId}`,
             } as IGroupDetails;
 
             await setDoc(
