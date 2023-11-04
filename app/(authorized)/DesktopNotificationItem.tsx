@@ -1,6 +1,6 @@
 import { Badge, IconButton, Popover, Typography } from "@mui/material";
 import { useState } from "react";
-import Notification from "./chats/notifications/Notification";
+import Notification from "./notifications/Notification";
 import { BsBell } from "react-icons/bs";
 
 export default function DesktopNotificationItem() {

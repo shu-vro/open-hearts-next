@@ -20,7 +20,7 @@ export enum SITEMAP {
     all_messages = `/all_messages`,
     call_page = "/chats/call",
     group_info = "/chats/group_info",
-    notifications = "/chats/notifications",
+    notifications = "/notifications",
 }
 
 const id = nanoid();

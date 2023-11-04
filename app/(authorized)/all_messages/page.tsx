@@ -15,14 +15,21 @@ export default function All_Messages() {
     const groups = useFetchGroup();
     const { push } = useRouter();
     const [searching, setSearching] = useState(false);
+    const [searchGroup, setSearchGroup] = useState(/.*/g);
 
     return (
         <div className="w-full flex justify-start items-start flex-col h-full">
-            <SearchGroup searching={searching} setSearching={setSearching} />
+            <SearchGroup
+                searching={searching}
+                setSearching={setSearching}
+                setSearchGroup={setSearchGroup}
+            />
             <div className="w-full overflow-y-auto h-full mt-3">
-                {groups.map((group, i) => (
-                    <GroupList key={group.id} group={group} />
-                ))}
+                {groups
+                    .filter((e) => e.name.search(searchGroup) > -1)
+                    .map((group) => (
+                        <GroupList key={group.id} group={group} />
+                    ))}
                 {!groups.length && <NoGroupBanner />}
             </div>
 

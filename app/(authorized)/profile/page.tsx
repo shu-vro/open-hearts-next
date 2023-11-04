@@ -66,7 +66,7 @@ export default function Page() {
                     <Box className="flex justify-start items-start flex-col">
                         <Avatar
                             src={userData?.photoURL || ""}
-                            alt="Shirshen Shuvro"
+                            alt={userData?.name || "User"}
                             className="w-full max-w-xs max-h-xs min-w-[300px] min-h-[300px] h-fit rounded-2xl"
                         />
                         <div>

@@ -5,7 +5,7 @@ export default async function Notifications() {
     const data: object[] = await response.json();
 
     return (
-        <div className="w-full h-full flex flex-col justify-start items-start gap-4 max-[668px]:gap-2">
+        <div className="w-full h-full flex flex-col justify-start items-start gap-4 max-[668px]:gap-2 overflow-y-auto">
             {data.map((e: any, i: number) => (
                 <Notification
                     name={e.slug}

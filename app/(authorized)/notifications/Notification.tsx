@@ -6,6 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { IconButton, useTheme } from "@mui/material";
 import { BsCheck2All } from "react-icons/bs";
 import { cn, repeat } from "@/lib/utils";
+import MuiLink from "@/app/MuiLink";
 
 type Props = {
     name: string;
@@ -34,7 +35,7 @@ export default function Notification({
         console.log("the notification is read");
     };
     return (
-        <a
+        <MuiLink
             href={url}
             className={cn(
                 "grid h-full mx-8 rounded-lg p-2 border-4 border-gray-400 dark:border-black border-solid first:mt-4 hover:no-underline",
@@ -54,7 +55,7 @@ export default function Notification({
                 'avatar ${repeat("info", 100)}'
                 '.    button   .  ${repeat("time", 98)}'`
                         : `'avatar info info info info info button'
-                        '.       .     .   .  time  time  time'`,
+                          '   .    .     .     .  time  time  time'`,
             }}
         >
             <Avatar
@@ -108,6 +109,6 @@ export default function Notification({
             >
                 {time}
             </span>
-        </a>
+        </MuiLink>
     );
 }

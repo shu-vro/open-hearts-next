@@ -2,22 +2,30 @@
 
 import useFetchGroup from "@/lib/hooks/useFetchGroup";
 import { GroupList } from "../all_messages/GroupList";
-import TopBarAllMessage from "../all_messages/TopBarAllMessage";
 import { useState } from "react";
 import SearchGroup from "../all_messages/SearchGroup";
+import { Box, Button, ButtonGroup } from "@mui/material";
+import { AlertDialog } from "../all_messages/AlertDialog";
 
 export default function LeftSideBar() {
     const groups = useFetchGroup();
     const [searching, setSearching] = useState(false);
+    const [searchGroup, setSearchGroup] = useState(/.*/g);
 
     return (
         <div className="w-1/4 max-[962px]:hidden flex justify-start items-start flex-col h-full relative">
             <TopBarAllMessage setSearching={setSearching} />
-            <SearchGroup searching={searching} setSearching={setSearching} />
+            <SearchGroup
+                searching={searching}
+                setSearching={setSearching}
+                setSearchGroup={setSearchGroup}
+            />
             <div className="w-full overflow-y-auto h-full mt-3">
-                {groups.map((group, i) => (
-                    <GroupList key={group.id} group={group} />
-                ))}
+                {groups
+                    .filter((e) => e.name.search(searchGroup) > -1)
+                    .map((group) => (
+                        <GroupList key={group.id} group={group} />
+                    ))}
                 {!groups.length && <NoGroupBanner />}
             </div>
         </div>
@@ -34,5 +42,41 @@ export function NoGroupBanner() {
                 Groups you are added will appear here
             </span>
         </div>
+    );
+}
+function TopBarAllMessage({
+    setSearching,
+}: {
+    setSearching: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+    const [openCreateGroupDialog, setOpenCreateGroupDialog] = useState(false);
+
+    return (
+        <Box position="sticky" className="top-0 w-full mx-0">
+            <ButtonGroup
+                variant="outlined"
+                aria-label="outlined primary button group"
+                fullWidth
+            >
+                <Button
+                    onClick={() => {
+                        setOpenCreateGroupDialog(true);
+                    }}
+                >
+                    Create Group
+                </Button>
+                <Button
+                    onClick={() => {
+                        setSearching((prev) => !prev);
+                    }}
+                >
+                    Search
+                </Button>
+            </ButtonGroup>
+            <AlertDialog
+                open={openCreateGroupDialog}
+                setOpen={setOpenCreateGroupDialog}
+            />
+        </Box>
     );
 }

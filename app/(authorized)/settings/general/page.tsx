@@ -80,6 +80,14 @@ export default function General() {
                             now.photoURL = photoURL;
                             return now;
                         });
+                        await setDoc(
+                            doc(
+                                firestoreDb,
+                                DATABASE_PATH.users,
+                                auth.currentUser?.uid!
+                            ),
+                            { ...userInfo, photoURL }
+                        );
 
                         await updateProfile(auth.currentUser!, {
                             photoURL,
