@@ -2,7 +2,7 @@
 
 import { cn, repeat } from "@/lib/utils";
 import { Avatar, Box, Typography } from "@mui/material";
-import HoverWrapper from "../HoverWrapper";
+import HoverWrapper from "../../HoverWrapper";
 import { OgObject } from "open-graph-scraper/dist/lib/types";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";

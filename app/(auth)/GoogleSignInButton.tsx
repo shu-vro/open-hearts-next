@@ -34,11 +34,7 @@ export default function GoogleSignInButton({
                         `User ${user?.displayName} created successfully`
                     );
                     setSubmitted(false);
-                    return push(
-                        localStorage.deviceType === "desktop"
-                            ? SITEMAP.chats
-                            : SITEMAP.all_messages
-                    );
+                    return push(SITEMAP.chats);
                 } catch (e) {
                     console.log(
                         `%c${JSON.stringify(e, null, 2)}`,

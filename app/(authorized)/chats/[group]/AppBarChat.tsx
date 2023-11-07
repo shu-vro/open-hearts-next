@@ -1,5 +1,6 @@
 "use client";
 
+import { useGroup } from "@/contexts/GroupContext";
 import { SITEMAP } from "@/lib/variables";
 import {
     AppBar,
@@ -16,6 +17,7 @@ import { BsCameraVideo, BsInfoLg, BsTelephone } from "react-icons/bs";
 import { GrUnorderedList } from "react-icons/gr";
 
 export default function AppBarChat() {
+    const { group } = useGroup();
     const matches_535 = useMediaQuery("(max-width: 535px)");
     return (
         <AppBar
@@ -34,13 +36,13 @@ export default function AppBarChat() {
                     noWrap
                     className="grow text-2xl max-[535px]:text-xl capitalize font-semibold ml-3"
                 >
-                    My name
+                    {group?.name || "Group Name here"}
                 </Typography>
                 <Tooltip title="List Chats">
                     <IconButton
                         className="hidden max-[962px]:flex"
                         LinkComponent={Link}
-                        href={SITEMAP.all_messages}
+                        href={SITEMAP.chats}
                         sx={{
                             display: {
                                 "962px": "none",

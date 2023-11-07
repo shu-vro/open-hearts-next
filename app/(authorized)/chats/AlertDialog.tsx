@@ -21,7 +21,7 @@ export function AlertDialog({
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
     const [name, setName] = useState("");
-    const [value, setValue] = useState<string[]>([]);
+    const [value, setValue] = useState<UserType[]>([]);
     const [allUsers, setAllUsers] = useState<UserType[]>([]);
     const { setGroup } = useGroup();
 
@@ -58,7 +58,13 @@ export function AlertDialog({
                 try {
                     const groupDetails = await FirstTimeOpeningGroup(false, {
                         name,
-                        invited: value,
+                        invited: value.map((el) => ({
+                            id: el.uid,
+                            nickname: el.name,
+                            addedBy:
+                                auth.currentUser?.uid ||
+                                "creator of this group",
+                        })),
                     });
                     if (groupDetails) {
                         setGroup(groupDetails);
@@ -81,13 +87,12 @@ export function AlertDialog({
                     }}
                 />
                 <Autocomplete
-                    // value={value}
-                    // onChange={(event: any, newValue: string[]) => {
-                    //     setValue(newValue);
-                    //     console.log(newValue);
-                    // }}
+                    value={value}
+                    onChange={(event: any, newValue: UserType[]) => {
+                        setValue(newValue);
+                        console.log(newValue);
+                    }}
                     className="w-[500px] max-w-full mt-4"
-                    // options={["shuvro", "shirshen", "purabi", "taposh"]}
                     options={allUsers}
                     groupBy={(option) => option.name[0]}
                     multiple
@@ -99,6 +104,7 @@ export function AlertDialog({
                     getOptionLabel={(option) => option.name}
                     renderOption={(props, option, { selected }) => (
                         <Box
+                            key={option.uid}
                             component="li"
                             sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
                             {...props}

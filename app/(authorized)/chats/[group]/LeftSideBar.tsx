@@ -1,14 +1,14 @@
 "use client";
 
-import useFetchGroup from "@/lib/hooks/useFetchGroup";
-import { GroupList } from "../all_messages/GroupList";
+import useFetchGroups from "@/lib/hooks/useFetchGroups";
+import { GroupList } from "../GroupList";
 import { useState } from "react";
-import SearchGroup from "../all_messages/SearchGroup";
+import SearchGroup from "../SearchGroup";
 import { Box, Button, ButtonGroup } from "@mui/material";
-import { AlertDialog } from "../all_messages/AlertDialog";
+import { AlertDialog } from "../AlertDialog";
 
 export default function LeftSideBar() {
-    const groups = useFetchGroup();
+    const groups = useFetchGroups();
     const [searching, setSearching] = useState(false);
     const [searchGroup, setSearchGroup] = useState(/.*/g);
 
@@ -44,6 +44,7 @@ export function NoGroupBanner() {
         </div>
     );
 }
+
 function TopBarAllMessage({
     setSearching,
 }: {

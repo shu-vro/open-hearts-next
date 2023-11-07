@@ -4,7 +4,7 @@ import { IGroupDetails } from "@/app";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
 
-export default function useFetchGroup() {
+export default function useFetchGroups() {
     const [groups, setGroups] = useState<IGroupDetails[]>([]);
 
     useEffect(() => {

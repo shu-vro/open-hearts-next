@@ -50,19 +50,20 @@ export interface UserType {
     status: STATUS.active;
 }
 
-type KEY = string;
+type TGroupMembersBasicDetails = Partial<{
+    id: string;
+    addedBy: string;
+    nickname: string;
+}>;
 
 export interface IGroupDetails {
-    id: KEY;
+    id: string;
     name: string;
     emoji: string;
     inviteLink: string;
-    groupMembers: (KEY | unknown)[];
+    groupMembers: string[];
     lastMessage: string;
     lastMessageSentBy: string;
     lastMessageSentTime: number;
-    nickname: Partial<{
-        id: string;
-        nickname: string;
-    }>;
+    groupMembersBasicDetails: TGroupMembersBasicDetails[];
 }

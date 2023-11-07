@@ -16,7 +16,6 @@ import { RxAccessibility, RxCross1 } from "react-icons/rx";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useState } from "react";
-import HoverWrapper from "../chats/HoverWrapper";
 
 const drawerWidth = 240;
 

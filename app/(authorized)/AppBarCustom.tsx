@@ -13,7 +13,7 @@ import { BsCardList, BsSun, BsThreeDotsVertical } from "react-icons/bs";
 import MobileNotificationItem from "./MobileNotificationItem";
 import DesktopNotificationItem from "./DesktopNotificationItem";
 import { useColorMode } from "@/contexts/ColorModeContext";
-import HoverWrapper from "./chats/HoverWrapper";
+import HoverWrapper from "./HoverWrapper";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase";
 import {
@@ -238,18 +238,7 @@ function RenderMenu({
                 <ListItemIcon>
                     <PiChatsTeardropDuotone />
                 </ListItemIcon>
-                <ListItemText>Chat</ListItemText>
-            </MenuItem>
-            <Divider />
-            <MenuItem
-                onClick={handleMenuClose}
-                component={Link}
-                href={SITEMAP.all_messages}
-            >
-                <ListItemIcon>
-                    <PiChatsTeardropDuotone />
-                </ListItemIcon>
-                <ListItemText>All Messages</ListItemText>
+                <ListItemText>Chats</ListItemText>
             </MenuItem>
             <Divider />
             <MenuItem

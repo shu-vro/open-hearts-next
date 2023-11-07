@@ -17,7 +17,6 @@ export enum SITEMAP {
     accessibility_settings = "/settings/accessibility",
     email_settings = "/settings/email",
     password_settings = "/settings/password",
-    all_messages = `/all_messages`,
     call_page = "/chats/call",
     group_info = "/chats/group_info",
     notifications = "/notifications",
@@ -31,8 +30,8 @@ export const DEFAULT_GROUP_DETAILS = Object.freeze({
     emoji: "1f44d",
     inviteLink: `/chats/${id}`,
     groupMembers: [],
+    groupMembersBasicDetails: [],
     lastMessage: "You joined this chat",
     lastMessageSentBy: "You",
-    nickname: {},
     lastMessageSentTime: Date.now(),
 } as IGroupDetails);

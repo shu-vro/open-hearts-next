@@ -32,9 +32,7 @@ export default function Login() {
                 return router.push(SITEMAP.verify_email);
             }
             return router.push(
-                localStorage.deviceType === "desktop"
-                    ? SITEMAP.chats
-                    : SITEMAP.all_messages
+                SITEMAP.chats
             );
         } catch (e: unknown) {
             setMessage(e as string);

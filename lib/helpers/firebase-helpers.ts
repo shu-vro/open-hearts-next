@@ -6,6 +6,7 @@ import {
     doc,
     getDoc,
     getDocs,
+    limitToLast,
     query,
     setDoc,
     where,
@@ -17,7 +18,7 @@ import { nanoid } from "nanoid";
  * This function creates a group if there is no groupId, or
  * gets a groupDetails if searchParams have one. (done in groupContext.tsx file).
  * It takes another optional parameter `redirectToAnotherGroupIdIfDoes_notExist`
- * this parameter will deside what if the `searchParam.get("groupId")` is wrong,
+ * this parameter will decide what if the `searchParam.get("groupId")` is wrong,
  * will it leave it as it is (undefined) or redirect to another groupId.
  * @param {string | undefined} groupId string or undefined
  * @param {boolean | undefined} redirectToAnotherGroupIdIfDoes_notExist boolean or undefined
@@ -27,13 +28,13 @@ export async function FirstTimeOpeningGroup(
     redirectToAnotherGroupIdIfDoes_notExist?: boolean,
     obj?: {
         name: string;
-        invited: string[];
+        invited: IGroupDetails["groupMembersBasicDetails"];
     },
     groupId?: string
 ) {
     try {
         if (!auth.currentUser) throw new Error("Not authenticated");
-        if (!!groupId) {
+        if (typeof groupId === "string") {
             const docRef = doc(
                 firestoreDb,
                 DATABASE_PATH.groupDetails,
@@ -49,7 +50,8 @@ export async function FirstTimeOpeningGroup(
                         "groupMembers",
                         "array-contains",
                         auth.currentUser.uid || ""
-                    )
+                    ),
+                    limitToLast(1)
                 );
                 const snapshots = await getDocs(q);
                 if (!snapshots.empty) {
@@ -64,7 +66,18 @@ export async function FirstTimeOpeningGroup(
                 ...DEFAULT_GROUP_DETAILS,
                 id: groupId,
                 name: obj?.name || "",
-                groupMembers: [auth.currentUser.uid, ...(obj?.invited || [])],
+                groupMembers: [
+                    auth.currentUser.uid,
+                    ...(obj?.invited.map((e) => e.id) || []),
+                ],
+                groupMembersBasicDetails: [
+                    {
+                        id: auth.currentUser.uid,
+                        addedBy: "group created by you",
+                        nickname: auth.currentUser.displayName,
+                    },
+                    ...(obj?.invited || []),
+                ],
                 inviteLink: `/chats/${groupId}`,
             } as IGroupDetails;
 

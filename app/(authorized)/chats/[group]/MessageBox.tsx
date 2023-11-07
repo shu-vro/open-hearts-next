@@ -16,7 +16,7 @@ import GetEmojiLink from "./GetEmojiLink";
 import ReplyBox from "./ReplyBox";
 import { Props, NativeHoverWrapper } from "./Message";
 import { OgObject } from "open-graph-scraper/dist/lib/types";
-import HoverWrapper from "./HoverWrapper";
+import HoverWrapper from "../../HoverWrapper";
 import { sanitize } from "isomorphic-dompurify";
 import { URL_REGEX } from "@/lib/utils";
 

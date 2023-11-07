@@ -23,11 +23,7 @@ export default function VerifyEmail() {
     }, []);
 
     if (emailVerified) {
-        router.push(
-            localStorage.deviceType === "desktop"
-                ? SITEMAP.chats
-                : SITEMAP.all_messages
-        );
+        router.push(SITEMAP.chats);
         return <>Email verified. redirecting to chats.</>;
     }
     return verificationEmailSent ? (
@@ -44,12 +40,7 @@ export default function VerifyEmail() {
             <h3>Verify your email by clicking the button below</h3>
             <VerifyButton
                 setVerificationEmailSent={setVerificationEmailSent}
-                redirectTo={
-                    sp?.get("redirectTo") ||
-                    localStorage.deviceType === "desktop"
-                        ? SITEMAP.chats
-                        : SITEMAP.all_messages
-                }
+                redirectTo={sp?.get("redirectTo") || SITEMAP.chats}
             />
             <i>or</i>
             <Logout />

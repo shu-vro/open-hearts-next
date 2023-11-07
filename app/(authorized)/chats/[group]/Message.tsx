@@ -18,7 +18,7 @@ import "swiper/css/scrollbar";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { useMessage, defaultMessage } from "@/contexts/MessageContext";
 import { MessageType, TypesOfMessage } from "@/app";
-import HoverWrapper, { HoverWrapperProps } from "./HoverWrapper";
+import HoverWrapper, { HoverWrapperProps } from "../../HoverWrapper";
 import GetEmojiLink from "./GetEmojiLink";
 import DeletedMessageBox from "./DeletedMessageBox";
 import { MessageBox } from "./MessageBox";
