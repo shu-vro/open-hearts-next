@@ -2,6 +2,7 @@
 import { auth } from "@/firebase";
 import { sendEmailVerification } from "firebase/auth";
 import { Button } from "@mui/material";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
 
 type Props = {
     setVerificationEmailSent: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,6 +15,7 @@ export default function VerifyButton({
     redirectTo = "/chats",
     setVerificationEmailSent,
 }: Props) {
+    const { setMessage } = useToastAlert();
     return (
         <Button
             type="button"
@@ -26,8 +28,8 @@ export default function VerifyButton({
                     setVerificationEmailSent(true);
                 } catch (error: any) {
                     console.warn(error);
-                    alert(
-                        "there was an error sending verify email: " +
+                    setMessage(
+                        "Error: there was an error sending verify email: " +
                             error.message
                     );
                 }

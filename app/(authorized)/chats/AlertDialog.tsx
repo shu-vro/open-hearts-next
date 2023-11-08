@@ -7,11 +7,12 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { FirstTimeOpeningGroup } from "@/lib/helpers/firebase-helpers";
-import { useGroup } from "@/contexts/GroupContext";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
 import { UserType } from "@/app";
+import { useRouter } from "next/navigation";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
 
 export function AlertDialog({
     open,
@@ -20,10 +21,11 @@ export function AlertDialog({
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+    const { setMessage } = useToastAlert();
     const [name, setName] = useState("");
     const [value, setValue] = useState<UserType[]>([]);
     const [allUsers, setAllUsers] = useState<UserType[]>([]);
-    const { setGroup } = useGroup();
+    const router = useRouter();
 
     const handleClose = () => {
         setOpen(false);
@@ -66,12 +68,13 @@ export function AlertDialog({
                                 "creator of this group",
                         })),
                     });
+                    handleClose();
                     if (groupDetails) {
-                        setGroup(groupDetails);
-                        handleClose();
+                        router.push(`/chats/${groupDetails.id}`);
                     }
                 } catch (e) {
-                    alert("Error! \ncheck console");
+                    setMessage("Error! \ncheck console");
+                    console.log(e);
                 }
             }}
         >
@@ -90,7 +93,6 @@ export function AlertDialog({
                     value={value}
                     onChange={(event: any, newValue: UserType[]) => {
                         setValue(newValue);
-                        console.log(newValue);
                     }}
                     className="w-[500px] max-w-full mt-4"
                     options={allUsers}

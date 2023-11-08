@@ -7,7 +7,6 @@ import RightSideBar from "./RightSideBar";
 import MessageContext from "@/contexts/MessageContext";
 import { MessageType } from "@/app";
 import AppBarChat from "./AppBarChat";
-import GroupContext from "@/contexts/GroupContext";
 import useGetGroup from "@/lib/hooks/useGetGroup";
 
 export default function Chats({ params }: { params: { group: string } }) {
@@ -59,7 +58,7 @@ export default function Chats({ params }: { params: { group: string } }) {
 
     return (
         <div className="w-full grow flex flex-row h-[calc(100%-4rem)]">
-            <Wrapper>
+            <MessageContext>
                 <>
                     <LeftSideBar />
                     <main className="grow w-1/2 flex justify-start items-start flex-col h-full">
@@ -134,15 +133,7 @@ export default function Chats({ params }: { params: { group: string } }) {
                     </main>
                     <RightSideBar />
                 </>
-            </Wrapper>
+            </MessageContext>
         </div>
-    );
-}
-
-function Wrapper({ children }: { children: React.ReactElement }) {
-    return (
-        <GroupContext>
-            <MessageContext>{children}</MessageContext>
-        </GroupContext>
     );
 }

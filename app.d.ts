@@ -50,20 +50,26 @@ export interface UserType {
     status: STATUS.active;
 }
 
-type TGroupMembersBasicDetails = Partial<{
+export type TGroupMembersBasicDetails = Partial<{
     id: string;
     addedBy: string;
     nickname: string;
 }>;
+
+type TLastMessage<T> = {
+    message: string;
+    sentTime: number;
+    by: T;
+    seenBy: T[];
+};
 
 export interface IGroupDetails {
     id: string;
     name: string;
     emoji: string;
     inviteLink: string;
-    groupMembers: string[];
-    lastMessage: string;
-    lastMessageSentBy: string;
-    lastMessageSentTime: number;
+    groupMembers: IGroupDetails["id"][];
+    lastMessage: TLastMessage<IGroupDetails["id"]>;
     groupMembersBasicDetails: TGroupMembersBasicDetails[];
+    photoURL: string;
 }

@@ -5,6 +5,8 @@ import TransitionEffect from "./TransitionEffects";
 import { ColorModeContext } from "@/contexts/ColorModeContext";
 import ConfigComponent from "./ConfigComponent";
 import { AuthContextProvider } from "@/contexts/AuthContext";
+import AuthorizedAlert from "./ToastAlert";
+import ToastAlertContext from "@/contexts/ToastAlertContext";
 
 const font = Montserrat({ subsets: ["latin"] });
 
@@ -29,14 +31,15 @@ export default function RootLayout({
         <html lang="en" className="doodle">
             <body className={font.className}>
                 <ColorModeContext>
-                    <>
+                    <ToastAlertContext>
                         <ConfigComponent />
                         <TransitionEffect>
                             <AuthContextProvider>
                                 {children}
+                                <AuthorizedAlert />
                             </AuthContextProvider>
                         </TransitionEffect>
-                    </>
+                    </ToastAlertContext>
                 </ColorModeContext>
             </body>
         </html>

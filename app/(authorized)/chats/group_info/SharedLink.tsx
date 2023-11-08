@@ -50,7 +50,7 @@ export default function SharedLink({ link }: { link: string }) {
                     const { favicon, ogTitle, ogDescription } = json.data;
 
                     setPreview(
-                        <Box className="flex flex-row justify-start items-center w-full">
+                        <Box className="flex gap-x-3 flex-row justify-start items-center w-full">
                             {favicon && (
                                 <img
                                     src={favicon}

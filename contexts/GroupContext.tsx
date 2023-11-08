@@ -16,7 +16,7 @@ export function useGroup() {
 export default function GroupContext({
     children,
 }: {
-    children: React.ReactElement;
+    children: React.ReactNode;
 }) {
     const [group, setGroup] = useState<UseGroupProp["group"]>(null);
     return (

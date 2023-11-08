@@ -73,7 +73,7 @@ export async function FirstTimeOpeningGroup(
                 groupMembersBasicDetails: [
                     {
                         id: auth.currentUser.uid,
-                        addedBy: "group created by you",
+                        addedBy: "owner",
                         nickname: auth.currentUser.displayName,
                     },
                     ...(obj?.invited || []),
@@ -94,5 +94,21 @@ export async function FirstTimeOpeningGroup(
     } catch (error) {
         console.warn(error);
         return alert("there was an error on testing file");
+    }
+}
+
+export async function changeGroupInformation(
+    groupId: string,
+    obj: Partial<IGroupDetails>
+) {
+    try {
+        await setDoc(
+            doc(firestoreDb, DATABASE_PATH.groupDetails, groupId),
+            obj,
+            { merge: true }
+        );
+    } catch (e) {
+        alert("error\nCheck console");
+        console.log(e);
     }
 }

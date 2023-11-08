@@ -24,12 +24,11 @@ import HoverWrapper from "../../HoverWrapper";
 import { LuCopy } from "react-icons/lu";
 import SharedLink from "./SharedLink";
 import { Swiper as SwiperType } from "swiper/types";
-import EmojiPicker, {
-    EmojiStyle,
-    Theme,
-    EmojiClickData,
-} from "emoji-picker-react";
 import { VoiceMessage, Accordion, AccordionSummary } from "./GroupInfoHelpers";
+import { useGroup } from "@/contexts/GroupContext";
+import { MemberTile } from "./MemberTile";
+import { EditMemberTile } from "./EditMemberTile";
+import ChangeGroupEmoji from "./ChangeGroupEmoji";
 
 type Props = {};
 
@@ -43,10 +42,7 @@ export default function GroupInfo({}: Props) {
             swiper.slideTo(newValue);
         }
     };
-    const groupURL = "https://localhost:3000/chats/123456789";
-    const {
-        palette: { mode: themeMode },
-    } = useTheme();
+    const { group } = useGroup();
 
     let imageLink = [
         "https://images.unsplash.com/photo-1668162692136-9c490f102de2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1926&q=80",
@@ -76,12 +72,12 @@ export default function GroupInfo({}: Props) {
         <>
             <Box className="w-full overflow-y-auto h-full">
                 <Avatar
-                    src=""
+                    src={group?.photoURL || ""}
                     alt="Some Avatar"
                     className="mx-auto mt-6 w-24 h-24"
                 />
                 <Typography variant="h5" align="center" className="my-2">
-                    Shirshen Shuvro
+                    {group?.name || "Group name"}
                 </Typography>
                 <HoverWrapper className="mx-4 w-[calc(100%-2.1rem)]">
                     <FormControl variant="filled" fullWidth>
@@ -92,7 +88,11 @@ export default function GroupInfo({}: Props) {
                             Group Link
                         </InputLabel>
                         <FilledInput
-                            value={groupURL}
+                            value={
+                                !!location
+                                    ? location.origin + group?.inviteLink
+                                    : group?.inviteLink
+                            }
                             disabled
                             fullWidth
                             endAdornment={
@@ -102,7 +102,12 @@ export default function GroupInfo({}: Props) {
                                             aria-label="toggle password visibility"
                                             onClick={() => {
                                                 navigator.clipboard.writeText(
-                                                    groupURL
+                                                    !!location
+                                                        ? location.origin +
+                                                              (group?.inviteLink ||
+                                                                  "")
+                                                        : group?.inviteLink ||
+                                                              ""
                                                 );
                                             }}
                                             edge="end"
@@ -121,28 +126,24 @@ export default function GroupInfo({}: Props) {
                 <Accordion className="mt-4">
                     <AccordionSummary>Change Group Emoji</AccordionSummary>
                     <AccordionDetails>
-                        <EmojiPicker
-                            onEmojiClick={(
-                                emojiData: EmojiClickData,
-                                event: MouseEvent
-                            ) => {
-                                console.log(emojiData);
-                            }}
-                            autoFocusSearch={false}
-                            theme={themeMode as Theme}
-                            searchPlaceHolder="Filter "
-                            emojiStyle={EmojiStyle.FACEBOOK}
-                            width={"100%"}
-                        />
+                        <ChangeGroupEmoji />
                     </AccordionDetails>
                 </Accordion>
                 <Accordion>
                     <AccordionSummary>See Members</AccordionSummary>
-                    <AccordionDetails></AccordionDetails>
+                    <AccordionDetails>
+                        {group?.groupMembersBasicDetails.map((member) => (
+                            <MemberTile member={member} key={member.id} />
+                        ))}
+                    </AccordionDetails>
                 </Accordion>
                 <Accordion>
                     <AccordionSummary>Nicknames</AccordionSummary>
-                    <AccordionDetails></AccordionDetails>
+                    <AccordionDetails>
+                        {group?.groupMembersBasicDetails.map((member) => (
+                            <EditMemberTile member={member} key={member.id} />
+                        ))}
+                    </AccordionDetails>
                 </Accordion>
                 <Accordion>
                     <AccordionSummary>
@@ -240,7 +241,7 @@ export default function GroupInfo({}: Props) {
                                         .map((_, i) => {
                                             return (
                                                 <SharedLink
-                                                    link="https://youtube.com/"
+                                                    link="https://facebook.com/"
                                                     key={i}
                                                 />
                                             );

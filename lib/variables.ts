@@ -31,7 +31,12 @@ export const DEFAULT_GROUP_DETAILS = Object.freeze({
     inviteLink: `/chats/${id}`,
     groupMembers: [],
     groupMembersBasicDetails: [],
-    lastMessage: "You joined this chat",
-    lastMessageSentBy: "You",
-    lastMessageSentTime: Date.now(),
+    photoURL:
+        "https://img.fixthephoto.com/blog/images/gallery/news_preview_mob_image__preview_404.jpg",
+    lastMessage: {
+        message: "You joined this chat",
+        by: "You",
+        sentTime: Date.now(),
+        seenBy: [],
+    },
 } as IGroupDetails);

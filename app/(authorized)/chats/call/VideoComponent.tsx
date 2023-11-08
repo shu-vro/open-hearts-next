@@ -11,6 +11,7 @@ import VideoCallDrawer from "./VideoCallDrawer";
 import { type Peer } from "peerjs";
 import { Toolbar } from "@mui/material";
 import { useSocket } from "@/contexts/SocketContext";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
 
 const drawerWidth = 320;
 
@@ -44,6 +45,7 @@ function VideoElement({ srcObject, ...rest }: VideoElementProps) {
 }
 
 export default function VideoComponent() {
+    const { setMessage } = useToastAlert();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [peer, setPeer] = useState<Peer>();
     const [Videos, setVideos] = useState<{
@@ -164,7 +166,7 @@ export default function VideoComponent() {
                     return { ...prev };
                 });
             })
-            .catch(alert);
+            .catch(setMessage);
 
         return () => {
             if (mediaStream) {

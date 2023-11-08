@@ -18,12 +18,10 @@ export default function MessageForm() {
 
     const { message, setMessage, replyMessage } = useMessage();
     const form = useRef<HTMLFormElement>(null);
-    const emojiUnified = "1f44d";
     return (
         <form
             onSubmit={async (e) => {
                 e.preventDefault();
-                // await setDoc
                 setMessage(() => defaultMessage);
             }}
             ref={form}
@@ -70,7 +68,10 @@ export default function MessageForm() {
                     type="button"
                     onClick={() => {
                         setMessage(() => {
-                            return { ...defaultMessage, emoji: emojiUnified };
+                            return {
+                                ...defaultMessage,
+                                emoji: group?.emoji || "1f44d",
+                            };
                         });
                         setTimeout(() => {
                             form.current?.dispatchEvent(
@@ -81,7 +82,7 @@ export default function MessageForm() {
                         }, 100);
                     }}
                 >
-                    <GetEmojiLink unified={emojiUnified} size={28} />
+                    <GetEmojiLink unified={group?.emoji || "1f44d"} size={28} />
                 </IconButton>
             ) : (
                 <IconButton size="large" type="submit">

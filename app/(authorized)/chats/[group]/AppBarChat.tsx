@@ -28,7 +28,7 @@ export default function AppBarChat() {
         >
             <Toolbar>
                 <Avatar
-                    src="https://mui.com/static/images/avatar/3.jpg"
+                    src={group?.photoURL}
                     alt="avatar"
                     sx={{ width: 56, height: 56 }}
                 />

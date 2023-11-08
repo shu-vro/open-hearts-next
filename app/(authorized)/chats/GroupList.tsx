@@ -6,6 +6,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { cn, repeat } from "@/lib/utils";
 import { IGroupDetails } from "@/app";
 import Link from "next/link";
+import { auth } from "@/firebase";
 
 dayjs.extend(relativeTime);
 
@@ -50,16 +51,21 @@ export function GroupList({ group }: { group: IGroupDetails }) {
                         gridArea: "time",
                     }}
                 >
-                    {dayjs(group.lastMessageSentTime).fromNow()}
+                    {dayjs(group.lastMessage.sentTime).fromNow()}
                 </Typography>
                 <Typography
                     noWrap
                     variant="subtitle2"
                     sx={{
+                        opacity: group.lastMessage.seenBy.includes(
+                            auth.currentUser?.uid!
+                        )
+                            ? 0.7
+                            : 1,
                         gridArea: "message",
                     }}
                 >
-                    {group.lastMessage}
+                    {group.lastMessage.by}: {group.lastMessage.message}
                 </Typography>
             </Box>
         </HoverWrapper>
