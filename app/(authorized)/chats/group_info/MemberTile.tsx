@@ -24,7 +24,6 @@ export function MemberTile({ member }: { member: TGroupMembersBasicDetails }) {
             let user = await getDoc(q);
             if (user.exists()) {
                 setUser(user.data() as UserType);
-                console.log(user.data());
             }
         })();
     }, []);

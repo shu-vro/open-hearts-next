@@ -4,6 +4,7 @@ import { nanoid } from "nanoid";
 export enum DATABASE_PATH {
     users = "users",
     groupDetails = "groupDetails",
+    messages = "messages",
 }
 
 export enum SITEMAP {

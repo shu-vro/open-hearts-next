@@ -36,9 +36,9 @@ export function NoGroupBanner() {
     return (
         <div className="w-full h-full flex justify-center items-center flex-col">
             <div className="text-[max(3vw,3vh)] text-center">
-                ¯\_( ͡° ͜ʖ ͡°)_/¯ T
+                ¯\_( ͡° ͜ʖ ͡°)_/¯
             </div>
-            <span className="text-center capitalize">
+            <span className="text-center capitalize mt-3">
                 Groups you are added will appear here
             </span>
         </div>

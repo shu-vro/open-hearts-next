@@ -1,5 +1,6 @@
 import "@mui/material/styles";
 import { STATUS } from "@/types/app";
+import { FieldValue } from "firebase/firestore";
 
 // declare module "adapterjs" {}
 
@@ -27,6 +28,8 @@ declare type MessageType = {
     reactions: {
         [x: string]: number;
     };
+    created_at: FieldValue;
+    sender_id: string;
 };
 
 declare interface IReplyMessage {

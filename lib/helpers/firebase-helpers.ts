@@ -112,3 +112,33 @@ export async function changeGroupInformation(
         console.log(e);
     }
 }
+
+/**
+ * Both creates and sets group.
+ * @param groupId
+ * @param obj
+ * @param chatId
+ */
+export async function setChatMessage(
+    groupId: string,
+    obj: Partial<IGroupDetails>,
+    chatId: string | null = null
+) {
+    const id = nanoid();
+    try {
+        await setDoc(
+            doc(
+                firestoreDb,
+                DATABASE_PATH.groupDetails,
+                groupId,
+                "messages",
+                chatId || id
+            ),
+            obj,
+            { merge: true }
+        );
+    } catch (e) {
+        alert("error\nCheck console");
+        console.log(e);
+    }
+}

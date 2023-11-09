@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import Avatar from "@mui/material/Avatar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineMessage, AiOutlinePlus } from "react-icons/ai";
 import { Chip, IconButton, Popover, useTheme } from "@mui/material";
 import EmojiPicker, {
@@ -17,18 +17,21 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { useMessage, defaultMessage } from "@/contexts/MessageContext";
-import { MessageType, TypesOfMessage } from "@/app";
+import { MessageType, TypesOfMessage, UserType } from "@/app";
 import HoverWrapper, { HoverWrapperProps } from "../../HoverWrapper";
 import GetEmojiLink from "./GetEmojiLink";
 import DeletedMessageBox from "./DeletedMessageBox";
 import { MessageBox } from "./MessageBox";
+import { useGroup } from "@/contexts/GroupContext";
+import { collection, doc, getDoc } from "firebase/firestore";
+import { firestoreDb } from "@/firebase";
+import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 
 export type Props = {
     by: "me" | "him";
     type?: TypesOfMessage;
     msg: MessageType;
     time: number;
-    avatarURL: string;
     metadata: null; // for now.
 };
 
@@ -56,17 +59,30 @@ export default function Message({
     by,
     type = "text",
     msg,
-    avatarURL,
     time,
     metadata, // contains user information (ALPHA)
 }: Props) {
+    const { group } = useGroup();
     const [anchorElForMessagesPopover, setAnchorElForMessagesPopover] =
         useState<null | HTMLElement>(null);
     const [selectedEmoji, setSelectedEmoji] = useState("");
+    const [user, setUser] = useState<UserType | null>(null);
     const {
         palette: { mode: themeMode },
     } = useTheme();
     const { setReplyMessage, setMessage } = useMessage();
+    useEffect(() => {
+        (async () => {
+            let q = doc(
+                collection(firestoreDb, DATABASE_PATH.users),
+                msg.sender_id
+            );
+            let user = await getDoc(q);
+            if (user.exists()) {
+                setUser(user.data() as UserType);
+            }
+        })();
+    }, []);
     return (
         <div
             className={cn(
@@ -96,13 +112,21 @@ export default function Message({
                 style={{ gridArea: "name" }}
             >
                 <Avatar
-                    src={avatarURL}
+                    src={user?.photoURL || ""}
                     alt="shirshen shuvro"
                     component={by === "him" ? Link : "div"}
-                    href="#profile"
+                    href={SITEMAP.profile + "/" + msg.sender_id}
                     sx={{ width: 30, height: 30 }}
                 />
-                {by === "him" && <span>lorem ipsum</span>}
+                {by === "him" && (
+                    <span>
+                        {
+                            group?.groupMembersBasicDetails.filter(
+                                (e) => e.id === msg.sender_id
+                            )[0].nickname
+                        }
+                    </span>
+                )}
             </div>
             <div
                 className="time justify-self-end text-xs text-gray-500"

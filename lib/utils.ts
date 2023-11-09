@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
 import { STATUS } from "@/types/app";
-import { UserType } from "@/app";
+import { MessageType, TypesOfMessage, UserType } from "@/app";
 import { AlertColor } from "@mui/material";
 
 export function repeat(text: string, count: number = 1) {
@@ -108,5 +108,17 @@ export function computeSeverityMessage(text: string): AlertColor {
         return "warning";
     } else {
         return "success";
+    }
+}
+
+export function determineMessageType(message: MessageType): TypesOfMessage {
+    if (message.voice) {
+        return "voice";
+    } else if (message.emoji) {
+        return "emoji";
+    } else if (message.imageLink.length) {
+        return "image";
+    } else {
+        return "text";
     }
 }

@@ -12,16 +12,29 @@ import { VscClose } from "react-icons/vsc";
 import lo_ from "lodash";
 import { BiImages } from "react-icons/bi";
 import { useGroup } from "@/contexts/GroupContext";
+import { setChatMessage } from "@/lib/helpers/firebase-helpers";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
+import { determineMessageType } from "@/lib/utils";
 
 export default function MessageForm() {
     const { group } = useGroup();
-
+    const { setMessage: setToastMessage } = useToastAlert();
     const { message, setMessage, replyMessage } = useMessage();
     const form = useRef<HTMLFormElement>(null);
     return (
         <form
             onSubmit={async (e) => {
                 e.preventDefault();
+                console.log(message, replyMessage);
+                if (!group) {
+                    return setToastMessage(
+                        "Group is not set. Refresh the browser or navigate using group tile".toUpperCase()
+                    );
+                }
+                if (!lo_.isEqual(defaultMessage, replyMessage.message)) {
+                    message.reply = replyMessage;
+                }
+                setChatMessage(group.id, message);
                 setMessage(() => defaultMessage);
             }}
             ref={form}
@@ -98,14 +111,14 @@ export function ReplySection() {
 
     return (
         <Box
-            className="replyBar absolute bottom-full left-0 w-full p-3 rounded-[.75rem_.75rem_0_0] z-10"
+            className="replyBar absolute bottom-full left-0 w-full py-3 rounded-[.75rem_.75rem_0_0] z-10"
             sx={{
                 background: (theme) => theme.palette.mySwatch.messageBG,
                 gridArea: "message",
             }}
         >
             <Box
-                className="grid border-[0] border-l-4 border-solid p-2 rounded-md"
+                className="grid border-[0] border-l-4 border-solid p-2"
                 sx={{
                     gridTemplateAreas: `'name cross'
                                          'message message'

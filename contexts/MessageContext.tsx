@@ -1,6 +1,8 @@
 "use client";
 
 import { IReplyMessage, MessageType } from "@/app";
+import { auth } from "@/firebase";
+import { serverTimestamp } from "firebase/firestore";
 import React, { createContext, useContext, useState } from "react";
 
 const Context = createContext({} as UseMessageProp);
@@ -39,7 +41,7 @@ export default function MessageContext({
     );
 }
 
-export const defaultMessage: MessageType = Object.freeze({
+export const defaultMessage = Object.freeze({
     emoji: "",
     text: "",
     imageLink: [],
@@ -48,4 +50,6 @@ export const defaultMessage: MessageType = Object.freeze({
     hash: null,
     reply: null,
     reactions: {},
-});
+    created_at: serverTimestamp(),
+    sender_id: auth.currentUser?.uid,
+} as MessageType);

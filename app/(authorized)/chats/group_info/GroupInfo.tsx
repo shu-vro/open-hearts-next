@@ -9,6 +9,11 @@ import {
     Box,
     Button,
     ButtonGroup,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     FilledInput,
     FormControl,
     IconButton,
@@ -29,13 +34,17 @@ import { useGroup } from "@/contexts/GroupContext";
 import { MemberTile } from "./MemberTile";
 import { EditMemberTile } from "./EditMemberTile";
 import ChangeGroupEmoji from "./ChangeGroupEmoji";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
+import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
+import { auth } from "@/firebase";
+import { useRouter } from "next/navigation";
+import { SITEMAP } from "@/lib/variables";
 
-type Props = {};
-
-export default function GroupInfo({}: Props) {
+export default function GroupInfo() {
     const [activeTab, setActiveTab] = useState<0 | 1 | 2 | number>(0);
     const [swiper, setSwiper] = useState<SwiperType>();
     const [showImageModal, setShowImageModal] = useState("");
+    const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
     const handleTabChange = (newValue: number) => {
         setActiveTab(newValue);
         if (swiper) {
@@ -43,6 +52,11 @@ export default function GroupInfo({}: Props) {
         }
     };
     const { group } = useGroup();
+    const handleCloseLeaveDialog = () => {
+        setOpenLeaveDialog(false);
+    };
+    const { setMessage } = useToastAlert();
+    const { push } = useRouter();
 
     let imageLink = [
         "https://images.unsplash.com/photo-1668162692136-9c490f102de2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1926&q=80",
@@ -263,9 +277,69 @@ export default function GroupInfo({}: Props) {
                     variant="contained"
                     className="block max-w-[600px]"
                     fullWidth
+                    onClick={() => {
+                        setOpenLeaveDialog(true);
+                    }}
                 >
                     Leave Group
                 </Button>
+                <Dialog
+                    open={openLeaveDialog}
+                    onClose={handleCloseLeaveDialog}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle>Leave Group?</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Are you sure to leave{" "}
+                            <Typography color="primary.main" component={"span"}>
+                                {group?.name || "<group-name>"}
+                            </Typography>{" "}
+                            group?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={async () => {
+                                try {
+                                    if (!group) return;
+                                    let groupMembers =
+                                        group.groupMembers.filter(
+                                            (member) =>
+                                                member !== auth.currentUser?.uid
+                                        );
+                                    let groupMembersBasicDetails =
+                                        group.groupMembersBasicDetails.filter(
+                                            (member) =>
+                                                member.id !==
+                                                auth.currentUser?.uid
+                                        );
+                                    await changeGroupInformation(
+                                        group?.id || "",
+                                        {
+                                            groupMembers,
+                                            groupMembersBasicDetails,
+                                        }
+                                    );
+                                    setMessage("You left from group.");
+                                    push(SITEMAP.chats);
+                                } catch (e) {
+                                    setMessage("Error: check console");
+                                    console.log(e);
+                                }
+                                handleCloseLeaveDialog();
+                            }}
+                            variant="contained"
+                            color="error"
+                        >
+                            Yes
+                        </Button>
+                        <Button onClick={handleCloseLeaveDialog} autoFocus>
+                            No
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Box>
         </>
     );
