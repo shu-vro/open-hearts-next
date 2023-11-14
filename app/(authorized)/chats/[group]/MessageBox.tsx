@@ -134,7 +134,6 @@ export function MessageBox({
             </Box>
         );
     } else if (type === "emoji") {
-        let unified = "1f601";
         return (
             <div
                 className={cn(
@@ -152,7 +151,7 @@ export function MessageBox({
                         by === "me" ? "float-right" : ""
                     )}
                 >
-                    <GetEmojiLink unified={unified} />
+                    <GetEmojiLink unified={msg.emoji || "1f44d"} />
                 </div>
             </div>
         );

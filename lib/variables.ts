@@ -1,4 +1,5 @@
 import { IGroupDetails } from "@/app";
+import { type Timestamp, serverTimestamp } from "firebase/firestore";
 import { nanoid } from "nanoid";
 
 export enum DATABASE_PATH {
@@ -37,7 +38,7 @@ export const DEFAULT_GROUP_DETAILS = Object.freeze({
     lastMessage: {
         message: "You joined this chat",
         by: "You",
-        sentTime: Date.now(),
+        sentTime: serverTimestamp() as Timestamp,
         seenBy: [],
     },
 } as IGroupDetails);

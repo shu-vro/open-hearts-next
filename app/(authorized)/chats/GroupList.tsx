@@ -51,11 +51,11 @@ export function GroupList({ group }: { group: IGroupDetails }) {
                         gridArea: "time",
                     }}
                 >
-                    {dayjs(group.lastMessage.sentTime).fromNow()}
+                    {dayjs(group?.lastMessage?.sentTime?.toMillis()).fromNow()}
                 </Typography>
                 <Typography
-                    noWrap
                     variant="subtitle2"
+                    className="line-clamp-2"
                     sx={{
                         opacity: group.lastMessage.seenBy.includes(
                             auth.currentUser?.uid!

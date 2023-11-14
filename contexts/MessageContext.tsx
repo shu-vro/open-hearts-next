@@ -2,7 +2,7 @@
 
 import { IReplyMessage, MessageType } from "@/app";
 import { auth } from "@/firebase";
-import { serverTimestamp } from "firebase/firestore";
+import { Timestamp, serverTimestamp } from "firebase/firestore";
 import React, { createContext, useContext, useState } from "react";
 
 const Context = createContext({} as UseMessageProp);
@@ -50,6 +50,6 @@ export const defaultMessage = Object.freeze({
     hash: null,
     reply: null,
     reactions: {},
-    created_at: serverTimestamp(),
-    sender_id: auth.currentUser?.uid,
+    created_at: serverTimestamp() as Timestamp,
+    sender_id: "",
 } as MessageType);

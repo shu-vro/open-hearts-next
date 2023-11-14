@@ -14,7 +14,7 @@ import { BiImages } from "react-icons/bi";
 import { useGroup } from "@/contexts/GroupContext";
 import { setChatMessage } from "@/lib/helpers/firebase-helpers";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
-import { determineMessageType } from "@/lib/utils";
+import { auth } from "@/firebase";
 
 export default function MessageForm() {
     const { group } = useGroup();
@@ -25,8 +25,9 @@ export default function MessageForm() {
         <form
             onSubmit={async (e) => {
                 e.preventDefault();
+                if (!group || !auth.currentUser) return;
                 console.log(message, replyMessage);
-                if (!group) {
+                if (!group || !auth.currentUser) {
                     return setToastMessage(
                         "Group is not set. Refresh the browser or navigate using group tile".toUpperCase()
                     );
@@ -34,7 +35,15 @@ export default function MessageForm() {
                 if (!lo_.isEqual(defaultMessage, replyMessage.message)) {
                     message.reply = replyMessage;
                 }
-                setChatMessage(group.id, message);
+                message.sender_id = auth.currentUser?.uid;
+                let BasicDetails = group.groupMembersBasicDetails?.find(
+                    (member) => member.id === auth.currentUser?.uid
+                );
+                try {
+                    setChatMessage(group.id, message, BasicDetails);
+                } catch (e: any) {
+                    setToastMessage(e.message);
+                }
                 setMessage(() => defaultMessage);
             }}
             ref={form}
@@ -194,7 +203,9 @@ export function ReplySection() {
                             />
                         )}
                         {reply.type === "emoji" && (
-                            <GetEmojiLink unified="1f601" />
+                            <GetEmojiLink
+                                unified={reply.message.emoji || "1f601"}
+                            />
                         )}
                     </Typography>
                 )}

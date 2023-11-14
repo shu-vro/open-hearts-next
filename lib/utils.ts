@@ -98,6 +98,7 @@ export const MAIL_REGEX =
 
 // add this method to all alertBoxes. will be implemented in next issue.
 export function computeSeverityMessage(text: string): AlertColor {
+    if (typeof text !== "string") return "success";
     if (text.startsWith("error") || text.startsWith("Error")) {
         return "error";
     }
@@ -111,12 +112,14 @@ export function computeSeverityMessage(text: string): AlertColor {
     }
 }
 
-export function determineMessageType(message: MessageType): TypesOfMessage {
-    if (message.voice) {
+export function determineMessageType(
+    message: Partial<MessageType>
+): TypesOfMessage {
+    if (message?.voice) {
         return "voice";
-    } else if (message.emoji) {
+    } else if (message?.emoji) {
         return "emoji";
-    } else if (message.imageLink.length) {
+    } else if (message?.imageLink?.length) {
         return "image";
     } else {
         return "text";

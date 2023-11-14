@@ -1,8 +1,12 @@
+/// <reference types="original-module" />
+
 import "@mui/material/styles";
 import { STATUS } from "@/types/app";
-import { FieldValue } from "firebase/firestore";
+import { FieldValue, serverTimestamp, Timestamp } from "firebase/firestore";
 
 // declare module "adapterjs" {}
+
+declare function serverTimestamp(): Timestamp;
 
 declare module "@mui/material/styles" {
     interface Palette {
@@ -28,7 +32,7 @@ declare type MessageType = {
     reactions: {
         [x: string]: number;
     };
-    created_at: FieldValue;
+    created_at: Timestamp;
     sender_id: string;
 };
 
@@ -61,7 +65,7 @@ export type TGroupMembersBasicDetails = Partial<{
 
 type TLastMessage<T> = {
     message: string;
-    sentTime: number;
+    sentTime: Timestamp;
     by: T;
     seenBy: T[];
 };

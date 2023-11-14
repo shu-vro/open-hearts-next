@@ -1,18 +1,21 @@
 import { firestoreDb, auth } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
-import { IGroupDetails } from "@/app";
+import { IGroupDetails, MessageType, TGroupMembersBasicDetails } from "@/app";
 import {
+    Timestamp,
     collection,
     doc,
     getDoc,
     getDocs,
     limitToLast,
     query,
+    serverTimestamp,
     setDoc,
     where,
 } from "firebase/firestore";
 import { DEFAULT_GROUP_DETAILS } from "@/lib/variables";
 import { nanoid } from "nanoid";
+import { determineMessageType } from "../utils";
 
 /**
  * This function creates a group if there is no groupId, or
@@ -121,11 +124,14 @@ export async function changeGroupInformation(
  */
 export async function setChatMessage(
     groupId: string,
-    obj: Partial<IGroupDetails>,
+    obj: Partial<MessageType>,
+    by?: TGroupMembersBasicDetails,
     chatId: string | null = null
 ) {
     const id = nanoid();
     try {
+        if (!by) throw new Error("Sent by not defined!");
+        const typeOfMessage = determineMessageType(obj);
         await setDoc(
             doc(
                 firestoreDb,
@@ -137,8 +143,23 @@ export async function setChatMessage(
             obj,
             { merge: true }
         );
+        await setDoc(
+            doc(firestoreDb, DATABASE_PATH.groupDetails, groupId),
+            {
+                lastMessage: {
+                    by: by.nickname,
+                    message:
+                        typeOfMessage === "text"
+                            ? obj.text
+                            : `sent a ${typeOfMessage}`,
+                    seenBy: [by.id],
+                    sentTime: serverTimestamp() as Timestamp,
+                },
+            } as Partial<IGroupDetails>,
+            { merge: true }
+        );
     } catch (e) {
         alert("error\nCheck console");
-        console.log(e);
+        console.table({ e, obj, by, chatId, groupId });
     }
 }

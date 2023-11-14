@@ -26,6 +26,7 @@ import { useGroup } from "@/contexts/GroupContext";
 import { collection, doc, getDoc } from "firebase/firestore";
 import { firestoreDb } from "@/firebase";
 import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
+import dayjs from "dayjs";
 
 export type Props = {
     by: "me" | "him";
@@ -121,7 +122,7 @@ export default function Message({
                 {by === "him" && (
                     <span>
                         {
-                            group?.groupMembersBasicDetails.filter(
+                            group?.groupMembersBasicDetails?.filter(
                                 (e) => e.id === msg.sender_id
                             )[0].nickname
                         }
@@ -132,7 +133,18 @@ export default function Message({
                 className="time justify-self-end text-xs text-gray-500"
                 style={{ gridArea: "time" }}
             >
-                {new Date(time).toLocaleString()}
+                {/* {new Date(msg.created_at.seconds * 1000).toLocaleString(
+                    "en-US",
+                    {
+                        hour12: true,
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                        second: "2-digit",
+                    }
+                )} */}
+                {dayjs(msg.created_at?.seconds * 1000 || Date.now()).format(
+                    "ddd, MMM D, YYYY h:mm:ss A"
+                )}
             </div>
             {msg.deleted ? (
                 <DeletedMessageBox by={by} reply={msg.reply} />
