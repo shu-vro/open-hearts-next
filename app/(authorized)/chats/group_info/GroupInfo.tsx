@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import ImagePreviewModal from "../[group]/ImagePreviewModal";
 import {
@@ -23,7 +23,6 @@ import {
     InputLabel,
     Tooltip,
     Typography,
-    useTheme,
 } from "@mui/material";
 import HoverWrapper from "../../HoverWrapper";
 import { LuCopy } from "react-icons/lu";
@@ -36,15 +35,20 @@ import { EditMemberTile } from "./EditMemberTile";
 import ChangeGroupEmoji from "./ChangeGroupEmoji";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
-import { auth } from "@/firebase";
+import { auth, firestoreDb } from "@/firebase";
 import { useRouter } from "next/navigation";
-import { SITEMAP } from "@/lib/variables";
+import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
+import AddMembersAlertDialog from "./AddMembersAlertDialog";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { UserType } from "@/app";
 
 export default function GroupInfo() {
     const [activeTab, setActiveTab] = useState<0 | 1 | 2 | number>(0);
     const [swiper, setSwiper] = useState<SwiperType>();
     const [showImageModal, setShowImageModal] = useState("");
     const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
+    const [addUserDialog, setAddUserDialog] = useState(false);
+    const [allUsers, setAllUsers] = useState<UserType[]>([]);
     const handleTabChange = (newValue: number) => {
         setActiveTab(newValue);
         if (swiper) {
@@ -57,6 +61,26 @@ export default function GroupInfo() {
     };
     const { setMessage } = useToastAlert();
     const { push } = useRouter();
+
+    useEffect(() => {
+        (async () => {
+            if (!group) return;
+            if (!auth.currentUser?.uid)
+                return setMessage(
+                    "User might be logged out. If this error continues, login again"
+                );
+            const q = query(collection(firestoreDb, DATABASE_PATH.users));
+            let allDocs = await getDocs(q);
+            if (!allDocs.empty) {
+                setAllUsers(
+                    allDocs.docs
+                        .map((doc) => doc.data() as UserType)
+                        .sort((a, b) => -b.name[0].localeCompare(a.name[0]))
+                    // .filter((el) => !group.groupMembers?.includes(el.uid))
+                );
+            }
+        })();
+    }, [group?.groupMembers]);
 
     let imageLink = [
         "https://images.unsplash.com/photo-1668162692136-9c490f102de2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1926&q=80",
@@ -134,9 +158,6 @@ export default function GroupInfo() {
                         />
                     </FormControl>
                 </HoverWrapper>
-                {/* all goes here */}
-                add pick emoji button, customize members button, create nickname
-                button, change group name input, roles for users
                 <Accordion className="mt-4">
                     <AccordionSummary>Change Group Emoji</AccordionSummary>
                     <AccordionDetails>
@@ -146,8 +167,28 @@ export default function GroupInfo() {
                 <Accordion>
                     <AccordionSummary>See Members</AccordionSummary>
                     <AccordionDetails>
+                        <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
+                            <Box
+                                className="grid p-2 py-7 text-inherit hover:no-underline place-items-center cursor-pointer"
+                                onClick={() => {
+                                    setAddUserDialog(true);
+                                }}
+                            >
+                                <span>Add member</span>
+                            </Box>
+                            <AddMembersAlertDialog
+                                open={addUserDialog}
+                                allUsers={allUsers}
+                                groupMembers={group?.groupMembers}
+                                setOpen={setAddUserDialog}
+                            />
+                        </HoverWrapper>
                         {group?.groupMembersBasicDetails.map((member) => (
-                            <MemberTile member={member} key={member.id} />
+                            <MemberTile
+                                member={member}
+                                key={member.id}
+                                user={allUsers.find((e) => e.uid === member.id)}
+                            />
                         ))}
                     </AccordionDetails>
                 </Accordion>
@@ -155,7 +196,11 @@ export default function GroupInfo() {
                     <AccordionSummary>Nicknames</AccordionSummary>
                     <AccordionDetails>
                         {group?.groupMembersBasicDetails.map((member) => (
-                            <EditMemberTile member={member} key={member.id} />
+                            <EditMemberTile
+                                member={member}
+                                user={allUsers.find((e) => e.uid === member.id)}
+                                key={member.id}
+                            />
                         ))}
                     </AccordionDetails>
                 </Accordion>

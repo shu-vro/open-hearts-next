@@ -17,10 +17,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { cn } from "@/lib/utils";
 import { TGroupMembersBasicDetails, UserType } from "@/app";
 import Link from "next/link";
-import { firestoreDb } from "@/firebase";
-import { useEffect, useState } from "react";
-import { collection, doc, getDoc } from "firebase/firestore";
-import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
+import { useState } from "react";
+import { SITEMAP } from "@/lib/variables";
 import { useGroup } from "@/contexts/GroupContext";
 import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
 import { useParams } from "next/navigation";
@@ -29,25 +27,18 @@ dayjs.extend(relativeTime);
 
 export function EditMemberTile({
     member,
+    user,
 }: {
     member: TGroupMembersBasicDetails;
+    user?: UserType;
 }) {
     const params = useParams() as { group: string };
     const { group } = useGroup();
     const [nickname, setNickname] = useState(member.nickname);
-    const [user, setUser] = useState<UserType | null>(null);
-    useEffect(() => {
-        (async () => {
-            let q = doc(
-                collection(firestoreDb, DATABASE_PATH.users),
-                member.id
-            );
-            let user = await getDoc(q);
-            if (user.exists()) {
-                setUser(user.data() as UserType);
-            }
-        })();
-    }, []);
+
+    console.log(member, user, "go");
+
+    if (!user) return "";
 
     return (
         <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
@@ -63,8 +54,8 @@ export function EditMemberTile({
                 <Avatar
                     component={Link}
                     href={SITEMAP.profile + `/${member.id}`}
-                    src={user?.photoURL || ""}
-                    alt={user?.name || "Friend's name"}
+                    src={user.photoURL || ""}
+                    alt={user.name || "Friend's name"}
                     sx={{
                         gridArea: "avatar",
                     }}
@@ -108,7 +99,7 @@ export function EditMemberTile({
                                                             mbr = {
                                                                 ...mbr,
                                                                 nickname:
-                                                                    user?.name,
+                                                                    user.name,
                                                             };
                                                         }
                                                         return mbr;
@@ -146,7 +137,7 @@ export function EditMemberTile({
                         gridArea: "name",
                     }}
                 >
-                    {user?.name || ""}
+                    {user.name || ""}
                 </Typography>
             </Box>
         </HoverWrapper>

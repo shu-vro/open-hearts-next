@@ -6,29 +6,19 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { cn } from "@/lib/utils";
 import { TGroupMembersBasicDetails, UserType } from "@/app";
 import Link from "next/link";
-import { firestoreDb } from "@/firebase";
-import { useEffect, useState } from "react";
-import { collection, doc, getDoc } from "firebase/firestore";
-import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
+import { SITEMAP } from "@/lib/variables";
 
 dayjs.extend(relativeTime);
 
-export function MemberTile({ member }: { member: TGroupMembersBasicDetails }) {
-    const [user, setUser] = useState<UserType | null>(null);
-    useEffect(() => {
-        (async () => {
-            let q = doc(
-                collection(firestoreDb, DATABASE_PATH.users),
-                member.id
-            );
-            let user = await getDoc(q);
-            if (user.exists()) {
-                setUser(user.data() as UserType);
-            }
-        })();
-    }, []);
-
-    const isActive = Math.random() <= 0.5 ? true : false;
+export function MemberTile({
+    member,
+    user,
+}: {
+    member: TGroupMembersBasicDetails;
+    user?: UserType;
+}) {
+    const isActive = true;
+    if (!user) return "";
     return (
         <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
             <Box
@@ -44,8 +34,8 @@ export function MemberTile({ member }: { member: TGroupMembersBasicDetails }) {
                 <Avatar
                     component={Link}
                     href={SITEMAP.profile + `/${member.id}`}
-                    src={user?.photoURL || ""}
-                    alt={user?.name || "Friend's name"}
+                    src={user.photoURL || ""}
+                    alt={user.name || "Friend's name"}
                     sx={{
                         gridArea: "avatar",
                     }}
@@ -61,7 +51,7 @@ export function MemberTile({ member }: { member: TGroupMembersBasicDetails }) {
                         gridArea: "name",
                     }}
                 >
-                    {user?.name || ""}
+                    {user.name || ""}
                 </Typography>
                 {member?.nickname && (
                     <Typography

@@ -5,21 +5,23 @@ import MessageForm from "./MessageForm";
 import LeftSideBar from "./LeftSideBar";
 import RightSideBar from "./RightSideBar";
 import MessageContext from "@/contexts/MessageContext";
-import { MessageType } from "@/app";
+import { MessageType, UserType } from "@/app";
 import AppBarChat from "./AppBarChat";
 import useGetGroup from "@/lib/hooks/useGetGroup";
 import {
     collection,
-    doc,
+    getDocs,
     onSnapshot,
     orderBy,
     query,
-    serverTimestamp,
+    where,
 } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
 import { useEffect, useState } from "react";
 import { determineMessageType } from "@/lib/utils";
+import svgBG from "@/assets/dribbble-kc-removebg-preview.svg";
+import { Box } from "@mui/material";
 
 export default function Chats({ params }: { params: { group: string } }) {
     const [messages, setMessages] = useState<MessageType[]>([]);
@@ -50,10 +52,6 @@ export default function Chats({ params }: { params: { group: string } }) {
         return unsubscribe;
     }, []);
 
-    useEffect(() => {
-        console.log(messages);
-    }, [messages]);
-
     return (
         <div className="w-full grow flex flex-row h-[calc(100%-4rem)]">
             <MessageContext>
@@ -61,7 +59,7 @@ export default function Chats({ params }: { params: { group: string } }) {
                     <LeftSideBar />
                     <main className="grow w-1/2 flex justify-start items-start flex-col h-full">
                         <AppBarChat />
-                        <div className="chat-section w-full overflow-y-auto h-full">
+                        <div className="chat-section w-full overflow-y-auto h-full relative">
                             {messages.map((msg, i) => (
                                 <MessageSent
                                     key={i}
@@ -76,6 +74,7 @@ export default function Chats({ params }: { params: { group: string } }) {
                                     msg={msg}
                                 />
                             ))}
+                            {!messages.length && <EmptyMessage />}
                         </div>
                         <MessageForm />
                     </main>
@@ -83,5 +82,19 @@ export default function Chats({ params }: { params: { group: string } }) {
                 </>
             </MessageContext>
         </div>
+    );
+}
+
+function EmptyMessage() {
+    return (
+        <Box
+            className="absolute top-1/2 left-1/2 w-full h-full flex justify-center items-center flex-col select-none"
+            style={{
+                transform: "translate(-50%, -50%)",
+            }}
+        >
+            <object data={svgBG.src} className="w-full"></object>
+            <span className="capitalize">the message box is empty</span>
+        </Box>
     );
 }

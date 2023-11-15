@@ -26,7 +26,7 @@ export default function ToastAlert() {
                 severity={computeSeverityMessage(message)}
                 sx={{ width: "100%" }}
             >
-                {message}
+                {message.toUpperCase()}
             </Alert>
         </Snackbar>
     );
