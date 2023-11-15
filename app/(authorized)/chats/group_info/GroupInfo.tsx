@@ -206,7 +206,7 @@ export default function GroupInfo() {
                 </Accordion>
                 <Accordion>
                     <AccordionSummary>
-                        Manage Members (Only admins)
+                        Manage Group (Only admins)
                     </AccordionSummary>
                     <AccordionDetails></AccordionDetails>
                 </Accordion>

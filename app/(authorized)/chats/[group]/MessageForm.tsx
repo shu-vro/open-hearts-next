@@ -25,13 +25,12 @@ export default function MessageForm() {
         <form
             onSubmit={async (e) => {
                 e.preventDefault();
-                if (!group || !auth.currentUser) return;
-                console.log(message, replyMessage);
-                if (!group || !auth.currentUser) {
+                if (!group || !auth.currentUser)
                     return setToastMessage(
                         "Group is not set. Refresh the browser or navigate using group tile".toUpperCase()
                     );
-                }
+                console.log(message, replyMessage);
+
                 if (!lo_.isEqual(defaultMessage, replyMessage.message)) {
                     message.reply = replyMessage;
                 }
