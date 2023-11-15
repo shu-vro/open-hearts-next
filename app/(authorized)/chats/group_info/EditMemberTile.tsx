@@ -36,8 +36,6 @@ export function EditMemberTile({
     const { group } = useGroup();
     const [nickname, setNickname] = useState(member.nickname);
 
-    console.log(member, user, "go");
-
     if (!user) return "";
 
     return (

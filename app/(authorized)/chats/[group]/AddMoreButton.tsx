@@ -462,7 +462,6 @@ export default function AddMoreButton({ form }: Props) {
             </Menu>
             <IconButton
                 size="large"
-                type="submit"
                 onClick={(e) => {
                     setMenuOpen(e.currentTarget);
                 }}
