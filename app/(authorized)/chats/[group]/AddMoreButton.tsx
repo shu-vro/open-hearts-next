@@ -24,9 +24,11 @@ import { MdDelete, MdKeyboardVoice } from "react-icons/md";
 import numeral from "numeral";
 import { cn } from "@/lib/utils";
 import { defaultMessage, useMessage } from "@/contexts/MessageContext";
+import { auth, storage } from "@/firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 interface DisplayRowProps {
-    file: File;
+    file: { file: File; id: number };
     setFiles: React.Dispatch<
         React.SetStateAction<{ file: File; id: number }[]>
     >;
@@ -35,7 +37,7 @@ interface DisplayRowProps {
 }
 
 function DisplayRow({ file, setFiles, k, setImageLink }: DisplayRowProps) {
-    const url = URL.createObjectURL(file);
+    const [url, setUrl] = useState("");
     const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
@@ -43,6 +45,11 @@ function DisplayRow({ file, setFiles, k, setImageLink }: DisplayRowProps) {
             prev[k] = url;
             return prev;
         });
+        setUrl(URL.createObjectURL(file.file));
+
+        return () => {
+            URL.revokeObjectURL(url);
+        };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -50,6 +57,9 @@ function DisplayRow({ file, setFiles, k, setImageLink }: DisplayRowProps) {
         <TableRow
             className={cn(deleting ? "animate-[slideOff_.5s_forwards]" : "")}
         >
+            <TableCell align="left" padding="none">
+                {file.id + 1}
+            </TableCell>
             <TableCell
                 align="left"
                 padding="none"
@@ -59,11 +69,11 @@ function DisplayRow({ file, setFiles, k, setImageLink }: DisplayRowProps) {
                 }}
             >
                 <Tooltip title="click to see preview" arrow>
-                    <span>{file.name}</span>
+                    <span>{file.file.name}</span>
                 </Tooltip>
             </TableCell>
             <TableCell align="right" padding="normal">
-                {numeral(file.size).format("0.0b")}
+                {numeral(file.file.size).format("0.0b")}
             </TableCell>
             <TableCell align="right" padding="normal">
                 <Tooltip
@@ -85,9 +95,10 @@ function DisplayRow({ file, setFiles, k, setImageLink }: DisplayRowProps) {
                     onClick={() => {
                         setDeleting(true);
                         setTimeout(() => {
-                            setFiles((prev) => {
-                                return prev.filter((el) => k !== el.id);
-                            });
+                            setFiles((prev) =>
+                                prev.filter((el) => k !== el.id)
+                            );
+                            setDeleting(false);
                         }, 500);
                     }}
                 >
@@ -136,6 +147,7 @@ function ImageFileSelect() {
                 onClose={() => {
                     setOpen(false);
                 }}
+                hidden={!Boolean(files.length)}
             >
                 <AppBar
                     className="flex justify-between items-center flex-row"
@@ -154,31 +166,36 @@ function ImageFileSelect() {
                     >
                         Close
                     </Button>
-                    {Boolean(files.length) && (
-                        <Button
-                            onClick={() => {
-                                // TODO: on the backend, this will be the url of the images. for now, it will just be the dataUrl.
-                                setMessage((prev) => {
-                                    return {
-                                        ...prev,
-                                        imageLink: imageLink.filter((e) => e),
-                                    };
-                                });
-                                setOpen(false);
-                            }}
-                            startIcon={<BsCheck2All />}
-                            variant="contained"
-                            color="success"
-                            size={matches649 ? "small" : "medium"}
-                        >
-                            Save
-                        </Button>
-                    )}
+                    <Button
+                        onClick={() => {
+                            // TODO: on the backend, this will be the url of the images. for now, it will just be the dataUrl.
+                            setMessage((prev) => {
+                                return {
+                                    ...prev,
+                                    imageLink: imageLink.filter((e) => e),
+                                };
+                            });
+                            setOpen(false);
+                        }}
+                        startIcon={<BsCheck2All />}
+                        variant="contained"
+                        color="success"
+                        size={matches649 ? "small" : "medium"}
+                    >
+                        Save
+                    </Button>
                 </AppBar>
                 <DialogContent>
-                    <Table>
+                    <Table className="overflow-x-hidden">
                         <TableHead>
                             <TableRow>
+                                <TableCell
+                                    component="th"
+                                    align="left"
+                                    padding="none"
+                                >
+                                    Sl No
+                                </TableCell>
                                 <TableCell
                                     component="th"
                                     align="left"
@@ -210,13 +227,13 @@ function ImageFileSelect() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {files.map((file, i) => {
+                            {files.map((file) => {
                                 return (
                                     <DisplayRow
-                                        file={file.file}
-                                        key={i}
+                                        file={file}
+                                        key={file.id}
                                         setFiles={setFiles}
-                                        k={i}
+                                        k={file.id}
                                         setImageLink={setImageLink}
                                     />
                                 );
@@ -289,7 +306,6 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
             }
             setRecordStart(RegExp("true").test(el.dataset.open!));
         } catch (e) {
-            console.log(e);
             alert(JSON.stringify(e, null, 4));
         }
     }
@@ -340,14 +356,24 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
                         Close
                     </Button>
                     <Button
-                        onClick={() => {
+                        onClick={async () => {
                             setOpen(false);
                             setRecordStart(false);
-                            // send to server using uploadBytes of firebase.
+                            if (!audioBlob) return setMenuOpen(null);
+                            // upload voice to firebase storage -- done
+                            const storageRef = ref(
+                                storage,
+                                auth.currentUser!.uid
+                            );
+                            const result = await uploadBytes(
+                                storageRef,
+                                audioBlob
+                            );
+                            let voiceURL = await getDownloadURL(result.ref);
                             setMessage(() => {
                                 return {
                                     ...defaultMessage,
-                                    voice: URL.createObjectURL(audioBlob!),
+                                    voice: voiceURL,
                                 };
                             });
                             setTimeout(() => {

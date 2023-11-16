@@ -25,10 +25,13 @@ export default function MessageForm() {
         <form
             onSubmit={async (e) => {
                 e.preventDefault();
-                if (!group || !auth.currentUser)
+                console.log(group);
+                if (!group)
                     return setToastMessage(
-                        "Group is not set. Refresh the browser or navigate using group tile".toUpperCase()
+                        "error: Group is not set. Refresh the browser or navigate using group tile"
                     );
+                else if (!auth.currentUser)
+                    return setToastMessage("error: Authorization error");
                 console.log(message, replyMessage);
 
                 if (!lo_.isEqual(defaultMessage, replyMessage.message)) {
