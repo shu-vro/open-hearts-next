@@ -24,8 +24,11 @@ import { MdDelete, MdKeyboardVoice } from "react-icons/md";
 import numeral from "numeral";
 import { cn } from "@/lib/utils";
 import { defaultMessage, useMessage } from "@/contexts/MessageContext";
-import { auth, storage } from "@/firebase";
+import { storage } from "@/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { nanoid } from "nanoid";
+import { useGroup } from "@/contexts/GroupContext";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
 
 interface DisplayRowProps {
     file: { file: File; id: number };
@@ -39,20 +42,23 @@ interface DisplayRowProps {
 function DisplayRow({ file, setFiles, k, setImageLink }: DisplayRowProps) {
     const [url, setUrl] = useState("");
     const [deleting, setDeleting] = useState(false);
+    const { group } = useGroup();
 
     useEffect(() => {
-        setImageLink((prev) => {
-            prev[k] = url;
-            return prev;
-        });
-        setUrl(URL.createObjectURL(file.file));
+        (async () => {
+            if (!group) return;
+            const storageRef = ref(storage, `${group.id}/${nanoid()}`);
+            const result = await uploadBytes(storageRef, file.file);
+            let tempUrl = await getDownloadURL(result.ref);
+            setUrl(tempUrl);
 
-        return () => {
-            URL.revokeObjectURL(url);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+            setImageLink((prev) => {
+                prev[k] = tempUrl;
+                return prev;
+            });
+            console.log("ran");
+        })();
     }, []);
-
     return (
         <TableRow
             className={cn(deleting ? "animate-[slideOff_.5s_forwards]" : "")}
@@ -109,12 +115,13 @@ function DisplayRow({ file, setFiles, k, setImageLink }: DisplayRowProps) {
     );
 }
 
-function ImageFileSelect() {
+function ImageFileSelect({ form }: Props) {
     const { setMessage } = useMessage();
     const [open, setOpen] = useState(false);
     const [files, setFiles] = useState<{ file: File; id: number }[]>([]);
     const [imageLink, setImageLink] = useState<string[]>([]);
     const matches649 = useMediaQuery("(max-width: 649px)");
+
     const selectFiles = () => {
         let inputs = document.createElement("input");
         inputs.type = "file";
@@ -161,14 +168,12 @@ function ImageFileSelect() {
                         startIcon={<IoCloseCircle />}
                         variant="contained"
                         color="error"
-                        className="mr-2"
                         size={matches649 ? "small" : "medium"}
                     >
                         Close
                     </Button>
                     <Button
                         onClick={() => {
-                            // TODO: on the backend, this will be the url of the images. for now, it will just be the dataUrl.
                             setMessage((prev) => {
                                 return {
                                     ...prev,
@@ -179,10 +184,36 @@ function ImageFileSelect() {
                         }}
                         startIcon={<BsCheck2All />}
                         variant="contained"
-                        color="success"
+                        color="warning"
+                        className="mx-2"
                         size={matches649 ? "small" : "medium"}
                     >
                         Save
+                    </Button>
+                    <Button
+                        onClick={() => {
+                            setMessage((prev) => {
+                                return {
+                                    ...prev,
+                                    imageLink: imageLink.filter((e) => e),
+                                };
+                            });
+
+                            setTimeout(() => {
+                                form?.dispatchEvent(
+                                    new Event("submit", {
+                                        bubbles: true,
+                                    })
+                                );
+                            }, 100);
+                            setOpen(false);
+                        }}
+                        startIcon={<BsCheck2All />}
+                        variant="contained"
+                        color="success"
+                        size={matches649 ? "small" : "medium"}
+                    >
+                        Save and Send
                     </Button>
                 </AppBar>
                 <DialogContent>
@@ -256,6 +287,7 @@ interface VoiceInputProps extends Props {
 }
 function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
     const { setMessage } = useMessage();
+    const { setMessage: setToastMessage } = useToastAlert();
     const [open, setOpen] = useState(false);
     const [recordStart, setRecordStart] = useState(false);
     const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
@@ -264,6 +296,8 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
     );
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
     const navigator = globalThis?.navigator || null;
+    const { group } = useGroup();
+
     async function handleVoiceInput(el: HTMLButtonElement) {
         try {
             if (el.dataset.open === "true") {
@@ -360,10 +394,15 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
                             setOpen(false);
                             setRecordStart(false);
                             if (!audioBlob) return setMenuOpen(null);
+                            if (!group) {
+                                setToastMessage("error: group is not resolved");
+                                setMenuOpen(null);
+                                return;
+                            }
                             // upload voice to firebase storage -- done
                             const storageRef = ref(
                                 storage,
-                                auth.currentUser!.uid
+                                `${group.id}/${nanoid()}`
                             );
                             const result = await uploadBytes(
                                 storageRef,
@@ -390,7 +429,7 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
                         variant="contained"
                         color="success"
                     >
-                        Save
+                        Send
                     </Button>
                 </AppBar>
                 <DialogContent>
@@ -484,7 +523,7 @@ export default function AddMoreButton({ form }: Props) {
                 }}
             >
                 <VoiceInput form={form} setMenuOpen={setMenuOpen} />
-                <ImageFileSelect />
+                <ImageFileSelect form={form} />
             </Menu>
             <IconButton
                 size="large"

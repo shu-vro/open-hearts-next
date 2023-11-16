@@ -1,7 +1,6 @@
 "use client";
 
 import { IReplyMessage, MessageType } from "@/app";
-import { auth } from "@/firebase";
 import { Timestamp, serverTimestamp } from "firebase/firestore";
 import React, { createContext, useContext, useState } from "react";
 
