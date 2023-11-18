@@ -67,7 +67,7 @@ export default function MessageForm() {
                 onChange={(e) => {
                     setMessage((prev) => ({
                         ...prev,
-                        text: e.currentTarget?.value,
+                        text: e.target.value,
                     }));
                 }}
                 onKeyUp={(e) => {

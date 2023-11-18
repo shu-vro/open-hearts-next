@@ -41,15 +41,19 @@ import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import AddMembersAlertDialog from "./AddMembersAlertDialog";
 import { collection, getDocs, query } from "firebase/firestore";
 import { MessageType, UserType } from "@/app";
+import { URL_REGEX } from "@/lib/utils";
 
-export default function GroupInfo({ messages }: { messages?: MessageType[] }) {
+export default function GroupInfo({
+    messages = [],
+}: {
+    messages?: MessageType[];
+}) {
     const [activeTab, setActiveTab] = useState<0 | 1 | 2 | number>(0);
     const [swiper, setSwiper] = useState<SwiperType>();
     const [showImageModal, setShowImageModal] = useState("");
     const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
     const [addUserDialog, setAddUserDialog] = useState(false);
     const [allUsers, setAllUsers] = useState<UserType[]>([]);
-    const [nativeMessages, setNativeMessages] = useState(messages || []);
     const handleTabChange = (newValue: number) => {
         setActiveTab(newValue);
         if (swiper) {
@@ -296,13 +300,21 @@ export default function GroupInfo({ messages }: { messages?: MessageType[] }) {
                             </SwiperSlide>
                             <SwiperSlide>
                                 <Box>
-                                    {nativeMessages.map((msg, i) => {
-                                        return (
-                                            <SharedLink
-                                                link="https://facebook.com/"
-                                                key={i}
-                                            />
-                                        );
+                                    {messages.map((msg) => {
+                                        if (!msg.text) return null;
+                                        return msg.text
+                                            .match(URL_REGEX)
+                                            ?.map((text_message, j) => {
+                                                return (
+                                                    <SharedLink
+                                                        link={text_message}
+                                                        messageTime={
+                                                            msg.created_at
+                                                        }
+                                                        key={j}
+                                                    />
+                                                );
+                                            });
                                     })}
                                 </Box>
                             </SwiperSlide>

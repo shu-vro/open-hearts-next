@@ -5,7 +5,7 @@ import MessageForm from "./MessageForm";
 import LeftSideBar from "./LeftSideBar";
 import RightSideBar from "./RightSideBar";
 import MessageContext from "@/contexts/MessageContext";
-import { MessageType, UserType } from "@/app";
+import { MessageType } from "@/app";
 import AppBarChat from "./AppBarChat";
 import useGetGroup from "@/lib/hooks/useGetGroup";
 import {

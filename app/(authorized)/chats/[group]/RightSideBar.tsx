@@ -1,3 +1,5 @@
+"use client";
+
 import { MessageType } from "@/app";
 import GroupInfo from "../group_info/GroupInfo";
 

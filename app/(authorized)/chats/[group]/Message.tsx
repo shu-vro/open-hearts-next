@@ -133,15 +133,6 @@ export default function Message({
                 className="time justify-self-end text-xs text-gray-500"
                 style={{ gridArea: "time" }}
             >
-                {/* {new Date(msg.created_at.seconds * 1000).toLocaleString(
-                    "en-US",
-                    {
-                        hour12: true,
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                        second: "2-digit",
-                    }
-                )} */}
                 {dayjs(msg.created_at?.seconds * 1000 || Date.now()).format(
                     "ddd, MMM D, YYYY h:mm:ss A"
                 )}

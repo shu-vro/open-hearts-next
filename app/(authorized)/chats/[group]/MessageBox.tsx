@@ -270,7 +270,7 @@ export function MessageBox({
                 <NativeHoverWrapper replied={!!msg.reply}>
                     <Box
                         className={cn(
-                            "message text-sm p-3 rounded-lg",
+                            "message text-sm p-3 rounded-lg break-all",
                             by === "me" && "text-right"
                         )}
                         sx={{

@@ -8,11 +8,17 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { URL_REGEX } from "@/lib/utils";
+import { type Timestamp } from "firebase/firestore";
 
 dayjs.extend(relativeTime);
 
-export default function SharedLink({ link }: { link: string }) {
-    const [timeDiff, setTimeDiff] = useState(dayjs(1694720446951).fromNow());
+export default function SharedLink({
+    link,
+    messageTime,
+}: {
+    link: string;
+    messageTime: Timestamp;
+}) {
     const [preview, setPreview] = useState(<></>);
     useEffect(() => {
         (async () => {
@@ -66,6 +72,7 @@ export default function SharedLink({ link }: { link: string }) {
                                     <Typography
                                         variant="body1"
                                         className="text-lg"
+                                        // noWrap
                                     >
                                         {ogTitle}
                                     </Typography>
@@ -143,7 +150,7 @@ export default function SharedLink({ link }: { link: string }) {
                         gridArea: "time",
                     }}
                 >
-                    {timeDiff}
+                    {dayjs(messageTime?.toMillis()).fromNow()}
                 </Typography>
                 <Box
                     sx={{
