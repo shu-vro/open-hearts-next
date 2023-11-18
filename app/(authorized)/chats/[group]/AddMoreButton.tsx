@@ -22,7 +22,7 @@ import { BsCheck2All, BsFileImage, BsFillPlusCircleFill } from "react-icons/bs";
 import { IoCloseCircle } from "react-icons/io5";
 import { MdDelete, MdKeyboardVoice } from "react-icons/md";
 import numeral from "numeral";
-import { cn } from "@/lib/utils";
+import { UploadImagesToFirebase, cn } from "@/lib/utils";
 import { defaultMessage, useMessage } from "@/contexts/MessageContext";
 import { storage } from "@/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -36,28 +36,18 @@ interface DisplayRowProps {
         React.SetStateAction<{ file: File; id: number }[]>
     >;
     k: number;
-    setImageLink: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-function DisplayRow({ file, setFiles, k, setImageLink }: DisplayRowProps) {
+function DisplayRow({ file, setFiles, k }: DisplayRowProps) {
     const [url, setUrl] = useState("");
     const [deleting, setDeleting] = useState(false);
-    const { group } = useGroup();
 
     useEffect(() => {
-        (async () => {
-            if (!group) return;
-            const storageRef = ref(storage, `${group.id}/${nanoid()}`);
-            const result = await uploadBytes(storageRef, file.file);
-            let tempUrl = await getDownloadURL(result.ref);
-            setUrl(tempUrl);
-
-            setImageLink((prev) => {
-                prev[k] = tempUrl;
-                return prev;
-            });
-            console.log("ran");
-        })();
+        let tempUrl = URL.createObjectURL(file.file);
+        setUrl(tempUrl);
+        return () => {
+            URL.revokeObjectURL(tempUrl);
+        };
     }, []);
     return (
         <TableRow
@@ -119,8 +109,9 @@ function ImageFileSelect({ form }: Props) {
     const { setMessage } = useMessage();
     const [open, setOpen] = useState(false);
     const [files, setFiles] = useState<{ file: File; id: number }[]>([]);
-    const [imageLink, setImageLink] = useState<string[]>([]);
     const matches649 = useMediaQuery("(max-width: 649px)");
+    const { group } = useGroup();
+    const { setMessage: setToastAlert } = useToastAlert();
 
     const selectFiles = () => {
         let inputs = document.createElement("input");
@@ -173,14 +164,20 @@ function ImageFileSelect({ form }: Props) {
                         Close
                     </Button>
                     <Button
-                        onClick={() => {
+                        onClick={async () => {
+                            if (!group) return;
+                            let tempFiles = await UploadImagesToFirebase(
+                                files,
+                                group.id
+                            );
                             setMessage((prev) => {
                                 return {
                                     ...prev,
-                                    imageLink: imageLink.filter((e) => e),
+                                    imageLink: tempFiles.filter((e) => e),
                                 };
                             });
                             setOpen(false);
+                            setFiles([]);
                         }}
                         startIcon={<BsCheck2All />}
                         variant="contained"
@@ -191,13 +188,19 @@ function ImageFileSelect({ form }: Props) {
                         Save
                     </Button>
                     <Button
-                        onClick={() => {
+                        onClick={async () => {
+                            if (!group) return;
+                            let tempFiles = await UploadImagesToFirebase(
+                                files,
+                                group.id
+                            );
                             setMessage((prev) => {
                                 return {
                                     ...prev,
-                                    imageLink: imageLink.filter((e) => e),
+                                    imageLink: tempFiles.filter((e) => e),
                                 };
                             });
+                            setFiles([]);
 
                             setTimeout(() => {
                                 form?.dispatchEvent(
@@ -265,7 +268,6 @@ function ImageFileSelect({ form }: Props) {
                                         key={file.id}
                                         setFiles={setFiles}
                                         k={file.id}
-                                        setImageLink={setImageLink}
                                     />
                                 );
                             })}

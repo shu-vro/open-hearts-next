@@ -186,10 +186,6 @@ export function MessageBox({
                             by === "me" ? "justify-self-end" : ""
                         )}
                         sx={{
-                            background: (theme) =>
-                                by === "him"
-                                    ? theme.palette.mySwatch.messageBG
-                                    : theme.palette.primary.main,
                             color: (theme) =>
                                 by === "me"
                                     ? theme.palette.getContrastText(
@@ -201,7 +197,7 @@ export function MessageBox({
                     >
                         <ImageList
                             variant="masonry"
-                            cols={3}
+                            cols={Math.min(3, msg.imageLink.length)}
                             gap={8}
                             className="mt-0 rounded-[inherit]"
                         >
@@ -229,8 +225,12 @@ export function MessageBox({
                             />
                         </ImageList>
                         <Box
-                            className="p-3 pt-0"
+                            className="p-3 rounded-lg rounded-t-none"
                             sx={{
+                                background: (theme) =>
+                                    by === "him"
+                                        ? theme.palette.mySwatch.messageBG
+                                        : theme.palette.primary.main,
                                 "& > a": {
                                     color: "inherit",
                                     textDecoration: "underline",

@@ -6,7 +6,7 @@ They are unfinished because the relevant features aren't introduced yet.
 -   [x] In the [SpeedDialTooltip.tsx](</app/(authorized)/all_messages/SpeedDialTooltip.tsx>) Search functionality needs to be implemented.
 -   [x] finally, make [SpeedDialTooltip.tsx](</app/(authorized)/all_messages/SpeedDialTooltip.tsx>) responsive. On mobile, it's speed dial and on laptop, it's top app bar.
 -   [x] add chat section based on slug in url.
--   [ ] compatible to send all types of message
+-   [x] compatible to send all types of message
 -   [ ] implement chat section with all types of message types.
     -   [ ] the add photo button needs modifications.
     -   [ ] add photo and voice send feature
@@ -23,4 +23,5 @@ They are unfinished because the relevant features aren't introduced yet.
 
     -   [ ] also, profile redirect (when another user clicks on the profile) working or not
 
--   [ ] task for tomorrow: why photos are sent saved twice?
+-   [x] task for tomorrow: why photos are sent saved twice?
+-   [ ] add preview images

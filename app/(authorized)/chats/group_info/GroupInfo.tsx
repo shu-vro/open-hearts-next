@@ -39,16 +39,17 @@ import { auth, firestoreDb } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import AddMembersAlertDialog from "./AddMembersAlertDialog";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { UserType } from "@/app";
+import { collection, getDocs, query } from "firebase/firestore";
+import { MessageType, UserType } from "@/app";
 
-export default function GroupInfo() {
+export default function GroupInfo({ messages }: { messages?: MessageType[] }) {
     const [activeTab, setActiveTab] = useState<0 | 1 | 2 | number>(0);
     const [swiper, setSwiper] = useState<SwiperType>();
     const [showImageModal, setShowImageModal] = useState("");
     const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
     const [addUserDialog, setAddUserDialog] = useState(false);
     const [allUsers, setAllUsers] = useState<UserType[]>([]);
+    const [nativeMessages, setNativeMessages] = useState(messages || []);
     const handleTabChange = (newValue: number) => {
         setActiveTab(newValue);
         if (swiper) {
@@ -295,16 +296,14 @@ export default function GroupInfo() {
                             </SwiperSlide>
                             <SwiperSlide>
                                 <Box>
-                                    {Array(3)
-                                        .fill("")
-                                        .map((_, i) => {
-                                            return (
-                                                <SharedLink
-                                                    link="https://facebook.com/"
-                                                    key={i}
-                                                />
-                                            );
-                                        })}
+                                    {nativeMessages.map((msg, i) => {
+                                        return (
+                                            <SharedLink
+                                                link="https://facebook.com/"
+                                                key={i}
+                                            />
+                                        );
+                                    })}
                                 </Box>
                             </SwiperSlide>
                             <SwiperSlide>

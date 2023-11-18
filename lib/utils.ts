@@ -4,6 +4,10 @@ import numeral from "numeral";
 import { STATUS } from "@/types/app";
 import { MessageType, TypesOfMessage, UserType } from "@/app";
 import { AlertColor } from "@mui/material";
+import { ref } from "firebase/storage";
+import { storage } from "@/firebase";
+import { nanoid } from "nanoid";
+import { getDownloadURL, uploadBytes } from "firebase/storage";
 
 export function repeat(text: string, count: number = 1) {
     let result = "";
@@ -124,4 +128,32 @@ export function determineMessageType(
     } else {
         return "text";
     }
+}
+
+export async function UploadImagesToFirebase(
+    files: {
+        file: File;
+        id: number;
+    }[],
+    groupId: string
+) {
+    return await Promise.all(
+        files
+            .filter((e) => e)
+            .map((e) => {
+                return (async () => {
+                    try {
+                        const storageRef = ref(
+                            storage,
+                            `${groupId}/${nanoid()}`
+                        );
+                        const result = await uploadBytes(storageRef, e.file);
+                        let tempUrl = await getDownloadURL(result.ref);
+                        return tempUrl;
+                    } catch (error) {
+                        return "";
+                    }
+                })();
+            })
+    );
 }

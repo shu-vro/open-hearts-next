@@ -78,7 +78,7 @@ export default function Chats({ params }: { params: { group: string } }) {
                         </div>
                         <MessageForm />
                     </main>
-                    <RightSideBar />
+                    <RightSideBar messages={messages} />
                 </>
             </MessageContext>
         </div>
