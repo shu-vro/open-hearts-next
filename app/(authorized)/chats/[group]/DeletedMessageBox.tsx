@@ -25,7 +25,7 @@ export default function DeletedMessageBox({
         >
             <ReplyBox
                 by={by} // stupidity for now.
-                reply={reply}
+                replyId={reply}
             />
             <NativeHoverWrapper
                 replied={!!reply}

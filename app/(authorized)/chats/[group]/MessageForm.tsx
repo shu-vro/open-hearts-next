@@ -3,18 +3,18 @@
 import TextField from "@mui/material/TextField";
 import GifButton from "./GifButton";
 import { useRef } from "react";
-import { Box, Chip, IconButton, Typography, useTheme } from "@mui/material";
-import { MdKeyboardVoice, MdSend } from "react-icons/md";
+import { IconButton, useTheme } from "@mui/material";
+import { MdSend } from "react-icons/md";
 import AddMoreButton from "./AddMoreButton";
 import GetEmojiLink from "./GetEmojiLink";
 import { defaultMessage, useMessage } from "@/contexts/MessageContext";
-import { VscClose } from "react-icons/vsc";
 import lo_ from "lodash";
-import { BiImages } from "react-icons/bi";
 import { useGroup } from "@/contexts/GroupContext";
 import { setChatMessage } from "@/lib/helpers/firebase-helpers";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { auth } from "@/firebase";
+import ReplySection from "./ReplySection";
+import MessageFormStack from "./MessageFormStack";
 
 export default function MessageForm() {
     const { group } = useGroup();
@@ -33,9 +33,9 @@ export default function MessageForm() {
                     return setToastMessage("error: Authorization error");
                 console.log(message);
 
-                if (!lo_.isEqual(defaultMessage, replyMessage.message)) {
-                    message.reply = replyMessage;
-                }
+                // if (!lo_.isEqual(defaultMessage, replyMessage.message)) {
+                //     message.reply = replyMessage;
+                // }
                 message.sender_id = auth.currentUser?.uid;
                 let BasicDetails = group.groupMembersBasicDetails?.find(
                     (member) => member.id === auth.currentUser?.uid
@@ -51,9 +51,10 @@ export default function MessageForm() {
             className="input-area flex justify-end items-center w-full relative"
             action="get"
         >
-            {!lo_.isEqual(defaultMessage, replyMessage.message) && (
+            <MessageFormStack open={true} />
+            {/* {!lo_.isEqual(defaultMessage, replyMessage.message) && (
                 <ReplySection />
-            )}
+            )} */}
             <AddMoreButton form={form.current!} />
             <TextField
                 label="Type something..."
@@ -113,104 +114,5 @@ export default function MessageForm() {
                 </IconButton>
             )}
         </form>
-    );
-}
-
-export function ReplySection() {
-    const { replyMessage: reply, setReplyMessage, setMessage } = useMessage();
-
-    return (
-        <Box
-            className="replyBar absolute bottom-full left-0 w-full py-3 rounded-[.75rem_.75rem_0_0] z-10"
-            sx={{
-                background: (theme) => theme.palette.mySwatch.messageBG,
-                gridArea: "message",
-            }}
-        >
-            <Box
-                className="grid border-[0] border-l-4 border-solid p-2"
-                sx={{
-                    gridTemplateAreas: `'name cross'
-                                         'message message'
-                    `,
-                    borderColor: (theme) => theme.palette.primary.dark,
-                }}
-            >
-                <b
-                    className="name capitalize"
-                    style={{
-                        gridArea: "name",
-                    }}
-                >
-                    {reply.to}
-                </b>
-                <VscClose
-                    style={{
-                        gridArea: "cross",
-                    }}
-                    className="justify-self-end cursor-pointer text-2xl"
-                    onClick={() => {
-                        setReplyMessage((prev) => ({
-                            ...prev,
-                            to: "",
-                            message: {
-                                ...defaultMessage,
-                            },
-                        }));
-                        setMessage((prev) => {
-                            return {
-                                ...prev,
-                                reply: null,
-                            };
-                        });
-                    }}
-                />
-                {reply.message.deleted ? (
-                    <Typography
-                        noWrap
-                        className="message truncate w-full text-sm p-3 rounded-lg"
-                        style={{
-                            maxWidth: "300px",
-                            gridArea: "message",
-                        }}
-                    >
-                        This message was deleted by sender
-                    </Typography>
-                ) : (
-                    <Typography
-                        className="message line-clamp-3 w-full text-sm"
-                        style={{
-                            maxWidth: "300px",
-                            gridArea: "message",
-                        }}
-                    >
-                        {reply.type === "text" && reply.message.text}
-                        {reply.type === "image" &&
-                            (reply.message.text ? (
-                                <>
-                                    <Chip icon={<BiImages />} label="Images" />{" "}
-                                    + {reply.message.text}
-                                </>
-                            ) : (
-                                <Chip
-                                    icon={<BiImages />}
-                                    label="Replying to images"
-                                />
-                            ))}
-                        {reply.type === "voice" && (
-                            <Chip
-                                icon={<MdKeyboardVoice size="20px" />}
-                                label="Replying to Voice"
-                            />
-                        )}
-                        {reply.type === "emoji" && (
-                            <GetEmojiLink
-                                unified={reply.message.emoji || "1f601"}
-                            />
-                        )}
-                    </Typography>
-                )}
-            </Box>
-        </Box>
     );
 }

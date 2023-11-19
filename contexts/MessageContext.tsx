@@ -1,6 +1,6 @@
 "use client";
 
-import { IReplyMessage, MessageType } from "@/app";
+import { MessageType } from "@/app";
 import { Timestamp, serverTimestamp } from "firebase/firestore";
 import React, { createContext, useContext, useState } from "react";
 
@@ -9,7 +9,7 @@ const Context = createContext({} as UseMessageProp);
 type UseMessageProp = {
     message: MessageType;
     setMessage: React.Dispatch<React.SetStateAction<MessageType>>;
-    replyMessage: IReplyMessage;
+    replyMessage: string | null;
     setReplyMessage: React.Dispatch<
         React.SetStateAction<UseMessageProp["replyMessage"]>
     >;
@@ -21,14 +21,13 @@ export function useMessage() {
 export default function MessageContext({
     children,
 }: {
-    children: React.ReactElement;
+    children: React.ReactNode;
 }) {
     const [message, setMessage] = useState<UseMessageProp["message"]>({
         ...defaultMessage,
     });
-    const [replyMessage, setReplyMessage] = useState<
-        UseMessageProp["replyMessage"]
-    >({ message: { ...defaultMessage }, type: "text", to: "shirshen shuvro" });
+    const [replyMessage, setReplyMessage] =
+        useState<UseMessageProp["replyMessage"]>("");
     return (
         <>
             <Context.Provider
@@ -41,6 +40,7 @@ export default function MessageContext({
 }
 
 export const defaultMessage = Object.freeze({
+    id: "",
     emoji: "",
     text: "",
     imageLink: [],

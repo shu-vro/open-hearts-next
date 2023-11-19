@@ -59,7 +59,7 @@ export function MessageBox({
                     gridArea: "message",
                 }}
             >
-                <ReplyBox by={by} reply={msg.reply} />
+                <ReplyBox by={by} replyId={msg.reply} />
                 <NativeHoverWrapper replied={!!msg.reply}>
                     <Box
                         className={cn(
@@ -144,7 +144,7 @@ export function MessageBox({
                     gridArea: "message",
                 }}
             >
-                <ReplyBox by={by} reply={msg.reply} />
+                <ReplyBox by={by} replyId={msg.reply} />
                 <div
                     className={cn(
                         "message text-sm rounded-lg z-10",
@@ -171,7 +171,7 @@ export function MessageBox({
             >
                 <ReplyBox
                     by={by} // stupidity for now.
-                    reply={msg.reply}
+                    replyId={msg.reply}
                 />
                 <NativeHoverWrapper
                     replied={!!msg.reply}
@@ -266,7 +266,7 @@ export function MessageBox({
                     gridArea: "message",
                 }}
             >
-                <ReplyBox by={by} reply={msg.reply} />
+                <ReplyBox by={by} replyId={msg.reply} />
                 <NativeHoverWrapper replied={!!msg.reply}>
                     <Box
                         className={cn(

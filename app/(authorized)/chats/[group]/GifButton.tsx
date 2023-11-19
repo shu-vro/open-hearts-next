@@ -46,6 +46,7 @@ export default function GifButton({ form }: { form: HTMLFormElement }) {
                                     bubbles: true,
                                 })
                             );
+                            setAnchorElPopover(null);
                         }, 100);
                     }}
                     theme={mode as Theme}

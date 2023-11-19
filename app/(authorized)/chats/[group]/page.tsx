@@ -8,24 +8,20 @@ import MessageContext from "@/contexts/MessageContext";
 import { MessageType } from "@/app";
 import AppBarChat from "./AppBarChat";
 import useGetGroup from "@/lib/hooks/useGetGroup";
-import {
-    collection,
-    getDocs,
-    onSnapshot,
-    orderBy,
-    query,
-    where,
-} from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
 import { useEffect, useState } from "react";
 import { determineMessageType } from "@/lib/utils";
 import svgBG from "@/assets/dribbble-kc-removebg-preview.svg";
 import { Box } from "@mui/material";
+import useFetchAllMessages from "@/lib/hooks/useFetchAllMessages";
+import { useAllMessages } from "@/contexts/AllMessagesContext";
 
 export default function Chats({ params }: { params: { group: string } }) {
-    const [messages, setMessages] = useState<MessageType[]>([]);
+    const { messages, setMessages } = useAllMessages();
     useGetGroup(params.group);
+    useFetchAllMessages(params.group);
 
     useEffect(() => {
         if (!params || !params.group) return;
@@ -55,31 +51,27 @@ export default function Chats({ params }: { params: { group: string } }) {
     return (
         <div className="w-full grow flex flex-row h-[calc(100%-4rem)]">
             <MessageContext>
-                <>
-                    <LeftSideBar />
-                    <main className="grow w-1/2 flex justify-start items-start flex-col h-full">
-                        <AppBarChat />
-                        <div className="chat-section w-full overflow-y-auto h-full relative">
-                            {messages.map((msg, i) => (
-                                <MessageSent
-                                    key={i}
-                                    by={
-                                        auth.currentUser?.uid === msg.sender_id
-                                            ? "me"
-                                            : "him"
-                                    }
-                                    type={determineMessageType(msg)}
-                                    time={1693755271197}
-                                    metadata={null}
-                                    msg={msg}
-                                />
-                            ))}
-                            {!messages.length && <EmptyMessage />}
-                        </div>
-                        <MessageForm />
-                    </main>
-                    <RightSideBar messages={messages} />
-                </>
+                <LeftSideBar />
+                <main className="grow w-1/2 flex justify-start items-start flex-col h-full">
+                    <AppBarChat />
+                    <div className="chat-section w-full overflow-y-auto h-full relative">
+                        {messages.map((msg, i) => (
+                            <MessageSent
+                                key={i}
+                                by={
+                                    auth.currentUser?.uid === msg.sender_id
+                                        ? "me"
+                                        : "him"
+                                }
+                                type={determineMessageType(msg)}
+                                msg={msg}
+                            />
+                        ))}
+                        {!messages.length && <EmptyMessage />}
+                    </div>
+                    <MessageForm />
+                </main>
+                <RightSideBar messages={messages} />
             </MessageContext>
         </div>
     );

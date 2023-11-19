@@ -118,16 +118,17 @@ export function computeSeverityMessage(text: string): AlertColor {
 
 export function determineMessageType(
     message: Partial<MessageType>
-): TypesOfMessage {
+): TypesOfMessage | null {
     if (message?.voice) {
         return "voice";
     } else if (message?.emoji) {
         return "emoji";
     } else if (message?.imageLink?.length) {
         return "image";
-    } else {
+    } else if (message.text) {
         return "text";
     }
+    return null;
 }
 
 export async function UploadImagesToFirebase(

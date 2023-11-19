@@ -22,25 +22,20 @@ declare module "@mui/material/styles" {
 }
 
 declare type MessageType = {
+    id: string;
     text: string;
     emoji: string;
     hash: string | null;
     deleted: boolean;
     imageLink: string[];
     voice: string;
-    reply: IReplyMessage | null;
+    reply: string | null;
     reactions: {
         [x: string]: number;
     };
     created_at: Timestamp;
     sender_id: string;
 };
-
-declare interface IReplyMessage {
-    message: MessageType;
-    type: TypesOfMessage;
-    to: string;
-}
 
 export type TypesOfMessage = "text" | "image" | "emoji" | "voice";
 

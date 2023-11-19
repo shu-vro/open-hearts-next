@@ -30,10 +30,8 @@ import dayjs from "dayjs";
 
 export type Props = {
     by: "me" | "him";
-    type?: TypesOfMessage;
+    type?: TypesOfMessage | null;
     msg: MessageType;
-    time: number;
-    metadata: null; // for now.
 };
 
 export function NativeHoverWrapper({
@@ -56,13 +54,7 @@ export function NativeHoverWrapper({
     );
 }
 
-export default function Message({
-    by,
-    type = "text",
-    msg,
-    time,
-    metadata, // contains user information (ALPHA)
-}: Props) {
+export default function Message({ by, type = "text", msg }: Props) {
     const { group } = useGroup();
     const [anchorElForMessagesPopover, setAnchorElForMessagesPopover] =
         useState<null | HTMLElement>(null);
@@ -216,22 +208,11 @@ export default function Message({
                         icon={<AiOutlineMessage />}
                         label="Reply"
                         onClick={() => {
-                            setReplyMessage({
-                                type,
-                                to: "shirshen dada",
-                                message: {
-                                    ...defaultMessage,
-                                    text: "shuvro is the best",
-                                },
-                            });
+                            setReplyMessage(msg.id);
                             setMessage((prev) => {
                                 return {
                                     ...prev,
-                                    reply: {
-                                        message: msg,
-                                        to: "shirshen dada",
-                                        type,
-                                    },
+                                    reply: msg.id,
                                 };
                             });
                         }}

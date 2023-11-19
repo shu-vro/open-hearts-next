@@ -117,10 +117,7 @@ export async function changeGroupInformation(
 }
 
 /**
- * Both creates and sets group.
- * @param groupId
- * @param obj
- * @param chatId
+ * Both creates and sets in group.
  */
 export async function setChatMessage(
     groupId: string,
@@ -128,7 +125,7 @@ export async function setChatMessage(
     by?: TGroupMembersBasicDetails,
     chatId: string | null = null
 ) {
-    const id = nanoid();
+    const id = chatId || nanoid();
     try {
         if (!by) throw new Error("Sent by not defined!");
         const typeOfMessage = determineMessageType(obj);
@@ -138,9 +135,9 @@ export async function setChatMessage(
                 DATABASE_PATH.groupDetails,
                 groupId,
                 "messages",
-                chatId || id
+                id
             ),
-            obj,
+            { ...obj, id },
             { merge: true }
         );
         await setDoc(

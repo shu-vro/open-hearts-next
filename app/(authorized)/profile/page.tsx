@@ -7,8 +7,8 @@ import { Avatar, Box, Typography } from "@mui/material";
 import { auth, firestoreDb } from "@/firebase";
 import { FaRegHandPointRight } from "react-icons/fa";
 import { doc, getDoc } from "firebase/firestore";
-import { DATABASE_PATH } from "@/lib/variables";
-import { useSearchParams } from "next/navigation";
+import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
+import { redirect, useSearchParams } from "next/navigation";
 import { UserType } from "@/app";
 import { MAIL_REGEX, URL_REGEX } from "@/lib/utils";
 
@@ -25,21 +25,32 @@ const imbue = Imbue({
  *      say sorry to user and request him to go back
  */
 
-export default function Page() {
+export default function ProfilePage({ uid }: { uid: string }) {
     const searchParam = useSearchParams();
     const [userData, setUserData] = useState<UserType>();
     useEffect(() => {
         (async () => {
             try {
-                let uid: string | null | undefined = auth.currentUser?.uid;
-                if (!auth.currentUser) {
+                let uid_temp: string | null | undefined = auth.currentUser?.uid;
+
+                if (
+                    (!searchParam || searchParam.get("uid") === null) &&
+                    !auth.currentUser
+                ) {
+                    return redirect(SITEMAP.chats);
+                    // if (searchParam && searchParam.get("uid") !== null) {
+                    //     uid = searchParam.get("uid");
+                    // }
+                }
+                if (uid) {
+                    uid_temp = uid;
+                } else if (searchParam && searchParam.get("uid") !== null) {
                     if (searchParam && searchParam.get("uid") !== null) {
-                        uid = searchParam.get("uid");
+                        uid_temp = searchParam.get("uid");
                     }
-                    return;
                 }
                 const document = await getDoc(
-                    doc(firestoreDb, DATABASE_PATH.users, uid || "")
+                    doc(firestoreDb, DATABASE_PATH.users, uid_temp || "")
                 );
                 setUserData(document.data() as UserType);
             } catch (e) {
