@@ -105,13 +105,17 @@ function DisplayRow({ file, setFiles, k }: DisplayRowProps) {
     );
 }
 
-function ImageFileSelect({ form }: Props) {
+function ImageFileSelect({
+    form,
+    setMenuOpen,
+}: {
+    setMenuOpen: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
+} & Props) {
     const { setMessage } = useMessage();
     const [open, setOpen] = useState(false);
     const [files, setFiles] = useState<{ file: File; id: number }[]>([]);
     const matches649 = useMediaQuery("(max-width: 649px)");
     const { group } = useGroup();
-    const { setMessage: setToastAlert } = useToastAlert();
 
     const selectFiles = () => {
         let inputs = document.createElement("input");
@@ -136,15 +140,18 @@ function ImageFileSelect({ form }: Props) {
         };
         inputs.remove();
     };
+    const handleClose = () => {
+        setOpen(false);
+        setFiles([]);
+        setMenuOpen(null);
+    };
     return (
         <>
             <Dialog
                 open={open}
                 fullWidth
                 maxWidth="md"
-                onClose={() => {
-                    setOpen(false);
-                }}
+                onClose={handleClose}
                 hidden={!Boolean(files.length)}
             >
                 <AppBar
@@ -176,8 +183,7 @@ function ImageFileSelect({ form }: Props) {
                                     imageLink: tempFiles.filter((e) => e),
                                 };
                             });
-                            setOpen(false);
-                            setFiles([]);
+                            handleClose();
                         }}
                         startIcon={<BsCheck2All />}
                         variant="contained"
@@ -200,7 +206,6 @@ function ImageFileSelect({ form }: Props) {
                                     imageLink: tempFiles.filter((e) => e),
                                 };
                             });
-                            setFiles([]);
 
                             setTimeout(() => {
                                 form?.dispatchEvent(
@@ -209,7 +214,7 @@ function ImageFileSelect({ form }: Props) {
                                     })
                                 );
                             }, 100);
-                            setOpen(false);
+                            handleClose();
                         }}
                         startIcon={<BsCheck2All />}
                         variant="contained"
@@ -525,7 +530,7 @@ export default function AddMoreButton({ form }: Props) {
                 }}
             >
                 <VoiceInput form={form} setMenuOpen={setMenuOpen} />
-                <ImageFileSelect form={form} />
+                <ImageFileSelect form={form} setMenuOpen={setMenuOpen} />
             </Menu>
             <IconButton
                 size="large"

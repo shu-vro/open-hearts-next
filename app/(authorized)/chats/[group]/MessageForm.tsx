@@ -19,7 +19,7 @@ import MessageFormStack from "./MessageFormStack";
 export default function MessageForm() {
     const { group } = useGroup();
     const { setMessage: setToastMessage } = useToastAlert();
-    const { message, setMessage, replyMessage } = useMessage();
+    const { message, setMessage, replyMessage, setReplyMessage } = useMessage();
     const form = useRef<HTMLFormElement>(null);
     return (
         <form
@@ -46,15 +46,15 @@ export default function MessageForm() {
                     setToastMessage(e.message);
                 }
                 setMessage(() => defaultMessage);
+                setReplyMessage(null);
             }}
             ref={form}
             className="input-area flex justify-end items-center w-full relative"
             action="get"
         >
-            <MessageFormStack open={true} />
-            {/* {!lo_.isEqual(defaultMessage, replyMessage.message) && (
-                <ReplySection />
-            )} */}
+            <MessageFormStack
+                open={Boolean(replyMessage || message.imageLink.length)}
+            />
             <AddMoreButton form={form.current!} />
             <TextField
                 label="Type something..."

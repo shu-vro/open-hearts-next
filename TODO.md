@@ -4,10 +4,9 @@ They are unfinished because the relevant features aren't introduced yet.
 
 -   [x] add chat section based on slug in url.
 -   [x] compatible to send all types of message
--   [ ] implement chat section with all types of message types.
-    -   [ ] the add photo button needs modifications.
-    -   [ ] add photo and voice send feature
-    -   [ ] add photo and voice show feature
+-   [x] implement chat section with all types of message types.
+    -   [x] the add photo button needs modifications.
+    -   [x] add photo and voice send feature
 -   [ ] show these photos, links, and voice
 -   [ ] Create admin panel for groups
     -   [ ] if present, good. fetch chat, group info
@@ -21,5 +20,6 @@ They are unfinished because the relevant features aren't introduced yet.
     -   [ ] also, profile redirect (when another user clicks on the profile) working or not
 
 -   [x] task for tomorrow: why photos are sent saved twice?
--   [ ] add preview images
+-   [x] add preview images
 -   [x] make profile page for other users
+-   [ ] loading while uploading images
