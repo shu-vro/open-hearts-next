@@ -15,9 +15,9 @@ They are unfinished because the relevant features aren't introduced yet.
     -   [ ] task label is added to all issues. the if statement is not executed
     -   [ ] workflow failing because there is no label to exit
     -   [ ] branch creation label is executed for every push
--   [ ] check if profile photo change is working properly or not.
+-   [x] check if profile photo change is working properly or not.
 
-    -   [ ] also, profile redirect (when another user clicks on the profile) working or not
+    -   [x] also, profile redirect (when another user clicks on the profile) working or not
 
 -   [x] task for tomorrow: why photos are sent saved twice?
 -   [x] add preview images

@@ -26,13 +26,13 @@ import { UserType } from "@/app";
 import { VscChromeClose } from "react-icons/vsc";
 import { updateProfile } from "firebase/auth";
 import { isEqual } from "lodash";
-import { computeSeverityMessage } from "@/lib/utils";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
 
 export default function General() {
     const [file, setFile] = useState<string | null | undefined>(
         auth.currentUser?.photoURL
     );
-    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const { setMessage: setSnackbarMessage } = useToastAlert();
     const form = useRef<HTMLFormElement | null>(null);
     const [userInfo, setUserInfo] = useState<Partial<UserType>>({});
     const [userInfoConst, setUserInfoConst] = useState<Partial<UserType>>({});
@@ -164,20 +164,6 @@ ${JSON.stringify(e, null, 2)}`);
 
     return (
         <form ref={form} onSubmit={handleSubmit}>
-            <Snackbar
-                anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-                open={!!snackbarMessage}
-                onClose={handleSnackbarClose}
-            >
-                <Alert
-                    onClose={handleSnackbarClose}
-                    severity={computeSeverityMessage(snackbarMessage)}
-                    sx={{ width: "100%" }}
-                    variant="filled"
-                >
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar>
             <h1>General</h1>
             <FileUploader
                 multiple={false}
@@ -328,10 +314,10 @@ ${JSON.stringify(e, null, 2)}`);
                                 className="w-[430px] max-w-full mb-4 ml-3 block max-[480px]:ml-0"
                                 options={[
                                     "phone number",
-                                    "email",
                                     "facebook",
                                     "linkedin",
                                     "twitter",
+                                    "github",
                                 ]}
                                 defaultValue={key}
                                 sx={{ width: 300 }}
@@ -408,9 +394,6 @@ ${JSON.stringify(e, null, 2)}`);
                             if (n.contacts) {
                                 n.contacts[""] = "";
                             }
-                            // if (n.studies?.findIndex((e) => e === "") === -1) {
-                            //     n.studies?.push("");
-                            // }
                             return n;
                         });
                     }}
