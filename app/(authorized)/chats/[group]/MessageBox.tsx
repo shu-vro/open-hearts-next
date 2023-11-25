@@ -1,5 +1,5 @@
 "use client";
-import { cn, normalizeTimeFormat, repeat } from "@/lib/utils";
+import { cn, repeat } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import {
     Avatar,
@@ -10,8 +10,6 @@ import {
     Typography,
 } from "@mui/material";
 import ImagePreviewModal from "./ImagePreviewModal";
-import { IoMdPause } from "react-icons/io";
-import { RiVoiceprintFill } from "react-icons/ri";
 import GetEmojiLink from "./GetEmojiLink";
 import ReplyBox from "./ReplyBox";
 import { Props, NativeHoverWrapper } from "./Message";
@@ -19,13 +17,14 @@ import { OgObject } from "open-graph-scraper/dist/lib/types";
 import HoverWrapper from "../../HoverWrapper";
 import { sanitize } from "isomorphic-dompurify";
 import { URL_REGEX } from "@/lib/utils";
+import VoiceMessageBox from "./VoiceMessageBox";
 
-function DangerousHtml(text: string, array: string[] = []) {
+function DangerousHtml(text: string, urls: string[] = []) {
     let result = text;
-    for (let i = 0; i < array.length; i++) {
+    for (let i = 0; i < urls.length; i++) {
         result = result.replaceAll(
-            array[i],
-            `<a href="${array[i]}" target="_blank" rel="noopener noreferrer">${array[i]}</a>`
+            urls[i],
+            `<a href="${urls[i]}" target="_blank" rel="noopener noreferrer">${urls[i]}</a>`
         );
     }
     return sanitize(result, {
@@ -43,7 +42,6 @@ export function MessageBox({
     type: Props["type"];
     msg: Props["msg"];
 }) {
-    const [voiceMessageDone, setVoiceMessageDone] = useState(0);
     const [showImageModal, setShowImageModal] = useState("");
     const [urls, setUrls] = useState<RegExpMatchArray | null>(null);
     useEffect(() => {
@@ -53,85 +51,10 @@ export function MessageBox({
 
     if (type === "voice") {
         return (
-            <Box
-                className={cn(by === "me" ? "justify-self-end" : "")}
-                sx={{
-                    gridArea: "message",
-                }}
-            >
-                <ReplyBox by={by} replyId={msg.reply} />
-                <NativeHoverWrapper replied={!!msg.reply}>
-                    <Box
-                        className={cn(
-                            "message text-sm p-3 rounded-[inherit] flex justify-center items-center flex-row gap-2",
-                            by === "me" && "float-right"
-                        )}
-                        bgcolor="mySwatch.messageBG"
-                        sx={{
-                            bgcolor: (theme) =>
-                                by === "him"
-                                    ? theme.palette.mySwatch.messageBG
-                                    : theme.palette.primary.main,
-                            color: (theme) =>
-                                by === "me"
-                                    ? theme.palette.getContrastText(
-                                          theme.palette.primary.main
-                                      )
-                                    : "inherit",
-                        }}
-                    >
-                        <IconButton
-                            size="small"
-                            sx={{
-                                color: (theme) =>
-                                    by === "me"
-                                        ? theme.palette.getContrastText(
-                                              theme.palette.primary.main
-                                          )
-                                        : "inherit",
-                            }}
-                        >
-                            <IoMdPause />
-                        </IconButton>
-                        <span className="start font-bold">
-                            {normalizeTimeFormat(0)}
-                        </span>
-                        <div
-                            className="relative text-3xl max-[865px]:text-2xl overflow-hidden"
-                            onClick={(e) => {
-                                let rect =
-                                    e.currentTarget.getBoundingClientRect();
-                                setVoiceMessageDone(
-                                    ((e.clientX - rect.x) / rect.width) * 100
-                                );
-                            }}
-                        >
-                            <div className="base opacity-40 flex justify-center items-center flex-row">
-                                {Array(6)
-                                    .fill("")
-                                    .map((_, i) => (
-                                        <RiVoiceprintFill key={i} />
-                                    ))}
-                            </div>
-                            <div
-                                className="slider absolute top-0 left-0 w-full h-full"
-                                style={{
-                                    clipPath: `polygon(0 0, ${voiceMessageDone}% 0, ${voiceMessageDone}% 100%, 0% 100%)`,
-                                }}
-                            >
-                                {Array(6)
-                                    .fill("")
-                                    .map((_, i) => (
-                                        <RiVoiceprintFill key={i} />
-                                    ))}
-                            </div>
-                        </div>
-                        <span className="end font-bold">
-                            {normalizeTimeFormat(400)}
-                        </span>
-                    </Box>
-                </NativeHoverWrapper>
-            </Box>
+            <VoiceMessageBox
+                by={by}
+                msg={{ reply: msg.reply!, voice: msg.voice }}
+            />
         );
     } else if (type === "emoji") {
         return (

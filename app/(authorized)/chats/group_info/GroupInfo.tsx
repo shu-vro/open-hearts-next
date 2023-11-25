@@ -275,25 +275,6 @@ export default function GroupInfo({
                                                 </ImageListItem>
                                             );
                                         })}
-                                        {/* {imageLink.map((src, i) => (
-                                            <ImageListItem
-                                                key={i}
-                                                component="a"
-                                                href={`#${i + 1}`}
-                                                onClick={() => {
-                                                    setShowImageModal(
-                                                        i.toString()
-                                                    );
-                                                }}
-                                            >
-                                                <img
-                                                    src={`${src}?w=248&fit=crop&auto=format`}
-                                                    srcSet={`${src}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                                                    alt={src}
-                                                    loading="lazy"
-                                                />
-                                            </ImageListItem>
-                                        ))} */}
                                         <ImagePreviewModal
                                             images={imageLink}
                                             handleClose={handleClose}

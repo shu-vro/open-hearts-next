@@ -7,19 +7,19 @@ They are unfinished because the relevant features aren't introduced yet.
 -   [x] implement chat section with all types of message types.
     -   [x] the add photo button needs modifications.
     -   [x] add photo and voice send feature
--   [ ] show these photos, links, and voice
+-   [x] show these photos, links, and voice
+-   [ ] implement delete message feature
+    -   [ ] also make sure that message is hashed before deleted
+    -   [ ] remove bad words from text type messages
 -   [ ] Create admin panel for groups
     -   [ ] if present, good. fetch chat, group info
     -   [ ] if not present, show all group's list
 -   [ ] Update workflows again. they are not perfect yet.
+
     -   [ ] task label is added to all issues. the if statement is not executed
     -   [ ] workflow failing because there is no label to exit
     -   [ ] branch creation label is executed for every push
--   [x] check if profile photo change is working properly or not.
-
-    -   [x] also, profile redirect (when another user clicks on the profile) working or not
 
 -   [x] task for tomorrow: why photos are sent saved twice?
--   [x] add preview images
--   [x] make profile page for other users
+-   [ ] add preview images
 -   [ ] loading while uploading images
