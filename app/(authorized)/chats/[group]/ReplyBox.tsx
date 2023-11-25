@@ -32,7 +32,7 @@ export default function ReplyBox({
     return reply ? (
         <Box
             component={Link}
-            href={`#${"hello"}`}
+            href={`#${replyId}`}
             className={cn(
                 "relative py-2 px-3 rounded-lg opacity-60 cursor-pointer hover:no-underline text-inherit block mt-2 pb-5"
             )}

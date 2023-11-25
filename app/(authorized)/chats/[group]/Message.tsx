@@ -63,7 +63,7 @@ export default function Message({ by, type = "text", msg }: Props) {
     const {
         palette: { mode: themeMode },
     } = useTheme();
-    const { setReplyMessage, setMessage } = useMessage();
+    const { setMessage } = useMessage();
     useEffect(() => {
         (async () => {
             let q = doc(
@@ -208,7 +208,6 @@ export default function Message({ by, type = "text", msg }: Props) {
                         icon={<AiOutlineMessage />}
                         label="Reply"
                         onClick={() => {
-                            setReplyMessage(msg.id);
                             setMessage((prev) => {
                                 return {
                                     ...prev,

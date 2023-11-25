@@ -18,7 +18,7 @@ import { nanoid } from "nanoid";
 export default function MessageForm() {
     const { group } = useGroup();
     const { setMessage: setToastMessage } = useToastAlert();
-    const { message, setMessage, replyMessage, setReplyMessage } = useMessage();
+    const { message, setMessage } = useMessage();
     const form = useRef<HTMLFormElement>(null);
 
     useEffect(() => {
@@ -47,14 +47,13 @@ export default function MessageForm() {
                     setToastMessage(e.message);
                 }
                 setMessage(() => ({ ...defaultMessage, id: nanoid() }));
-                setReplyMessage(null);
             }}
             ref={form}
             className="input-area flex justify-end items-center w-full relative"
             action="get"
         >
             <MessageFormStack
-                open={Boolean(replyMessage || message.imageLink.length)}
+                open={Boolean(message.reply || message.imageLink.length)}
             />
             <AddMoreButton form={form.current!} />
             <TextField

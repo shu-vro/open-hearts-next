@@ -13,6 +13,7 @@ type Props = {
     msg: {
         voice: string;
         reply: string;
+        id: string;
     };
     by: "me" | "him";
 };
@@ -48,6 +49,7 @@ export default function VoiceMessageBox({ msg, by }: Props) {
             sx={{
                 gridArea: "message",
             }}
+            id={msg.id}
         >
             <ReplyBox by={by} replyId={msg.reply} />
             <NativeHoverWrapper replied={!!msg.reply}>

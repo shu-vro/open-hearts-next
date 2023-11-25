@@ -13,10 +13,10 @@ import { useEffect } from "react";
  * @required for [MessageForm.tsx](<./MessageForm.tsx>)
  */
 export default function ReplySection() {
-    const { replyMessage, setReplyMessage } = useMessage();
+    const { message, setMessage } = useMessage();
     const { messages } = useAllMessages();
 
-    const reply = messages.find((e) => e.id === replyMessage);
+    const reply = messages.find((e) => e.id === message.reply);
     const replyType = determineMessageType(reply || {});
 
     return reply ? (
@@ -43,7 +43,11 @@ export default function ReplySection() {
                 }}
                 className="justify-self-end cursor-pointer text-2xl"
                 onClick={() => {
-                    setReplyMessage(null);
+                    setMessage((prev) => {
+                        let n = { ...prev };
+                        n.reply = null;
+                        return n;
+                    });
                 }}
             />
             {reply.deleted ? (

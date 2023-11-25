@@ -53,7 +53,7 @@ export function MessageBox({
         return (
             <VoiceMessageBox
                 by={by}
-                msg={{ reply: msg.reply!, voice: msg.voice }}
+                msg={{ reply: msg.reply!, voice: msg.voice, id: msg.id }}
             />
         );
     } else if (type === "emoji") {
@@ -66,6 +66,7 @@ export function MessageBox({
                 style={{
                     gridArea: "message",
                 }}
+                id={msg.id}
             >
                 <ReplyBox by={by} replyId={msg.reply} />
                 <div
@@ -91,6 +92,7 @@ export function MessageBox({
                 style={{
                     gridArea: "message",
                 }}
+                id={msg.id}
             >
                 <ReplyBox
                     by={by} // stupidity for now.
@@ -188,6 +190,7 @@ export function MessageBox({
                 style={{
                     gridArea: "message",
                 }}
+                id={msg.id}
             >
                 <ReplyBox by={by} replyId={msg.reply} />
                 <NativeHoverWrapper replied={!!msg.reply}>

@@ -10,10 +10,6 @@ const Context = createContext({} as UseMessageProp);
 type UseMessageProp = {
     message: MessageType;
     setMessage: React.Dispatch<React.SetStateAction<MessageType>>;
-    replyMessage: string | null;
-    setReplyMessage: React.Dispatch<
-        React.SetStateAction<UseMessageProp["replyMessage"]>
-    >;
 };
 export function useMessage() {
     return useContext(Context);
@@ -27,13 +23,9 @@ export default function MessageContext({
     const [message, setMessage] = useState<UseMessageProp["message"]>({
         ...defaultMessage,
     });
-    const [replyMessage, setReplyMessage] =
-        useState<UseMessageProp["replyMessage"]>("");
     return (
         <>
-            <Context.Provider
-                value={{ message, setMessage, replyMessage, setReplyMessage }}
-            >
+            <Context.Provider value={{ message, setMessage }}>
                 {children}
             </Context.Provider>
         </>
