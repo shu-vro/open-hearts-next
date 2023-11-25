@@ -111,7 +111,10 @@ function ImageFileSelect({
 }: {
     setMenuOpen: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
 } & Props) {
-    const { setMessage } = useMessage();
+    const {
+        message: { id: chatId },
+        setMessage,
+    } = useMessage();
     const [open, setOpen] = useState(false);
     const [files, setFiles] = useState<{ file: File; id: number }[]>([]);
     const matches649 = useMediaQuery("(max-width: 649px)");
@@ -175,7 +178,8 @@ function ImageFileSelect({
                             if (!group) return;
                             let tempFiles = await UploadImagesToFirebase(
                                 files,
-                                group.id
+                                group.id,
+                                chatId || nanoid()
                             );
                             setMessage((prev) => {
                                 return {
@@ -198,7 +202,8 @@ function ImageFileSelect({
                             if (!group) return;
                             let tempFiles = await UploadImagesToFirebase(
                                 files,
-                                group.id
+                                group.id,
+                                chatId || nanoid()
                             );
                             setMessage((prev) => {
                                 return {
@@ -416,9 +421,10 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
                                 audioBlob
                             );
                             let voiceURL = await getDownloadURL(result.ref);
-                            setMessage(() => {
+                            setMessage((prev) => {
                                 return {
                                     ...defaultMessage,
+                                    id: prev.id,
                                     voice: voiceURL,
                                 };
                             });

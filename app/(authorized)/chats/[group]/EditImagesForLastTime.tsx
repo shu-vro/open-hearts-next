@@ -16,6 +16,10 @@ import { useMessage } from "@/contexts/MessageContext";
 import { VscClose } from "react-icons/vsc";
 import HoverWrapper from "../../HoverWrapper";
 import { MessageType } from "@/app";
+import { deleteObject, listAll, ref } from "firebase/storage";
+import { storage } from "@/firebase";
+import { useGroup } from "@/contexts/GroupContext";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
 
 /**
  * @required - for [MessageForm.tsx](./MessageForm.tsx)
@@ -24,13 +28,15 @@ import { MessageType } from "@/app";
  */
 
 function DisplayLocalConfirmationDialog({
-    setMessage,
+    // setMessage,
     openDialog,
     handleConfirmDialogClose,
+    handleDeleteFromStorage,
 }: {
-    setMessage: React.Dispatch<React.SetStateAction<MessageType>>;
+    // setMessage: React.Dispatch<React.SetStateAction<MessageType>>;
     openDialog: boolean;
     handleConfirmDialogClose: () => void;
+    handleDeleteFromStorage: () => Promise<void>;
 }) {
     return (
         <Dialog open={openDialog} onClose={handleConfirmDialogClose}>
@@ -44,7 +50,16 @@ function DisplayLocalConfirmationDialog({
                     <br />
                     <br />
                     <FormControlLabel
-                        control={<Checkbox />}
+                        control={
+                            <Checkbox
+                                onChange={(e) => {
+                                    if (e.target.checked) {
+                                        localStorage.DO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN =
+                                            "true";
+                                    }
+                                }}
+                            />
+                        }
                         label="I understand. Do not show me this dialog."
                     />
                 </DialogContentText>
@@ -54,12 +69,13 @@ function DisplayLocalConfirmationDialog({
                     Cancel
                 </Button>
                 <Button
-                    onClick={() => {
-                        setMessage((prev) => {
-                            let n = { ...prev };
-                            n.imageLink = [];
-                            return n;
-                        });
+                    onClick={async () => {
+                        // setMessage((prev) => {
+                        //     let n = { ...prev };
+                        //     n.imageLink = [];
+                        //     return n;
+                        // });
+                        await handleDeleteFromStorage();
                         handleConfirmDialogClose();
                     }}
                     autoFocus
@@ -76,9 +92,36 @@ function DisplayLocalConfirmationDialog({
 export function EditImagesForLastTime() {
     const { message, setMessage } = useMessage();
     const [openDialog, setOpenDialog] = useState(false);
+    const { group } = useGroup();
+    const { setMessage: setToastMessage } = useToastAlert();
 
     const handleConfirmDialogClose = () => {
         setOpenDialog(false);
+    };
+    const handleDeleteFromStorage = async () => {
+        if (!group) return;
+        const listRef = ref(storage, `${group.id}/${message.id}`);
+
+        try {
+            const listAllRef = await listAll(listRef);
+            listAllRef.items.forEach((itemRef) => {
+                deleteObject(itemRef)
+                    .then(() => {
+                        setMessage((prev) => {
+                            let n = { ...prev };
+                            n.imageLink = [];
+                            return n;
+                        });
+                    })
+                    .catch((e) => {
+                        setToastMessage(`Error: ${e}`);
+                        console.warn(e);
+                    });
+            });
+        } catch (e) {
+            setToastMessage(`Error: ${e}`);
+            console.warn(e);
+        }
     };
     return message.imageLink.length ? (
         <Box
@@ -93,14 +136,14 @@ export function EditImagesForLastTime() {
                     gridArea: "cross",
                 }}
                 className="justify-self-end cursor-pointer text-2xl"
-                onClick={() => {
+                onClick={async () => {
                     if (
                         localStorage.DO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN !==
-                        null
+                        "true"
                     ) {
                         setOpenDialog(true);
                     } else {
-                        // ask for confirmation
+                        await handleDeleteFromStorage();
                     }
                 }}
             />
@@ -124,7 +167,6 @@ export function EditImagesForLastTime() {
                         >
                             <img
                                 className="object-cover w-full h-full rounded-[inherit]"
-                                // src="https://images.unsplash.com/photo-1682685797406-97f364419b4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
                                 src={link}
                                 alt="tile"
                             />
@@ -148,9 +190,10 @@ export function EditImagesForLastTime() {
                 ))}
             </Box>
             <DisplayLocalConfirmationDialog
-                setMessage={setMessage}
+                // setMessage={setMessage}
                 openDialog={openDialog}
                 handleConfirmDialogClose={handleConfirmDialogClose}
+                handleDeleteFromStorage={handleDeleteFromStorage}
             ></DisplayLocalConfirmationDialog>
         </Box>
     ) : null;

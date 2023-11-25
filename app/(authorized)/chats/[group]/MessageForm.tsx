@@ -2,25 +2,29 @@
 
 import TextField from "@mui/material/TextField";
 import GifButton from "./GifButton";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { IconButton, useTheme } from "@mui/material";
 import { MdSend } from "react-icons/md";
 import AddMoreButton from "./AddMoreButton";
 import GetEmojiLink from "./GetEmojiLink";
 import { defaultMessage, useMessage } from "@/contexts/MessageContext";
-import lo_ from "lodash";
 import { useGroup } from "@/contexts/GroupContext";
 import { setChatMessage } from "@/lib/helpers/firebase-helpers";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { auth } from "@/firebase";
-import ReplySection from "./ReplySection";
 import MessageFormStack from "./MessageFormStack";
+import { nanoid } from "nanoid";
 
 export default function MessageForm() {
     const { group } = useGroup();
     const { setMessage: setToastMessage } = useToastAlert();
     const { message, setMessage, replyMessage, setReplyMessage } = useMessage();
     const form = useRef<HTMLFormElement>(null);
+
+    useEffect(() => {
+        console.log(message);
+    }, [message]);
+
     return (
         <form
             onSubmit={async (e) => {
@@ -33,19 +37,16 @@ export default function MessageForm() {
                     return setToastMessage("error: Authorization error");
                 console.log(message);
 
-                // if (!lo_.isEqual(defaultMessage, replyMessage.message)) {
-                //     message.reply = replyMessage;
-                // }
                 message.sender_id = auth.currentUser?.uid;
                 let BasicDetails = group.groupMembersBasicDetails?.find(
                     (member) => member.id === auth.currentUser?.uid
                 );
                 try {
-                    setChatMessage(group.id, message, BasicDetails);
+                    setChatMessage(group.id, message, BasicDetails, message.id);
                 } catch (e: any) {
                     setToastMessage(e.message);
                 }
-                setMessage(() => defaultMessage);
+                setMessage(() => ({ ...defaultMessage, id: nanoid() }));
                 setReplyMessage(null);
             }}
             ref={form}
@@ -91,9 +92,10 @@ export default function MessageForm() {
                     size="large"
                     type="button"
                     onClick={() => {
-                        setMessage(() => {
+                        setMessage((prev) => {
                             return {
                                 ...defaultMessage,
+                                id: prev.id,
                                 emoji: group?.emoji || "1f44d",
                             };
                         });

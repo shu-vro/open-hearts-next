@@ -34,9 +34,10 @@ export default function GifButton({ form }: { form: HTMLFormElement }) {
             >
                 <GifPicker
                     onGifClick={(e) => {
-                        setMessage(() => {
+                        setMessage((prev) => {
                             return {
                                 ...defaultMessage,
+                                id: prev.id,
                                 imageLink: [e.url],
                             };
                         });

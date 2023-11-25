@@ -16,7 +16,7 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { RiDeleteBin6Fill } from "react-icons/ri";
-import { useMessage, defaultMessage } from "@/contexts/MessageContext";
+import { useMessage } from "@/contexts/MessageContext";
 import { MessageType, TypesOfMessage, UserType } from "@/app";
 import HoverWrapper, { HoverWrapperProps } from "../../HoverWrapper";
 import GetEmojiLink from "./GetEmojiLink";

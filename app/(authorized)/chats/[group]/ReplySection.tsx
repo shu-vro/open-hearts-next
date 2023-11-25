@@ -13,23 +13,13 @@ import { useEffect } from "react";
  * @required for [MessageForm.tsx](<./MessageForm.tsx>)
  */
 export default function ReplySection() {
-    const { replyMessage, setReplyMessage, setMessage } = useMessage();
+    const { replyMessage, setReplyMessage } = useMessage();
     const { messages } = useAllMessages();
-    useEffect(() => {
-        console.log(replyMessage);
-    }, [replyMessage]);
 
     const reply = messages.find((e) => e.id === replyMessage);
     const replyType = determineMessageType(reply || {});
 
     return reply ? (
-        // <Box
-        //     className="replyBar absolute bottom-full left-0 w-full py-3 rounded-[.75rem_.75rem_0_0] z-10"
-        //     sx={{
-        //         background: (theme) => theme.palette.mySwatch.messageBG,
-        //         gridArea: "message",
-        //     }}
-        // >
         <Box
             className="grid border-[0] border-l-4 border-solid p-2"
             sx={{
@@ -100,6 +90,5 @@ export default function ReplySection() {
                 </Typography>
             )}
         </Box>
-    ) : // </Box>
-    null;
+    ) : null;
 }

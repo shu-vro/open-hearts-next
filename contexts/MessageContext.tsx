@@ -2,6 +2,7 @@
 
 import { MessageType } from "@/app";
 import { Timestamp, serverTimestamp } from "firebase/firestore";
+import { nanoid } from "nanoid";
 import React, { createContext, useContext, useState } from "react";
 
 const Context = createContext({} as UseMessageProp);
@@ -40,7 +41,7 @@ export default function MessageContext({
 }
 
 export const defaultMessage = Object.freeze({
-    id: "",
+    id: nanoid(),
     emoji: "",
     text: "",
     imageLink: [],

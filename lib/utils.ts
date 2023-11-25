@@ -136,7 +136,8 @@ export async function UploadImagesToFirebase(
         file: File;
         id: number;
     }[],
-    groupId: string
+    groupId: string,
+    chatId: string
 ) {
     return await Promise.all(
         files
@@ -146,7 +147,7 @@ export async function UploadImagesToFirebase(
                     try {
                         const storageRef = ref(
                             storage,
-                            `${groupId}/${nanoid()}`
+                            `${groupId}/${chatId}/${nanoid()}`
                         );
                         const result = await uploadBytes(storageRef, e.file);
                         let tempUrl = await getDownloadURL(result.ref);
