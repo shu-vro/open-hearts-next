@@ -8,6 +8,7 @@ They are unfinished because the relevant features aren't introduced yet.
     -   [x] the add photo button needs modifications.
     -   [x] add photo and voice send feature
 -   [x] show these photos, links, and voice
+-   [ ] implement `message reaction` feature
 -   [ ] implement delete message feature
     -   [ ] also make sure that message is hashed before deleted
     -   [ ] remove bad words from text type messages
@@ -21,5 +22,5 @@ They are unfinished because the relevant features aren't introduced yet.
     -   [ ] branch creation label is executed for every push
 
 -   [x] task for tomorrow: why photos are sent saved twice?
--   [ ] add preview images
+-   [x] add preview images
 -   [ ] loading while uploading images

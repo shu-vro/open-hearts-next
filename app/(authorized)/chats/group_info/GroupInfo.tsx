@@ -176,6 +176,9 @@ export default function GroupInfo({
                                 member={member}
                                 key={member.id}
                                 user={allUsers.find((e) => e.uid === member.id)}
+                                addedBy={group?.groupMembersBasicDetails.find(
+                                    (e) => e.id === member.addedBy
+                                )}
                             />
                         ))}
                     </AccordionDetails>

@@ -13,9 +13,11 @@ dayjs.extend(relativeTime);
 export function MemberTile({
     member,
     user,
+    addedBy,
 }: {
     member: TGroupMembersBasicDetails;
     user?: UserType;
+    addedBy: TGroupMembersBasicDetails | undefined;
 }) {
     const isActive = true;
     if (!user) return "";
@@ -74,7 +76,7 @@ export function MemberTile({
                         gridArea: "addedBy",
                     }}
                 >
-                    added by {member.addedBy}
+                    added by {addedBy?.nickname || "an admin"}
                 </Typography>
             </Box>
         </HoverWrapper>
