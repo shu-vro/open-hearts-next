@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { IoMdPause } from "react-icons/io";
-import { RiVoiceprintFill } from "react-icons/ri";
+import { MdOutlineFileDownload } from "react-icons/md";
 import { FaPlay } from "react-icons/fa";
 import { cn, normalizeTimeFormat } from "@/lib/utils";
 // @ts-ignore
@@ -21,6 +21,8 @@ type Props = {
 export default function VoiceMessageBox({ msg, by }: Props) {
     const [currentTime, setCurrentTime] = useState(0);
     const [voiceBlob, setVoiceBlob] = useState<Blob>();
+    const [src, setSrc] = useState("///");
+    const [firstTimePlayingVoice, setFirstTimePlayingVoice] = useState(false);
     const audioRef = useRef<HTMLAudioElement>(null);
     const visualizerRef = useRef<HTMLCanvasElement>(null);
 
@@ -42,6 +44,12 @@ export default function VoiceMessageBox({ msg, by }: Props) {
             visualizerRef.current?.removeEventListener("click", clickEvent);
         };
     }, []);
+
+    useEffect(() => {
+        if (firstTimePlayingVoice) {
+            setSrc(msg.voice);
+        }
+    }, [firstTimePlayingVoice]);
 
     return (
         <Box
@@ -76,6 +84,7 @@ export default function VoiceMessageBox({ msg, by }: Props) {
                         size="small"
                         onClick={() => {
                             if (!audioRef.current) return;
+                            setFirstTimePlayingVoice(true);
                             if (audioRef.current.paused) {
                                 audioRef.current.play();
                             } else {
@@ -91,7 +100,13 @@ export default function VoiceMessageBox({ msg, by }: Props) {
                                     : "inherit",
                         }}
                     >
-                        {audioRef.current?.paused ? <FaPlay /> : <IoMdPause />}
+                        {!firstTimePlayingVoice ? (
+                            <MdOutlineFileDownload />
+                        ) : audioRef.current?.paused ? (
+                            <FaPlay />
+                        ) : (
+                            <IoMdPause />
+                        )}
                     </IconButton>
                     <span className="start font-bold">
                         {normalizeTimeFormat(currentTime ?? 0)}
@@ -100,10 +115,10 @@ export default function VoiceMessageBox({ msg, by }: Props) {
                         hidden
                         ref={audioRef}
                         controls
-                        src={msg.voice || ""}
+                        src={src}
                         onLoadedMetadata={async () => {
                             try {
-                                const res = await fetch(msg.voice);
+                                const res = await fetch(src);
                                 const blob = await res.blob();
                                 setVoiceBlob(blob);
                             } catch (error) {
