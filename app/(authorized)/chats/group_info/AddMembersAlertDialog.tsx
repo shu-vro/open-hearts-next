@@ -1,7 +1,8 @@
-import { UserType } from "@/app";
+import { TGroupMembersBasicDetails, UserType } from "@/app";
 import { useGroup } from "@/contexts/GroupContext";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { auth, firestoreDb } from "@/firebase";
+import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
 import { DATABASE_PATH } from "@/lib/variables";
 import {
     Dialog,
@@ -14,22 +15,19 @@ import {
     Button,
     DialogTitle,
 } from "@mui/material";
-import { query, collection, where, getDocs } from "firebase/firestore";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function AddMembersAlertDialog({
     open,
     setOpen,
-    groupMembers,
     allUsers,
 }: {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    groupMembers?: string[];
     allUsers: UserType[];
 }) {
     const [value, setValue] = useState<UserType[]>([]);
-
+    const { group } = useGroup();
     const handleClose = () => {
         setOpen(false);
     };
@@ -47,13 +45,14 @@ export default function AddMembersAlertDialog({
             <DialogContent>
                 <Autocomplete
                     value={value}
-                    onChange={(event: any, newValue: UserType[]) => {
+                    onChange={(_event: any, newValue: UserType[]) => {
                         setValue(newValue);
                     }}
                     className="w-[500px] max-w-full mt-4"
                     options={
-                        allUsers.filter((u) => groupMembers?.includes(u.uid)) ||
-                        false
+                        allUsers.filter(
+                            (u) => !group?.groupMembers?.includes(u.uid)
+                        ) || false
                     }
                     groupBy={(option) => option.name[0]}
                     multiple
@@ -89,7 +88,31 @@ export default function AddMembersAlertDialog({
                 <Button onClick={handleClose} variant="contained" color="error">
                     Close
                 </Button>
-                <Button autoFocus variant="contained" type="submit">
+                <Button
+                    autoFocus
+                    variant="contained"
+                    type="submit"
+                    onClick={async () => {
+                        if (!group || !auth.currentUser) return;
+                        const members = value.map((member) => member.uid);
+                        const membersBasicDetails = value.map(
+                            (member) =>
+                                ({
+                                    id: member.uid,
+                                    nickname: member.name,
+                                    addedBy: auth.currentUser?.uid,
+                                } as TGroupMembersBasicDetails)
+                        );
+                        await changeGroupInformation(group.id, {
+                            groupMembers: group.groupMembers.concat(members),
+                            groupMembersBasicDetails:
+                                group.groupMembersBasicDetails.concat(
+                                    membersBasicDetails
+                                ),
+                        });
+                        handleClose();
+                    }}
+                >
                     Add
                 </Button>
             </DialogActions>

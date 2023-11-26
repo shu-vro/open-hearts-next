@@ -140,50 +140,26 @@ export default function Message({ by, type = "text", msg }: Props) {
             >
                 <Chip
                     icon={
-                        <GetEmojiLink
-                            unified="2764-fe0f"
-                            size={15}
+                        <div
                             style={{
                                 marginLeft: "4px",
                                 marginRight: "-6px",
                             }}
-                        />
+                        >
+                            {Array(5)
+                                .fill(true)
+                                .map((_, i) => (
+                                    <GetEmojiLink
+                                        key={i}
+                                        unified="2764-fe0f"
+                                        size={15}
+                                    />
+                                ))}
+                        </div>
                     }
                     label={2}
                     color="primary"
                     variant="filled"
-                    clickable
-                />
-                <Chip
-                    icon={
-                        <GetEmojiLink
-                            unified="1f44d"
-                            size={15}
-                            style={{
-                                marginLeft: "4px",
-                                marginRight: "-6px",
-                            }}
-                        />
-                    }
-                    label={2}
-                    color="primary"
-                    variant="outlined"
-                    clickable
-                />
-                <Chip
-                    icon={
-                        <GetEmojiLink
-                            unified="1f973"
-                            size={15}
-                            style={{
-                                marginLeft: "4px",
-                                marginRight: "-6px",
-                            }}
-                        />
-                    }
-                    label={2}
-                    color="primary"
-                    variant="outlined"
                     clickable
                 />
                 <IconButton

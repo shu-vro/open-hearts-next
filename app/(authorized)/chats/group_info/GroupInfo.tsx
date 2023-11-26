@@ -167,7 +167,6 @@ export default function GroupInfo({
                             <AddMembersAlertDialog
                                 open={addUserDialog}
                                 allUsers={allUsers}
-                                groupMembers={group?.groupMembers}
                                 setOpen={setAddUserDialog}
                             />
                         </HoverWrapper>
