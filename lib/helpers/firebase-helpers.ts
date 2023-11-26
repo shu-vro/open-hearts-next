@@ -112,7 +112,7 @@ export async function changeGroupInformation(
         );
     } catch (e) {
         alert("error\nCheck console");
-        console.log(e);
+        console.warn(e);
     }
 }
 
