@@ -31,7 +31,7 @@ declare type MessageType = {
     voice: string;
     reply: string | null;
     reactions: {
-        [x: string]: number;
+        [x: string]: string;
     };
     created_at: Timestamp;
     sender_id: string;

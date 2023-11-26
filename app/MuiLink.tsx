@@ -1,9 +1,12 @@
-import MuiMaterialLink, { LinkOwnProps, LinkTypeMap } from "@mui/material/Link";
+import { TypographyOwnProps } from "@mui/material";
+import MuiMaterialLink from "@mui/material/Link";
 import Link, { LinkProps } from "next/link";
 import React from "react";
 
 export default function MuiLink({
     ...rest
-}: LinkProps & LinkProps & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+}: LinkProps &
+    React.AnchorHTMLAttributes<HTMLAnchorElement> &
+    TypographyOwnProps) {
     return <MuiMaterialLink component={Link} {...rest}></MuiMaterialLink>;
 }

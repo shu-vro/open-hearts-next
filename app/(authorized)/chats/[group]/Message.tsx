@@ -4,11 +4,23 @@ import { cn } from "@/lib/utils";
 import Avatar from "@mui/material/Avatar";
 import React, { useEffect, useState } from "react";
 import { AiOutlineMessage, AiOutlinePlus } from "react-icons/ai";
-import { Chip, IconButton, Popover, useTheme } from "@mui/material";
+import {
+    Box,
+    Button,
+    Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Popover,
+    useTheme,
+} from "@mui/material";
 import EmojiPicker, {
     EmojiStyle,
     Theme,
     EmojiClickData,
+    Categories,
 } from "emoji-picker-react";
 import Link from "next/link";
 import "swiper/css";
@@ -17,16 +29,24 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import { useMessage } from "@/contexts/MessageContext";
-import { MessageType, TypesOfMessage, UserType } from "@/app";
+import {
+    IGroupDetails,
+    MessageType,
+    TGroupMembersBasicDetails,
+    TypesOfMessage,
+    UserType,
+} from "@/app";
 import HoverWrapper, { HoverWrapperProps } from "../../HoverWrapper";
 import GetEmojiLink from "./GetEmojiLink";
 import DeletedMessageBox from "./DeletedMessageBox";
 import { MessageBox } from "./MessageBox";
 import { useGroup } from "@/contexts/GroupContext";
-import { collection, doc, getDoc } from "firebase/firestore";
-import { firestoreDb } from "@/firebase";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, firestoreDb } from "@/firebase";
 import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import dayjs from "dayjs";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
+import MuiLink from "@/app/MuiLink";
 
 export type Props = {
     by: "me" | "him";
@@ -54,16 +74,142 @@ export function NativeHoverWrapper({
     );
 }
 
-export default function Message({ by, type = "text", msg }: Props) {
-    const { group } = useGroup();
-    const [anchorElForMessagesPopover, setAnchorElForMessagesPopover] =
-        useState<null | HTMLElement>(null);
-    const [selectedEmoji, setSelectedEmoji] = useState("");
-    const [user, setUser] = useState<UserType | null>(null);
+function PickEmoji({
+    msg,
+    group,
+    anchorElForEmojiPopover,
+    setAnchorElForEmojiPopover,
+    setToastMessage,
+}: {
+    msg: MessageType;
+    anchorElForEmojiPopover: HTMLElement | null;
+    setAnchorElForEmojiPopover: React.Dispatch<
+        React.SetStateAction<HTMLElement | null>
+    >;
+    setToastMessage: React.Dispatch<React.SetStateAction<string>>;
+    group: IGroupDetails | null;
+}) {
     const {
         palette: { mode: themeMode },
     } = useTheme();
+    return (
+        <Popover
+            open={Boolean(anchorElForEmojiPopover)}
+            anchorEl={anchorElForEmojiPopover}
+            anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+            }}
+            transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+            }}
+            onClose={() => setAnchorElForEmojiPopover(null)}
+        >
+            <EmojiPicker
+                onEmojiClick={async (
+                    emojiData: EmojiClickData,
+                    event: MouseEvent
+                ) => {
+                    if (!group) return setToastMessage("Group is not resolved");
+                    if (!auth.currentUser)
+                        return setToastMessage("User is not resolved");
+                    setAnchorElForEmojiPopover(null);
+                    const emoji = emojiData.unified.replace("___", "");
+                    console.log(emoji);
+                    let newMsg = { ...msg };
+                    newMsg.reactions[auth.currentUser.uid] = emoji;
+
+                    await setDoc(
+                        doc(
+                            firestoreDb,
+                            DATABASE_PATH.groupDetails,
+                            group.id,
+                            "messages",
+                            newMsg.id
+                        ),
+                        newMsg,
+                        {
+                            merge: true,
+                        }
+                    );
+                }}
+                autoFocusSearch={false}
+                theme={themeMode as Theme}
+                searchPlaceHolder="Search Emoji"
+                emojiStyle={EmojiStyle.FACEBOOK}
+                lazyLoadEmojis={true}
+                customEmojis={[
+                    {
+                        names: ["heart", "heavy black heart"],
+                        imgUrl: "https://cdn.jsdelivr.net/npm/emoji-datasource-facebook/img/facebook/64/2764-fe0f.png",
+                        id: "___2764-fe0f",
+                    },
+                    {
+                        names: ["like", "+1", "thumbsUp", "thumbs up sign"],
+                        imgUrl: "https://cdn.jsdelivr.net/npm/emoji-datasource-facebook/img/facebook/64/1f44d.png",
+                        id: "___1f44d",
+                    },
+                    {
+                        names: [
+                            "dislike",
+                            "-1",
+                            "thumbsDown",
+                            "thumbs down sign",
+                        ],
+                        imgUrl: "https://cdn.jsdelivr.net/npm/emoji-datasource-facebook/img/facebook/64/1f44e.png",
+                        id: "___1f44e",
+                    },
+                    {
+                        names: ["angry", "angry face"],
+                        imgUrl: "https://cdn.jsdelivr.net/npm/emoji-datasource-facebook/img/facebook/64/1f620.png",
+                        id: "___1f620",
+                    },
+                    {
+                        names: ["HaHa", "rolling on the floor laughing"],
+                        imgUrl: "https://cdn.jsdelivr.net/npm/emoji-datasource-facebook/img/facebook/64/1f923.png",
+                        id: "___1f923",
+                    },
+                ]}
+            />
+        </Popover>
+    );
+}
+
+function ReactorTile({
+    emoji,
+    reactor_id,
+    reactor_info,
+}: {
+    emoji: string;
+    reactor_id: string;
+    reactor_info: TGroupMembersBasicDetails | undefined;
+}) {
+    return (
+        <HoverWrapper className="w-[calc(100%-2px)] mt-2">
+            <Box className="flex justify-between items-center flex-row px-3 py-4 text-xl capitalize">
+                <MuiLink
+                    href={`${SITEMAP.profile}/${reactor_id}`}
+                    sx={{
+                        color: "text.primary",
+                    }}
+                >
+                    {reactor_info?.nickname || "Removed user"}
+                </MuiLink>
+                <GetEmojiLink unified={emoji} size={27} />
+            </Box>
+        </HoverWrapper>
+    );
+}
+
+export default function Message({ by, type = "text", msg }: Props) {
+    const { group } = useGroup();
+    const [anchorElForEmojiPopover, setAnchorElForEmojiPopover] =
+        useState<null | HTMLElement>(null);
+    const [user, setUser] = useState<UserType | null>(null);
     const { setMessage } = useMessage();
+    const { setMessage: setToastMessage } = useToastAlert();
+    const [showReactors, setShowReactors] = useState(false);
     useEffect(() => {
         (async () => {
             let q = doc(
@@ -76,6 +222,10 @@ export default function Message({ by, type = "text", msg }: Props) {
             }
         })();
     }, []);
+
+    const handleShowReactorsClose = () => {
+        setShowReactors(false);
+    };
     return (
         <div
             className={cn(
@@ -138,33 +288,39 @@ export default function Message({ by, type = "text", msg }: Props) {
                 className="likes flex justify-start items-center flex-row gap-2"
                 style={{ gridArea: "likes" }}
             >
-                <Chip
-                    icon={
-                        <div
-                            style={{
-                                marginLeft: "4px",
-                                marginRight: "-6px",
-                            }}
-                        >
-                            {Array(5)
-                                .fill(true)
-                                .map((_, i) => (
-                                    <GetEmojiLink
-                                        key={i}
-                                        unified="2764-fe0f"
-                                        size={15}
-                                    />
-                                ))}
-                        </div>
-                    }
-                    label={2}
-                    color="primary"
-                    variant="filled"
-                    clickable
-                />
+                {!!Object.keys(msg.reactions).length && (
+                    <Chip
+                        icon={
+                            <div
+                                style={{
+                                    marginLeft: "4px",
+                                    marginRight: "-6px",
+                                }}
+                            >
+                                {Object.entries(msg.reactions).map(
+                                    (emojiData) => (
+                                        <GetEmojiLink
+                                            key={emojiData[0]}
+                                            unified={emojiData[1]}
+                                            size={15}
+                                        />
+                                    )
+                                )}
+                            </div>
+                        }
+                        label={Object.keys(msg.reactions).length}
+                        color="primary"
+                        variant="filled"
+                        clickable
+                        onClick={() => {
+                            setShowReactors(true);
+                        }}
+                    />
+                )}
+
                 <IconButton
                     onClick={(e) => {
-                        setAnchorElForMessagesPopover(e.currentTarget);
+                        setAnchorElForEmojiPopover(e.currentTarget);
                     }}
                     size="small"
                     color="primary"
@@ -174,6 +330,34 @@ export default function Message({ by, type = "text", msg }: Props) {
                 >
                     <AiOutlinePlus />
                 </IconButton>
+                <Dialog
+                    open={showReactors}
+                    onClose={handleShowReactorsClose}
+                    maxWidth="sm"
+                    fullWidth
+                >
+                    <DialogTitle>Reactions</DialogTitle>
+                    <DialogContent>
+                        {Object.entries(msg.reactions).map((emojiData) => (
+                            <ReactorTile
+                                key={emojiData[0]}
+                                emoji={emojiData[1]}
+                                reactor_id={emojiData[0]}
+                                reactor_info={group?.groupMembersBasicDetails.find(
+                                    ({ id }) => id === emojiData[0]
+                                )}
+                            />
+                        ))}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={handleShowReactorsClose}
+                            variant="contained"
+                        >
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
             <div
                 className="reply justify-self-end flex justify-center items-center flex-row"
@@ -202,34 +386,13 @@ export default function Message({ by, type = "text", msg }: Props) {
                 </HoverWrapper>
             </div>
 
-            <Popover
-                open={Boolean(anchorElForMessagesPopover)}
-                anchorEl={anchorElForMessagesPopover}
-                anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                }}
-                transformOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                }}
-                onClose={() => setAnchorElForMessagesPopover(null)}
-            >
-                <EmojiPicker
-                    onEmojiClick={(
-                        emojiData: EmojiClickData,
-                        event: MouseEvent
-                    ) => {
-                        setSelectedEmoji(emojiData.unified);
-                        setAnchorElForMessagesPopover(null);
-                        console.log(emojiData);
-                    }}
-                    autoFocusSearch={false}
-                    theme={themeMode as Theme}
-                    searchPlaceHolder="Filter "
-                    emojiStyle={EmojiStyle.FACEBOOK}
-                />
-            </Popover>
+            <PickEmoji
+                msg={msg}
+                group={group}
+                anchorElForEmojiPopover={anchorElForEmojiPopover}
+                setAnchorElForEmojiPopover={setAnchorElForEmojiPopover}
+                setToastMessage={setToastMessage}
+            ></PickEmoji>
         </div>
     );
 }
