@@ -1,6 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Comfortaa } from "next/font/google";
 import TransitionEffect from "./TransitionEffects";
 import { ColorModeContext } from "@/contexts/ColorModeContext";
 import ConfigComponent from "./ConfigComponent";
@@ -9,7 +9,7 @@ import AuthorizedAlert from "./ToastAlert";
 import ToastAlertContext from "@/contexts/ToastAlertContext";
 import favicon from "./favicon.ico";
 
-const font = Montserrat({ subsets: ["latin"] });
+const font = Comfortaa({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Open Hearts",

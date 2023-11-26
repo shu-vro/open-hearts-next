@@ -79,7 +79,6 @@ function DisplayLocalConfirmationDialog({
                         handleConfirmDialogClose();
                     }}
                     autoFocus
-                    color="error"
                     variant="contained"
                 >
                     Ok
@@ -190,7 +189,6 @@ export function EditImagesForLastTime() {
                 ))}
             </Box>
             <DisplayLocalConfirmationDialog
-                // setMessage={setMessage}
                 openDialog={openDialog}
                 handleConfirmDialogClose={handleConfirmDialogClose}
                 handleDeleteFromStorage={handleDeleteFromStorage}

@@ -2,7 +2,6 @@
 
 They are unfinished because the relevant features aren't introduced yet.
 
--   [x] add chat section based on slug in url.
 -   [x] compatible to send all types of message
 -   [x] implement chat section with all types of message types.
     -   [x] the add photo button needs modifications.
@@ -25,3 +24,4 @@ They are unfinished because the relevant features aren't introduced yet.
 -   [x] task for tomorrow: why photos are sent saved twice?
 -   [x] add preview images
 -   [ ] loading while uploading images
+-   [x] build settings page for [EditImagesForLastTime](<app/(authorized)/chats/[group]/EditImagesForLastTime.tsx>) in line 141
