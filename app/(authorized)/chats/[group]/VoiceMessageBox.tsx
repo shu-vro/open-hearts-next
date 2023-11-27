@@ -63,8 +63,7 @@ export default function VoiceMessageBox({ msg, by }: Props) {
             <NativeHoverWrapper replied={!!msg.reply}>
                 <Box
                     className={cn(
-                        "message text-sm p-3 rounded-[inherit] flex justify-center items-center flex-row gap-2",
-                        by === "me" && "float-right"
+                        "message text-sm p-3 rounded-[inherit] flex justify-center items-center flex-row gap-2"
                     )}
                     bgcolor="mySwatch.messageBG"
                     sx={{

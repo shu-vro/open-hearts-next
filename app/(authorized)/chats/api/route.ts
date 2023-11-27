@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
                 error: true,
             });
         }
-        let data = await ogs({ url, timeout: 5 });
+        let data = await ogs({ url });
 
         if (data.error) {
             return NextResponse.json({

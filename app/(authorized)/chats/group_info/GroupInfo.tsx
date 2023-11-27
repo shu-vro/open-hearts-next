@@ -28,7 +28,7 @@ import HoverWrapper from "../../HoverWrapper";
 import { LuCopy } from "react-icons/lu";
 import SharedLink from "./SharedLink";
 import { Swiper as SwiperType } from "swiper/types";
-import { VoiceMessage, Accordion, AccordionSummary } from "./GroupInfoHelpers";
+import { Accordion, AccordionSummary } from "./GroupInfoHelpers";
 import { useGroup } from "@/contexts/GroupContext";
 import { MemberTile } from "./MemberTile";
 import { EditMemberTile } from "./EditMemberTile";
@@ -43,6 +43,7 @@ import { collection, getDocs, query } from "firebase/firestore";
 import { MessageType, UserType } from "@/app";
 import { URL_REGEX } from "@/lib/utils";
 import { LoadingButton } from "@mui/lab";
+import VoiceMessageBox from "../[group]/VoiceMessageBox";
 
 export default function GroupInfo({
     messages = [],
@@ -300,6 +301,11 @@ export default function GroupInfo({
                                                         messageTime={
                                                             msg.created_at
                                                         }
+                                                        sender={allUsers.find(
+                                                            (user) =>
+                                                                user.uid ===
+                                                                msg.sender_id
+                                                        )}
                                                         key={j}
                                                     />
                                                 );
@@ -308,11 +314,22 @@ export default function GroupInfo({
                                 </Box>
                             </SwiperSlide>
                             <SwiperSlide>
-                                {Array(2)
-                                    .fill("")
-                                    .map((_, i) => (
-                                        <VoiceMessage key={i} />
-                                    ))}
+                                <Box>
+                                    {messages.map((msg) => {
+                                        if (!msg.voice) return null;
+                                        return (
+                                            <VoiceMessageBox
+                                                key={msg.id}
+                                                by="him"
+                                                msg={{
+                                                    id: msg.id,
+                                                    reply: "",
+                                                    voice: msg.voice,
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </Box>
                             </SwiperSlide>
                         </Swiper>
                     </AccordionDetails>

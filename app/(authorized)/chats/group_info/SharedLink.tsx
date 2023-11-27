@@ -8,18 +8,32 @@ import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { URL_REGEX } from "@/lib/utils";
-import { type Timestamp } from "firebase/firestore";
+import { doc, getDoc, type Timestamp } from "firebase/firestore";
+import { UserType } from "@/app";
+import { DATABASE_PATH } from "@/lib/variables";
+import { firestoreDb } from "@/firebase";
 
 dayjs.extend(relativeTime);
 
 export default function SharedLink({
     link,
     messageTime,
+    sender,
 }: {
     link: string;
     messageTime: Timestamp;
+    sender: UserType | undefined;
 }) {
-    const [preview, setPreview] = useState(<></>);
+    const [preview, setPreview] = useState(
+        <Typography
+            noWrap
+            sx={{
+                color: (theme) => theme.palette.primary.main,
+            }}
+        >
+            {link}
+        </Typography>
+    );
     useEffect(() => {
         (async () => {
             try {
@@ -34,18 +48,7 @@ export default function SharedLink({
                     data: OgObject;
                     error: boolean;
                 };
-                if (json.error) {
-                    setPreview(
-                        <Typography
-                            noWrap
-                            sx={{
-                                color: (theme) => theme.palette.primary.main,
-                            }}
-                        >
-                            {link}
-                        </Typography>
-                    );
-                } else {
+                if (!json.error) {
                     if (json.data.favicon) {
                         if (!json.data.favicon.match(URL_REGEX)) {
                             json.data.favicon =
@@ -99,6 +102,8 @@ export default function SharedLink({
                             </Box>
                         </Box>
                     );
+                } else {
+                    console.warn(json);
                 }
             } catch (error) {
                 console.info(error);
@@ -128,8 +133,8 @@ export default function SharedLink({
                 }}
             >
                 <Avatar
-                    src={link}
-                    alt={link}
+                    src={sender?.photoURL || link}
+                    alt={sender?.name || "Friend's Name"}
                     sx={{
                         gridArea: "avatar",
                     }}
@@ -142,10 +147,10 @@ export default function SharedLink({
                         gridArea: "name",
                     }}
                 >
-                    Friend&apos;s name
+                    {sender?.name || "Friend's name"}
                 </Typography>
                 <Typography
-                    className="justify-self-end"
+                    className="justify-self-end opacity-70 font-[.8em]"
                     sx={{
                         gridArea: "time",
                     }}

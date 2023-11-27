@@ -10,6 +10,9 @@ import {
     collection,
     where,
     getDocs,
+    initializeFirestore,
+    persistentLocalCache,
+    persistentMultipleTabManager,
 } from "firebase/firestore";
 import {
     getAuth,
@@ -57,7 +60,12 @@ export const db = getDatabase(app);
 
 export const auth = getAuth(app);
 
-export const firestoreDb = getFirestore(app);
+export const firestoreDb = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager(),
+    }),
+});
+
 if (globalThis?.location?.hostname === "localhost") {
     connectStorageEmulator(storage, "127.0.0.1", 4007);
     connectDatabaseEmulator(db, "127.0.0.1", 4004);
