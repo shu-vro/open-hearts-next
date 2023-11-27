@@ -298,7 +298,7 @@ interface VoiceInputProps extends Props {
     setMenuOpen: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
 }
 function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
-    const { setMessage } = useMessage();
+    const { message, setMessage } = useMessage();
     const { setMessage: setToastMessage } = useToastAlert();
     const [open, setOpen] = useState(false);
     const [recordStart, setRecordStart] = useState(false);
@@ -414,7 +414,7 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
                             // upload voice to firebase storage -- done
                             const storageRef = ref(
                                 storage,
-                                `${group.id}/${nanoid()}`
+                                `${group.id}/${message.id}/${nanoid()}`
                             );
                             const result = await uploadBytes(
                                 storageRef,

@@ -70,11 +70,6 @@ function DisplayLocalConfirmationDialog({
                 </Button>
                 <Button
                     onClick={async () => {
-                        // setMessage((prev) => {
-                        //     let n = { ...prev };
-                        //     n.imageLink = [];
-                        //     return n;
-                        // });
                         await handleDeleteFromStorage();
                         handleConfirmDialogClose();
                     }}

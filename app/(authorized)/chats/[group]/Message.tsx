@@ -109,14 +109,13 @@ function PickEmoji({
             <EmojiPicker
                 onEmojiClick={async (
                     emojiData: EmojiClickData,
-                    event: MouseEvent
+                    _: MouseEvent
                 ) => {
                     if (!group) return setToastMessage("Group is not resolved");
                     if (!auth.currentUser)
                         return setToastMessage("User is not resolved");
                     setAnchorElForEmojiPopover(null);
                     const emoji = emojiData.unified.replace("___", "");
-                    console.log(emoji);
                     let newMsg = { ...msg };
                     newMsg.reactions[auth.currentUser.uid] = emoji;
 
@@ -196,11 +195,13 @@ function ReactorTile({
                 >
                     {reactor_info?.nickname || "Removed user"}
                 </MuiLink>
-                <GetEmojiLink unified={emoji} size={27} />
+                <GetEmojiLink unified={emoji} size={35} />
             </Box>
         </HoverWrapper>
     );
 }
+
+let clickCount = 0;
 
 export default function Message({ by, type = "text", msg }: Props) {
     const { group } = useGroup();
@@ -312,8 +313,45 @@ export default function Message({ by, type = "text", msg }: Props) {
                         color="primary"
                         variant="filled"
                         clickable
-                        onClick={() => {
-                            setShowReactors(true);
+                        onClick={function () {
+                            clickCount++;
+
+                            setTimeout(function () {
+                                if (clickCount === 1) {
+                                    setShowReactors(true);
+                                    console.log("Hello");
+                                }
+                                clickCount = 0;
+                            }, 500);
+                        }}
+                        onDoubleClick={async function () {
+                            if (!group)
+                                return setToastMessage("Group is not resolved");
+                            if (!auth.currentUser)
+                                return setToastMessage("User is not resolved");
+                            setAnchorElForEmojiPopover(null);
+                            const emoji = "2764-fe0f";
+                            let newMsg = { ...msg };
+                            if (auth.currentUser.uid in newMsg.reactions) {
+                                delete newMsg.reactions[auth.currentUser.uid];
+                            } else {
+                                newMsg.reactions[auth.currentUser.uid] = emoji;
+                            }
+
+                            await setDoc(
+                                doc(
+                                    firestoreDb,
+                                    DATABASE_PATH.groupDetails,
+                                    group.id,
+                                    "messages",
+                                    newMsg.id
+                                ),
+                                newMsg,
+                                {
+                                    merge: true,
+                                }
+                            );
+                            clickCount = 0; // Reset the click count on double-click
                         }}
                     />
                 )}
