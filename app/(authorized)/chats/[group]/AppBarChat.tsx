@@ -56,7 +56,7 @@ export default function AppBarChat() {
                 <IconButton
                     size={matches_535 ? "small" : "medium"}
                     LinkComponent={Link}
-                    href={`${SITEMAP.call_page}?mode=audio&groupId=room-1`}
+                    href={`${SITEMAP.call_page}?mode=audio&groupId=${group?.id}`}
                 >
                     <BsTelephone />
                 </IconButton>
@@ -71,7 +71,7 @@ export default function AppBarChat() {
                     size={matches_535 ? "small" : "medium"}
                     className="hidden max-[962px]:flex"
                     LinkComponent={Link}
-                    href={`${SITEMAP.group_info}?groupId=${0}`}
+                    href={`${SITEMAP.group_info}/${group?.id}`}
                     sx={{
                         display: {
                             "962px": "none",

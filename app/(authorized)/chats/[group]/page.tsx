@@ -11,7 +11,7 @@ import useGetGroup from "@/lib/hooks/useGetGroup";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { determineMessageType } from "@/lib/utils";
 import svgBG from "@/assets/dribbble-kc-removebg-preview.svg";
 import { Box } from "@mui/material";

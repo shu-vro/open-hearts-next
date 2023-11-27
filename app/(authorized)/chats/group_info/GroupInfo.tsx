@@ -29,7 +29,6 @@ import { LuCopy } from "react-icons/lu";
 import SharedLink from "./SharedLink";
 import { Swiper as SwiperType } from "swiper/types";
 import { Accordion, AccordionSummary } from "./GroupInfoHelpers";
-import { useGroup } from "@/contexts/GroupContext";
 import { MemberTile } from "./MemberTile";
 import { EditMemberTile } from "./EditMemberTile";
 import ChangeGroupEmoji from "./ChangeGroupEmoji";
@@ -40,15 +39,17 @@ import { useRouter } from "next/navigation";
 import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import AddMembersAlertDialog from "./AddMembersAlertDialog";
 import { collection, getDocs, query } from "firebase/firestore";
-import { MessageType, UserType } from "@/app";
+import { IGroupDetails, MessageType, UserType } from "@/app";
 import { URL_REGEX } from "@/lib/utils";
 import { LoadingButton } from "@mui/lab";
 import VoiceMessageBox from "../[group]/VoiceMessageBox";
 
 export default function GroupInfo({
     messages = [],
+    group = null,
 }: {
     messages?: MessageType[];
+    group: IGroupDetails | null;
 }) {
     const [activeTab, setActiveTab] = useState<0 | 1 | 2 | number>(0);
     const [swiper, setSwiper] = useState<SwiperType>();
@@ -63,7 +64,6 @@ export default function GroupInfo({
             swiper.slideTo(newValue);
         }
     };
-    const { group } = useGroup();
     const handleCloseLeaveDialog = () => {
         setOpenLeaveDialog(false);
     };
@@ -337,7 +337,7 @@ export default function GroupInfo({
                 <Button
                     color="error"
                     variant="contained"
-                    className="block max-w-[600px]"
+                    className="block max-w-[600px] mx-auto"
                     fullWidth
                     onClick={() => {
                         setOpenLeaveDialog(true);
