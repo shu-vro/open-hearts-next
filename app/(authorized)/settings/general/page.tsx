@@ -14,7 +14,6 @@ import {
     InputLabel,
     OutlinedInput,
     OutlinedInputProps,
-    Snackbar,
     TextField,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
@@ -27,6 +26,7 @@ import { VscChromeClose } from "react-icons/vsc";
 import { updateProfile } from "firebase/auth";
 import { isEqual } from "lodash";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
+import { LoadingButton } from "@mui/lab";
 
 export default function General() {
     const [file, setFile] = useState<string | null | undefined>(
@@ -36,6 +36,7 @@ export default function General() {
     const form = useRef<HTMLFormElement | null>(null);
     const [userInfo, setUserInfo] = useState<Partial<UserType>>({});
     const [userInfoConst, setUserInfoConst] = useState<Partial<UserType>>({});
+    const [loading, setLoading] = useState(false);
     const handleFileChange = (file: File) => {
         const reader = new FileReader();
         reader.onload = () => {
@@ -48,6 +49,7 @@ export default function General() {
         if (!auth.currentUser) {
             return;
         }
+        setLoading(true);
         try {
             e.preventDefault();
             if (file && file !== auth.currentUser?.photoURL) {
@@ -141,6 +143,7 @@ ${JSON.stringify(e, null, 2)}`);
             );
         }
         auth.currentUser.reload();
+        setLoading(false);
     };
     useEffect(() => {
         (async () => {
@@ -157,10 +160,6 @@ ${JSON.stringify(e, null, 2)}`);
             }
         })();
     }, []);
-
-    const handleSnackbarClose = () => {
-        setSnackbarMessage("");
-    };
 
     return (
         <form ref={form} onSubmit={handleSubmit}>
@@ -401,14 +400,15 @@ ${JSON.stringify(e, null, 2)}`);
                     Add field
                 </Button>
             </div>
-            <Button
+            <LoadingButton
                 type="submit"
                 size="large"
                 className="block mx-auto"
                 variant="contained"
+                loading={loading}
             >
-                Submit
-            </Button>
+                <span>Submit</span>
+            </LoadingButton>
         </form>
     );
 }

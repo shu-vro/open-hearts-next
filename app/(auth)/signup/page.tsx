@@ -1,7 +1,7 @@
 "use client";
 
 import { cn, testPassword } from "@/lib/utils";
-import { FormHelperText, Button } from "@mui/material";
+import { FormHelperText } from "@mui/material";
 import InputField from "../InputField";
 // @ts-ignore
 import Identicon from "react-identicons";
@@ -16,6 +16,7 @@ import GoogleSignInButton from "../GoogleSignInButton";
 import AuthForm from "../AuthForm";
 import MuiLink from "@/app/MuiLink";
 import { SITEMAP } from "@/lib/variables";
+import { LoadingButton } from "@mui/lab";
 
 export default function SignUp() {
     const [name, setName] = useState("");
@@ -103,14 +104,14 @@ export default function SignUp() {
                         setPassword={setPassword2}
                         label="Confirm Password"
                     />
-                    <Button
+                    <LoadingButton
                         type="submit"
                         variant="contained"
                         fullWidth
-                        disabled={submitted}
+                        loading={submitted}
                     >
-                        Sign Up
-                    </Button>
+                        <span>Sign Up</span>
+                    </LoadingButton>
                     <FormHelperText className="text-lg font-bold my-2">
                         Or
                     </FormHelperText>

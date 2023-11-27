@@ -8,7 +8,7 @@ They are unfinished because the relevant features aren't introduced yet.
     -   [x] add photo and voice send feature
 -   [x] show these photos, links, and voice
 -   [x] implement `message reaction` feature
-    -   [ ] add a way to remove `message reaction`
+    -   [x] add a way to remove `message reaction`
 -   [ ] implement delete message feature
     -   [ ] also make sure that message is hashed before deleted
     -   [ ] remove bad words from text type messages

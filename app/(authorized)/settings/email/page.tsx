@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import ReauthenticateDialog from "../ReauthenticateDialog";
 import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import { doc, setDoc } from "firebase/firestore";
+import { LoadingButton } from "@mui/lab";
 
 export default function Email() {
     const router = useRouter();
@@ -68,14 +69,14 @@ export default function Email() {
                 setEmail={setEmail}
                 className="w-[460px] max-w-full mb-4"
             />
-            <Button
+            <LoadingButton
                 type="submit"
                 variant="contained"
                 className="block mb-4"
-                disabled={reauthenticate}
+                loading={reauthenticate}
             >
-                Change email
-            </Button>
+                <span>Change email</span>
+            </LoadingButton>
 
             <ReauthenticateDialog
                 handleSubmit={handleSubmit}

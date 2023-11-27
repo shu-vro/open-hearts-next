@@ -39,6 +39,24 @@ export default function AddMembersAlertDialog({
             component="form"
             onSubmit={async (e) => {
                 e.preventDefault();
+                if (!group || !auth.currentUser) return;
+                const members = value.map((member) => member.uid);
+                const membersBasicDetails = value.map(
+                    (member) =>
+                        ({
+                            id: member.uid,
+                            nickname: member.name,
+                            addedBy: auth.currentUser?.uid,
+                        } as TGroupMembersBasicDetails)
+                );
+                await changeGroupInformation(group.id, {
+                    groupMembers: group.groupMembers.concat(members),
+                    groupMembersBasicDetails:
+                        group.groupMembersBasicDetails.concat(
+                            membersBasicDetails
+                        ),
+                });
+                handleClose();
             }}
         >
             <DialogTitle id="alert-dialog-title">Add Members</DialogTitle>
@@ -88,31 +106,7 @@ export default function AddMembersAlertDialog({
                 <Button onClick={handleClose} variant="contained" color="error">
                     Close
                 </Button>
-                <Button
-                    autoFocus
-                    variant="contained"
-                    type="submit"
-                    onClick={async () => {
-                        if (!group || !auth.currentUser) return;
-                        const members = value.map((member) => member.uid);
-                        const membersBasicDetails = value.map(
-                            (member) =>
-                                ({
-                                    id: member.uid,
-                                    nickname: member.name,
-                                    addedBy: auth.currentUser?.uid,
-                                } as TGroupMembersBasicDetails)
-                        );
-                        await changeGroupInformation(group.id, {
-                            groupMembers: group.groupMembers.concat(members),
-                            groupMembersBasicDetails:
-                                group.groupMembersBasicDetails.concat(
-                                    membersBasicDetails
-                                ),
-                        });
-                        handleClose();
-                    }}
-                >
+                <Button autoFocus variant="contained" type="submit">
                     Add
                 </Button>
             </DialogActions>

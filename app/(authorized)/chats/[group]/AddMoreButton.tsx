@@ -18,7 +18,12 @@ import {
     useMediaQuery,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { BsCheck2All, BsFileImage, BsFillPlusCircleFill } from "react-icons/bs";
+import {
+    BsCheck2All,
+    BsFileImage,
+    BsFillPlusCircleFill,
+    BsCheck2,
+} from "react-icons/bs";
 import { IoCloseCircle } from "react-icons/io5";
 import { MdDelete, MdKeyboardVoice } from "react-icons/md";
 import numeral from "numeral";
@@ -29,6 +34,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { nanoid } from "nanoid";
 import { useGroup } from "@/contexts/GroupContext";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
+import { LoadingButton } from "@mui/lab";
 
 interface DisplayRowProps {
     file: { file: File; id: number };
@@ -119,6 +125,7 @@ function ImageFileSelect({
     const [files, setFiles] = useState<{ file: File; id: number }[]>([]);
     const matches649 = useMediaQuery("(max-width: 649px)");
     const { group } = useGroup();
+    const [loading, setLoading] = useState(false);
 
     const selectFiles = () => {
         let inputs = document.createElement("input");
@@ -173,9 +180,10 @@ function ImageFileSelect({
                     >
                         Close
                     </Button>
-                    <Button
+                    <LoadingButton
                         onClick={async () => {
                             if (!group) return;
+                            setLoading(true);
                             let tempFiles = await UploadImagesToFirebase(
                                 files,
                                 group.id,
@@ -187,19 +195,23 @@ function ImageFileSelect({
                                     imageLink: tempFiles.filter((e) => e),
                                 };
                             });
+                            setLoading(false);
                             handleClose();
                         }}
-                        startIcon={<BsCheck2All />}
+                        startIcon={<BsCheck2 />}
                         variant="contained"
                         color="warning"
                         className="mx-2"
                         size={matches649 ? "small" : "medium"}
+                        loading={loading}
+                        loadingPosition="start"
                     >
-                        Save
-                    </Button>
-                    <Button
+                        <span>Save</span>
+                    </LoadingButton>
+                    <LoadingButton
                         onClick={async () => {
                             if (!group) return;
+                            setLoading(true);
                             let tempFiles = await UploadImagesToFirebase(
                                 files,
                                 group.id,
@@ -219,15 +231,18 @@ function ImageFileSelect({
                                     })
                                 );
                             }, 100);
+                            setLoading(false);
                             handleClose();
                         }}
                         startIcon={<BsCheck2All />}
                         variant="contained"
                         color="success"
                         size={matches649 ? "small" : "medium"}
+                        loading={loading}
+                        loadingPosition="start"
                     >
-                        Save and Send
-                    </Button>
+                        <span>Save and Send</span>
+                    </LoadingButton>
                 </AppBar>
                 <DialogContent>
                     <Table className="overflow-x-hidden">
@@ -361,7 +376,7 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
             <Dialog
                 open={open}
                 fullWidth
-                maxWidth="xs"
+                maxWidth="sm"
                 onClose={() => {
                     setOpen(false);
                     setRecordStart(false);
@@ -379,7 +394,7 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
                     className="flex justify-between items-center flex-row"
                     position="sticky"
                 >
-                    <h3 className="grow capitalize ml-3">select images</h3>
+                    <h3 className="grow capitalize ml-3">say something</h3>
                     <Button
                         onClick={() => {
                             setOpen(false);

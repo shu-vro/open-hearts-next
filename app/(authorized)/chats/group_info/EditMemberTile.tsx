@@ -2,13 +2,9 @@
 import {
     Avatar,
     Box,
-    Button,
     FormControl,
-    IconButton,
     InputAdornment,
-    InputLabel,
     OutlinedInput,
-    TextField,
     Typography,
 } from "@mui/material";
 import HoverWrapper from "../../HoverWrapper";
@@ -22,6 +18,7 @@ import { SITEMAP } from "@/lib/variables";
 import { useGroup } from "@/contexts/GroupContext";
 import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
 import { useParams } from "next/navigation";
+import { LoadingButton } from "@mui/lab";
 
 dayjs.extend(relativeTime);
 
@@ -35,6 +32,7 @@ export function EditMemberTile({
     const params = useParams() as { group: string };
     const { group } = useGroup();
     const [nickname, setNickname] = useState(member.nickname);
+    const [loading, setLoading] = useState(false);
 
     if (!user) return "";
 
@@ -75,16 +73,17 @@ export function EditMemberTile({
                         name={"change_nickname__" + member.id}
                         endAdornment={
                             <InputAdornment position="end">
-                                <Button
+                                <LoadingButton
                                     size="small"
                                     variant="contained"
+                                    loading={loading}
                                     sx={{
                                         fontSize: ".70rem",
                                     }}
-                                    onClick={() => {
+                                    onClick={async () => {
                                         if (!params || !params?.group || !group)
                                             return;
-                                        // setGroup((group) => {
+                                        setLoading(true);
                                         let n = { ...group };
                                         if (nickname === "") {
                                             if (!user) return;
@@ -119,11 +118,15 @@ export function EditMemberTile({
                                                     }
                                                 );
                                         }
-                                        changeGroupInformation(params.group, n);
+                                        await changeGroupInformation(
+                                            params.group,
+                                            n
+                                        );
+                                        setLoading(false);
                                     }}
                                 >
-                                    set
-                                </Button>
+                                    <span>set</span>
+                                </LoadingButton>
                             </InputAdornment>
                         }
                     />

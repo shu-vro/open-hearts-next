@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithGoogle } from "@/firebase";
 import { useRouter } from "next/navigation";
@@ -20,11 +20,12 @@ export default function GoogleSignInButton({
 }: Props) {
     const { push } = useRouter();
     return (
-        <Button
+        <LoadingButton
             type="button"
             startIcon={<FcGoogle />}
+            loadingPosition="start"
             fullWidth
-            disabled={submitted}
+            loading={submitted}
             variant="contained"
             onClick={async () => {
                 setSubmitted(true);
@@ -44,7 +45,7 @@ export default function GoogleSignInButton({
                 }
             }}
         >
-            Sign Up With Google
-        </Button>
+            <span>Sign Up With Google</span>
+        </LoadingButton>
     );
 }

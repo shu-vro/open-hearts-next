@@ -15,11 +15,11 @@ import { Box } from "@mui/material";
 import { useMessage } from "@/contexts/MessageContext";
 import { VscClose } from "react-icons/vsc";
 import HoverWrapper from "../../HoverWrapper";
-import { MessageType } from "@/app";
 import { deleteObject, listAll, ref } from "firebase/storage";
 import { storage } from "@/firebase";
 import { useGroup } from "@/contexts/GroupContext";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
+import { LoadingButton } from "@mui/lab";
 
 /**
  * @required - for [MessageForm.tsx](./MessageForm.tsx)
@@ -38,6 +38,7 @@ function DisplayLocalConfirmationDialog({
     handleConfirmDialogClose: () => void;
     handleDeleteFromStorage: () => Promise<void>;
 }) {
+    const [loading, setLoading] = useState(false);
     return (
         <Dialog open={openDialog} onClose={handleConfirmDialogClose}>
             <DialogTitle id="alert-dialog-title">WARNING</DialogTitle>
@@ -65,19 +66,28 @@ function DisplayLocalConfirmationDialog({
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleConfirmDialogClose} variant="contained">
+                <Button
+                    onClick={() => {
+                        setLoading(false);
+                        handleConfirmDialogClose();
+                    }}
+                    variant="contained"
+                >
                     Cancel
                 </Button>
-                <Button
+                <LoadingButton
                     onClick={async () => {
+                        setLoading(true);
                         await handleDeleteFromStorage();
+                        setLoading(false);
                         handleConfirmDialogClose();
                     }}
                     autoFocus
                     variant="contained"
+                    loading={loading}
                 >
-                    Ok
-                </Button>
+                    <span>Ok</span>
+                </LoadingButton>
             </DialogActions>
         </Dialog>
     );

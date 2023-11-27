@@ -1,8 +1,9 @@
 "use client";
 import { auth } from "@/firebase";
 import { sendEmailVerification } from "firebase/auth";
-import { Button } from "@mui/material";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
+import { LoadingButton } from "@mui/lab";
+import { useState } from "react";
 
 type Props = {
     setVerificationEmailSent: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,11 +17,13 @@ export default function VerifyButton({
     setVerificationEmailSent,
 }: Props) {
     const { setMessage } = useToastAlert();
+    const [loading, setLoading] = useState(false);
     return (
-        <Button
+        <LoadingButton
             type="button"
             variant="contained"
             onClick={async () => {
+                setLoading(true);
                 try {
                     await sendEmailVerification(auth.currentUser!, {
                         url: location.origin + redirectTo,
@@ -33,9 +36,10 @@ export default function VerifyButton({
                             error.message
                     );
                 }
+                setLoading(false);
             }}
         >
-            {text}
-        </Button>
+            <span>{text}</span>
+        </LoadingButton>
     );
 }

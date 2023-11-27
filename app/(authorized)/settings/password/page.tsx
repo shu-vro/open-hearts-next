@@ -14,6 +14,7 @@ export default function Password() {
     const [reenterPassword, setReenterPassword] = useState("");
     const [message, setMessage] = useState("");
     const [reauthenticate, setReauthenticate] = useState(false);
+
     const handleSubmit = async () => {
         if (!auth.currentUser) return setMessage("Current User Not Found");
         if (password !== reenterPassword) {

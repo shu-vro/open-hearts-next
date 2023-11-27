@@ -42,6 +42,7 @@ import AddMembersAlertDialog from "./AddMembersAlertDialog";
 import { collection, getDocs, query } from "firebase/firestore";
 import { MessageType, UserType } from "@/app";
 import { URL_REGEX } from "@/lib/utils";
+import { LoadingButton } from "@mui/lab";
 
 export default function GroupInfo({
     messages = [],
@@ -54,6 +55,7 @@ export default function GroupInfo({
     const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
     const [addUserDialog, setAddUserDialog] = useState(false);
     const [allUsers, setAllUsers] = useState<UserType[]>([]);
+    const [loading, setLoading] = useState(false);
     const handleTabChange = (newValue: number) => {
         setActiveTab(newValue);
         if (swiper) {
@@ -343,8 +345,10 @@ export default function GroupInfo({
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button
+                        <LoadingButton
+                            loading={loading}
                             onClick={async () => {
+                                setLoading(true);
                                 try {
                                     if (!group) return;
                                     let groupMembers =
@@ -371,13 +375,14 @@ export default function GroupInfo({
                                     setMessage("Error: check console");
                                     console.log(e);
                                 }
+                                setLoading(false);
                                 handleCloseLeaveDialog();
                             }}
                             variant="contained"
                             color="error"
                         >
-                            Yes
-                        </Button>
+                            <span>Yes</span>
+                        </LoadingButton>
                         <Button onClick={handleCloseLeaveDialog} autoFocus>
                             No
                         </Button>
