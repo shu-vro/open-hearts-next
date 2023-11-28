@@ -6,6 +6,7 @@ export enum DATABASE_PATH {
     users = "users",
     groupDetails = "groupDetails",
     messages = "messages",
+    notifications = "notifications",
 }
 
 export enum SITEMAP {

@@ -1,12 +1,8 @@
 /// <reference types="original-module" />
 
 import "@mui/material/styles";
-import { STATUS } from "@/types/app";
+import { ROLE, STATUS } from "@/types/app";
 import { FieldValue, serverTimestamp, Timestamp } from "firebase/firestore";
-
-// declare module "adapterjs" {}
-
-declare function serverTimestamp(): Timestamp;
 
 declare module "@mui/material/styles" {
     interface Palette {
@@ -52,11 +48,12 @@ export interface UserType {
     status: STATUS.active;
 }
 
-export type TGroupMembersBasicDetails = Partial<{
+export type TGroupMembersBasicDetails = {
     id: string;
     addedBy: string;
     nickname: string;
-}>;
+    role: ROLE;
+};
 
 type TLastMessage<T> = {
     message: string;

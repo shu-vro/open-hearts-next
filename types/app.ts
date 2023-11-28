@@ -3,3 +3,9 @@ export enum STATUS {
     away = "away",
     inactive = "inactive",
 }
+
+export enum ROLE {
+    owner,
+    admin,
+    member,
+}

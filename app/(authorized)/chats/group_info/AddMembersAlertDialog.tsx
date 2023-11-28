@@ -1,9 +1,8 @@
 import { TGroupMembersBasicDetails, UserType } from "@/app";
 import { useGroup } from "@/contexts/GroupContext";
-import { useToastAlert } from "@/contexts/ToastAlertContext";
-import { auth, firestoreDb } from "@/firebase";
+import { auth } from "@/firebase";
 import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
-import { DATABASE_PATH } from "@/lib/variables";
+import { ROLE } from "@/types/app";
 import {
     Dialog,
     DialogContent,
@@ -47,6 +46,7 @@ export default function AddMembersAlertDialog({
                             id: member.uid,
                             nickname: member.name,
                             addedBy: auth.currentUser?.uid,
+                            role: ROLE.member,
                         } as TGroupMembersBasicDetails)
                 );
                 await changeGroupInformation(group.id, {

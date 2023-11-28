@@ -178,6 +178,11 @@ export default function GroupInfo({
                                 member={member}
                                 key={member.id}
                                 user={allUsers.find((e) => e.uid === member.id)}
+                                myRole={
+                                    group?.groupMembersBasicDetails.find(
+                                        (e) => e.id === auth.currentUser?.uid
+                                    )?.role
+                                }
                                 addedBy={group?.groupMembersBasicDetails.find(
                                     (e) => e.id === member.addedBy
                                 )}

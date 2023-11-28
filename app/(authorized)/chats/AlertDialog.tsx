@@ -13,6 +13,7 @@ import { DATABASE_PATH } from "@/lib/variables";
 import { UserType } from "@/app";
 import { useRouter } from "next/navigation";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
+import { ROLE } from "@/types/app";
 
 export function AlertDialog({
     open,
@@ -63,6 +64,7 @@ export function AlertDialog({
                         invited: value.map((el) => ({
                             id: el.uid,
                             nickname: el.name,
+                            role: ROLE.member,
                             addedBy:
                                 auth.currentUser?.uid ||
                                 "creator of this group",

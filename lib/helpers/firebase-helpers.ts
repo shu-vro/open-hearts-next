@@ -16,6 +16,7 @@ import {
 import { DEFAULT_GROUP_DETAILS } from "@/lib/variables";
 import { nanoid } from "nanoid";
 import { determineMessageType } from "../utils";
+import { ROLE } from "@/types/app";
 
 /**
  * This function creates a group if there is no groupId, or
@@ -78,6 +79,7 @@ export async function FirstTimeOpeningGroup(
                         id: auth.currentUser.uid,
                         addedBy: "owner",
                         nickname: auth.currentUser.displayName,
+                        role: ROLE.owner,
                     },
                     ...(obj?.invited || []),
                 ],

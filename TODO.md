@@ -23,5 +23,5 @@ They are unfinished because the relevant features aren't introduced yet.
 
 -   [x] task for tomorrow: why photos are sent saved twice?
 -   [x] add preview images
--   [ ] loading while uploading images
+-   [x] loading while uploading images
 -   [x] build settings page for [EditImagesForLastTime](<app/(authorized)/chats/[group]/EditImagesForLastTime.tsx>) in line 141

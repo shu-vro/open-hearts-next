@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { TGroupMembersBasicDetails, UserType } from "@/app";
 import Link from "next/link";
 import { SITEMAP } from "@/lib/variables";
+import AdminControlMember from "./AdminControlMember";
+import { ROLE } from "@/types/app";
 
 dayjs.extend(relativeTime);
 
@@ -14,10 +16,12 @@ export function MemberTile({
     member,
     user,
     addedBy,
+    myRole,
 }: {
     member: TGroupMembersBasicDetails;
     user?: UserType;
     addedBy: TGroupMembersBasicDetails | undefined;
+    myRole?: ROLE;
 }) {
     const isActive = true;
     if (!user) return "";
@@ -27,9 +31,9 @@ export function MemberTile({
                 className="grid p-2 text-inherit hover:no-underline"
                 sx={{
                     gridTemplateAreas: `
-                            'avatar ${"name ".repeat(50)}'
-                            'avatar ${"nickname ".repeat(50)}'
-                            'avatar ${"addedBy ".repeat(50)}'
+                            'avatar ${"name ".repeat(50)} more'
+                            'avatar ${"nickname ".repeat(50)} more'
+                            'avatar ${"addedBy ".repeat(51)}'
                         `,
                 }}
             >
@@ -64,7 +68,12 @@ export function MemberTile({
                             gridArea: "nickname",
                         }}
                     >
-                        {member.nickname}
+                        {member.nickname} •{" "}
+                        {member.role === 0
+                            ? "owner"
+                            : member.role === 1
+                            ? "admin"
+                            : "member"}
                     </Typography>
                 )}
                 <Typography
@@ -76,8 +85,19 @@ export function MemberTile({
                         gridArea: "addedBy",
                     }}
                 >
-                    added by {addedBy?.nickname || "an admin"}
+                    added by {addedBy?.nickname || "owner"}
                 </Typography>
+                {typeof myRole === "number" &&
+                myRole < ROLE.admin &&
+                member.role > myRole ? (
+                    <AdminControlMember member={member} />
+                ) : (
+                    typeof myRole === "number" &&
+                    myRole < ROLE.member &&
+                    member.role > myRole && (
+                        <AdminControlMember member={member} />
+                    )
+                )}
             </Box>
         </HoverWrapper>
     );

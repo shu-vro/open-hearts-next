@@ -60,14 +60,8 @@ export default function AppBarCustom() {
     const renderMobileMenu = (
         <Menu
             anchorEl={mobileMoreAnchorEl}
-            anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-            }}
-            transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-            }}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             id={mobileMenuId}
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
