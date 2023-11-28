@@ -1,12 +1,12 @@
 "use client";
 import { Avatar, Box, Typography } from "@mui/material";
 import HoverWrapper from "../HoverWrapper";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { cn, repeat } from "@/lib/utils";
 import { IGroupDetails } from "@/app";
 import Link from "next/link";
 import { auth } from "@/firebase";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 

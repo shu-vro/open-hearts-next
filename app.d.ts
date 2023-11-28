@@ -31,9 +31,10 @@ declare type MessageType = {
     };
     created_at: Timestamp;
     sender_id: string;
+    info: string;
 };
 
-export type TypesOfMessage = "text" | "image" | "emoji" | "voice";
+export type TypesOfMessage = "text" | "image" | "emoji" | "voice" | "info";
 
 export interface UserType {
     name: string;
