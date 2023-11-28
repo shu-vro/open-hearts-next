@@ -3,7 +3,7 @@
 import TextField from "@mui/material/TextField";
 import GifButton from "./GifButton";
 import { useEffect, useRef } from "react";
-import { IconButton, useTheme } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { MdSend } from "react-icons/md";
 import AddMoreButton from "./AddMoreButton";
 import GetEmojiLink from "./GetEmojiLink";

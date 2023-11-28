@@ -26,7 +26,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
-import { RiDeleteBin6Fill } from "react-icons/ri";
 import { useMessage } from "@/contexts/MessageContext";
 import {
     IGroupDetails,
@@ -46,7 +45,7 @@ import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import dayjs from "dayjs";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import MuiLink from "@/app/MuiLink";
-import { MdReport } from "react-icons/md";
+import DeleteOrReportChip from "./DeleteOrReportChip";
 
 export type Props = {
     by: "me" | "him";
@@ -423,83 +422,7 @@ export default function Message({ by, type = "text", msg }: Props) {
                         }}
                     />
                 </HoverWrapper>
-                <HoverWrapper className="rounded-full">
-                    <Chip
-                        icon={
-                            msg.deleted ? (
-                                <MdReport size="18" />
-                            ) : (
-                                <RiDeleteBin6Fill size="18" />
-                            )
-                        }
-                        label={msg.deleted ? "Report" : "Delete"}
-                        onClick={function () {
-                            if (msg.deleted) {
-                                console.log("report now");
-                            } else {
-                                setShowDeleteMessageModal(true);
-                            }
-                        }}
-                    />
-                    <Dialog
-                        open={showDeleteMessageModal}
-                        onClose={handleShowDeleteMessageModal}
-                        maxWidth="sm"
-                        fullWidth
-                    >
-                        <DialogTitle>
-                            Confirm you want to delete message?
-                        </DialogTitle>
-                        <DialogContent>
-                            This message will be unsent for everyone in the
-                            chat. Others may have already seen or forwarded it.
-                            Unsent messages can still be included in reports.
-                        </DialogContent>
-                        <DialogActions>
-                            <Button
-                                onClick={handleShowDeleteMessageModal}
-                                variant="contained"
-                            >
-                                Close
-                            </Button>
-                            <Button
-                                onClick={async () => {
-                                    if (!group)
-                                        return setToastMessage(
-                                            "Error: Group is not resolved"
-                                        );
-                                    if (!auth.currentUser)
-                                        return setToastMessage(
-                                            "Error: User is not resolved"
-                                        );
-
-                                    let newMsg = { ...msg };
-                                    newMsg.deleted = true;
-
-                                    await setDoc(
-                                        doc(
-                                            firestoreDb,
-                                            DATABASE_PATH.groupDetails,
-                                            group.id,
-                                            "messages",
-                                            msg.id
-                                        ),
-                                        newMsg,
-                                        {
-                                            merge: true,
-                                        }
-                                    );
-
-                                    handleShowDeleteMessageModal();
-                                }}
-                                variant="contained"
-                                color="error"
-                            >
-                                Delete
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                </HoverWrapper>
+                <DeleteOrReportChip msg={msg} by={by} />
             </div>
 
             <PickEmoji

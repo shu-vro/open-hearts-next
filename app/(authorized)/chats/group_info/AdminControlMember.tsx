@@ -2,7 +2,7 @@ import { TGroupMembersBasicDetails } from "@/app";
 import { useGroup } from "@/contexts/GroupContext";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
-import { ROLE } from "@/types/app";
+import { ROLE } from "@/lib/variables";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";

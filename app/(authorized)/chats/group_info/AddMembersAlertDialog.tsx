@@ -2,7 +2,8 @@ import { TGroupMembersBasicDetails, UserType } from "@/app";
 import { useGroup } from "@/contexts/GroupContext";
 import { auth } from "@/firebase";
 import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
-import { ROLE } from "@/types/app";
+import { ROLE } from "@/lib/variables";
+
 import {
     Dialog,
     DialogContent,

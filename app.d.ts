@@ -17,6 +17,14 @@ declare module "@mui/material/styles" {
     }
 }
 
+declare interface ReportDocument {
+    path: string;
+    reported_by: UserType["uid"];
+    reported_to: MessageType["sender_id"];
+    group: string;
+    report_created_at: Timestamp;
+}
+
 declare type MessageType = {
     id: string;
     text: string;

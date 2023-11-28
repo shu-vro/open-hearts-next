@@ -7,6 +7,7 @@ export enum DATABASE_PATH {
     groupDetails = "groupDetails",
     messages = "messages",
     notifications = "notifications",
+    reports = "reports",
 }
 
 export enum SITEMAP {
@@ -23,6 +24,18 @@ export enum SITEMAP {
     call_page = "/chats/call",
     group_info = "/chats/group_info",
     notifications = "/notifications",
+}
+
+export enum STATUS {
+    active = "active",
+    away = "away",
+    inactive = "inactive",
+}
+
+export enum ROLE {
+    owner,
+    admin,
+    member,
 }
 
 const id = nanoid();

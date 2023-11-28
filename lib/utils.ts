@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
-import { STATUS } from "@/types/app";
+import { STATUS } from "@/lib/variables";
 import { MessageType, TypesOfMessage, UserType } from "@/app";
 import { AlertColor } from "@mui/material";
 import { ref } from "firebase/storage";

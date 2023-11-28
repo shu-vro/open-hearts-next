@@ -8,7 +8,7 @@ import { TGroupMembersBasicDetails, UserType } from "@/app";
 import Link from "next/link";
 import { SITEMAP } from "@/lib/variables";
 import AdminControlMember from "./AdminControlMember";
-import { ROLE } from "@/types/app";
+import { ROLE } from "@/lib/variables";
 
 dayjs.extend(relativeTime);
 

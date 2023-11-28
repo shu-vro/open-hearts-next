@@ -11,7 +11,7 @@ They are unfinished because the relevant features aren't introduced yet.
 
     -   [x] add a way to remove `message reaction`
 
--   [ ] implement group information message
+-   [x] implement group information message
 -   [ ] implement delete message feature
     -   [ ] also make sure that message is hashed before deleted
     -   [ ] remove bad words from text type messages

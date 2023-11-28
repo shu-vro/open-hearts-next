@@ -13,7 +13,7 @@ import { DATABASE_PATH } from "@/lib/variables";
 import { UserType } from "@/app";
 import { useRouter } from "next/navigation";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
-import { ROLE } from "@/types/app";
+import { ROLE } from "@/lib/variables";
 
 export function AlertDialog({
     open,

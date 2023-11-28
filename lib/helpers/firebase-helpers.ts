@@ -16,7 +16,7 @@ import {
 import { DEFAULT_GROUP_DETAILS } from "@/lib/variables";
 import { nanoid } from "nanoid";
 import { determineMessageType } from "../utils";
-import { ROLE } from "@/types/app";
+import { ROLE } from "@/lib/variables";
 
 /**
  * This function creates a group if there is no groupId, or
