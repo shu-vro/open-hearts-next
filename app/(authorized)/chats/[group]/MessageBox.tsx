@@ -180,7 +180,7 @@ export function MessageBox({
                 </div>
             </div>
         );
-    } else {
+    } else if (type === "text") {
         return (
             <Box
                 className={cn(
@@ -234,6 +234,8 @@ export function MessageBox({
                 </div>
             </Box>
         );
+    } else {
+        return null;
     }
 }
 

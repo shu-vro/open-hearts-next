@@ -44,4 +44,5 @@ export const defaultMessage = Object.freeze({
     reactions: {},
     created_at: serverTimestamp() as Timestamp,
     sender_id: "",
+    info: "",
 } as MessageType);

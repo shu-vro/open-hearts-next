@@ -17,6 +17,10 @@ import svgBG from "@/assets/dribbble-kc-removebg-preview.svg";
 import { Box } from "@mui/material";
 import useFetchAllMessages from "@/lib/hooks/useFetchAllMessages";
 import { useAllMessages } from "@/contexts/AllMessagesContext";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 export default function Chats({ params }: { params: { group: string } }) {
     const { messages, setMessages } = useAllMessages();

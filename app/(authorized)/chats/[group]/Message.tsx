@@ -227,7 +227,12 @@ export default function Message({ by, type = "text", msg }: Props) {
     const handleShowReactorsClose = () => {
         setShowReactors(false);
     };
-    return (
+    return type === "info" ? (
+        <div className="text-center w-full text-xs opacity-70">
+            <div>{dayjs(msg.created_at.toMillis()).fromNow()}</div>
+            {msg.info}
+        </div>
+    ) : (
         <div
             className={cn(
                 "grid w-fit max-w-[80%] pl-4 my-4",

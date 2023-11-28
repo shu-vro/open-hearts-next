@@ -119,13 +119,15 @@ export function computeSeverityMessage(text: string): AlertColor {
 export function determineMessageType(
     message: Partial<MessageType>
 ): TypesOfMessage | null {
-    if (message?.voice) {
+    if (message?.info) {
+        return "info";
+    } else if (message?.voice) {
         return "voice";
     } else if (message?.emoji) {
         return "emoji";
     } else if (message?.imageLink?.length) {
         return "image";
-    } else if (message.text) {
+    } else if (message?.text) {
         return "text";
     }
     return null;
