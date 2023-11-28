@@ -1,14 +1,16 @@
 "use client";
 
 import EmailInputField from "@/app/(auth)/EmailInputField";
-import { auth } from "@/firebase";
+import { auth, firestoreDb } from "@/firebase";
 import { Button } from "@mui/material";
 import React, { useState } from "react";
 import AlertBox from "@/app/(auth)/AlertBox";
 import { updateEmail } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import ReauthenticateDialog from "../ReauthenticateDialog";
-import { SITEMAP } from "@/lib/variables";
+import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
+import { doc, setDoc } from "firebase/firestore";
+import { LoadingButton } from "@mui/lab";
 
 export default function Email() {
     const router = useRouter();
@@ -22,6 +24,11 @@ export default function Email() {
         if (!auth.currentUser) return setMessage("Current User Not Found");
         try {
             await updateEmail(auth.currentUser, email);
+            await setDoc(
+                doc(firestoreDb, DATABASE_PATH.users, auth.currentUser.uid),
+                { email },
+                { merge: true }
+            );
             setMessage(
                 "Email Updated Successfully. \nNext Step: Validate new email. \nRedirecting to validate-email page"
             );
@@ -31,6 +38,7 @@ export default function Email() {
                 );
             }, 3500);
         } catch (error: any) {
+            setMessage("error occurred at authorized/settings/email");
             console.log(
                 "%cError occurred at authorized/settings/email",
                 "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 2em;"
@@ -38,12 +46,12 @@ export default function Email() {
             if (error.code === "auth/requires-recent-login") {
                 setReauthenticate(true);
                 return setMessage(
-                    "You need to reauthenticate to update your email."
+                    "warning: You need to reauthenticate to update your email."
                 );
             } else if (error.code === "auth/email-already-in-use") {
-                return setMessage("Email is already in use");
+                return setMessage("warning: Email is already in use");
             } else if (error.code === "auth/auth/invalid-email") {
-                return setMessage("Email is not valid");
+                return setMessage("warning: Email is not valid");
             }
         }
     };
@@ -61,14 +69,14 @@ export default function Email() {
                 setEmail={setEmail}
                 className="w-[460px] max-w-full mb-4"
             />
-            <Button
+            <LoadingButton
                 type="submit"
                 variant="contained"
                 className="block mb-4"
-                disabled={reauthenticate}
+                loading={reauthenticate}
             >
-                Change email
-            </Button>
+                <span>Change email</span>
+            </LoadingButton>
 
             <ReauthenticateDialog
                 handleSubmit={handleSubmit}

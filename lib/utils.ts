@@ -1,7 +1,13 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import numeral from "numeral";
-import { UserType } from "@/app";
+import { STATUS } from "@/lib/variables";
+import { MessageType, TypesOfMessage, UserType } from "@/app";
+import { AlertColor } from "@mui/material";
+import { ref } from "firebase/storage";
+import { storage } from "@/firebase";
+import { nanoid } from "nanoid";
+import { getDownloadURL, uploadBytes } from "firebase/storage";
 
 export function repeat(text: string, count: number = 1) {
     let result = "";
@@ -85,7 +91,73 @@ export const DefaultUserConfig = {
     uid: "",
     studies: [],
     works: [],
+    contacts: {},
+    status: STATUS.active,
 } as UserType;
 
 export const URL_REGEX =
     /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www\.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-]*))?)(?:\?[-\+=&;%@.\w_]*)?(?:#[-.\!\/\\\w]*)?/gi;
+export const MAIL_REGEX =
+    /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gm;
+
+// add this method to all alertBoxes. will be implemented in next issue.
+export function computeSeverityMessage(text: string): AlertColor {
+    if (typeof text !== "string") return "success";
+    if (text.startsWith("error") || text.startsWith("Error")) {
+        return "error";
+    }
+    if (text.startsWith("info") || text.startsWith("Info")) {
+        return "info";
+    }
+    if (text.startsWith("warning") || text.startsWith("Warning")) {
+        return "warning";
+    } else {
+        return "success";
+    }
+}
+
+export function determineMessageType(
+    message: Partial<MessageType>
+): TypesOfMessage | null {
+    if (message?.info) {
+        return "info";
+    } else if (message?.voice) {
+        return "voice";
+    } else if (message?.emoji) {
+        return "emoji";
+    } else if (message?.imageLink?.length) {
+        return "image";
+    } else if (message?.text) {
+        return "text";
+    }
+    return null;
+}
+
+export async function UploadImagesToFirebase(
+    files: {
+        file: File;
+        id: number;
+    }[],
+    groupId: string,
+    chatId: string
+) {
+    return await Promise.all(
+        files
+            .filter((e) => e)
+            .map((e) => {
+                return (async () => {
+                    try {
+                        const storageRef = ref(
+                            storage,
+                            `${groupId}/${chatId}/${nanoid()}`
+                        );
+                        const result = await uploadBytes(storageRef, e.file);
+                        let tempUrl = await getDownloadURL(result.ref);
+                        return tempUrl;
+                    } catch (error) {
+                        return "";
+                    }
+                })();
+            })
+    );
+}

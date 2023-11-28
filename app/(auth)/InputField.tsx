@@ -1,8 +1,4 @@
-import {
-    TextField,
-    type StandardTextFieldProps,
-    TextFieldProps,
-} from "@mui/material";
+import { TextField, type TextFieldProps } from "@mui/material";
 import React from "react";
 
 export default function InputField({ ...rest }: Partial<TextFieldProps>) {

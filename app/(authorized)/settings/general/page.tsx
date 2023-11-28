@@ -3,6 +3,8 @@
 import InputField from "@/app/(auth)/InputField";
 import { auth, firestoreDb, storage } from "@/firebase";
 import {
+    Alert,
+    Autocomplete,
     Avatar,
     Box,
     Button,
@@ -23,14 +25,18 @@ import { UserType } from "@/app";
 import { VscChromeClose } from "react-icons/vsc";
 import { updateProfile } from "firebase/auth";
 import { isEqual } from "lodash";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
+import { LoadingButton } from "@mui/lab";
 
 export default function General() {
     const [file, setFile] = useState<string | null | undefined>(
         auth.currentUser?.photoURL
     );
+    const { setMessage: setSnackbarMessage } = useToastAlert();
     const form = useRef<HTMLFormElement | null>(null);
     const [userInfo, setUserInfo] = useState<Partial<UserType>>({});
     const [userInfoConst, setUserInfoConst] = useState<Partial<UserType>>({});
+    const [loading, setLoading] = useState(false);
     const handleFileChange = (file: File) => {
         const reader = new FileReader();
         reader.onload = () => {
@@ -43,8 +49,8 @@ export default function General() {
         if (!auth.currentUser) {
             return;
         }
+        setLoading(true);
         try {
-            let downloadUrl, displayName;
             e.preventDefault();
             if (file && file !== auth.currentUser?.photoURL) {
                 // downscale image
@@ -68,12 +74,31 @@ export default function General() {
                             canvas.toDataURL(),
                             "data_url"
                         );
-                        downloadUrl = await getDownloadURL(result.ref);
-                        setFile(downloadUrl);
+                        let photoURL = await getDownloadURL(result.ref);
+                        setFile(photoURL);
+
+                        setUserInfo((prev) => {
+                            let now = { ...prev };
+                            now.photoURL = photoURL;
+                            return now;
+                        });
+                        await setDoc(
+                            doc(
+                                firestoreDb,
+                                DATABASE_PATH.users,
+                                auth.currentUser?.uid!
+                            ),
+                            { ...userInfo, photoURL }
+                        );
+
+                        await updateProfile(auth.currentUser!, {
+                            photoURL,
+                        });
                         if (process.env.NODE_ENV !== "production") {
-                            console.log("photo changed!", downloadUrl);
+                            console.log("photo changed!", photoURL);
                         }
                     } catch (e) {
+                        setSnackbarMessage("error uploading image");
                         console.log(
                             `%c${JSON.stringify(e, null, 2)}`,
                             "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 1em;"
@@ -83,41 +108,42 @@ export default function General() {
                     image.remove();
                 };
             }
-            if (userInfo.name !== auth.currentUser?.displayName) {
-                displayName = userInfo.name;
-            }
 
-            if (downloadUrl || displayName) {
+            if (userInfo.name !== auth.currentUser?.displayName) {
                 await updateProfile(auth.currentUser!, {
-                    displayName,
-                    photoURL: downloadUrl,
+                    displayName: userInfo.name,
                 });
 
                 if (process.env.NODE_ENV !== "production") {
                     console.log(
-                        `%cnew name: ${displayName} and photo: ${downloadUrl}`,
+                        `%cnew name: ${userInfo.name} and photo: ${userInfo.photoURL}`,
                         "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 2em;"
                     );
                 }
             }
-            purifyUserInfo(setUserInfo, displayName, downloadUrl);
+            purifyUserInfo(setUserInfo);
             if (!isEqual(userInfoConst, userInfo)) {
+                console.log("not equal", userInfoConst, userInfo);
                 await setDoc(
                     doc(
                         firestoreDb,
                         DATABASE_PATH.users,
                         auth.currentUser?.uid!
                     ),
-                    userInfo,
-                    { merge: true }
+                    userInfo
                 );
             }
+            setSnackbarMessage("User Updated Successfully!");
         } catch (e) {
+            setSnackbarMessage(`error: Something went wrong.
+${JSON.stringify(e, null, 2)}`);
             console.log(
                 `%c${JSON.stringify(e, null, 2)}`,
                 "color: white;background: dodgerblue;border-radius: 5px;padding: 7px;font-size: 1.2em;"
             );
         }
+        auth.currentUser.reload();
+        setLoading(false);
     };
     useEffect(() => {
         (async () => {
@@ -189,6 +215,7 @@ export default function General() {
             <InputField
                 label="Home Town"
                 className="w-[460px] max-w-full mb-4 block"
+                required={false}
                 name="home_town"
                 value={userInfo?.hometown || ""}
                 onChange={(e) => {
@@ -272,14 +299,116 @@ export default function General() {
                     Add field
                 </Button>
             </div>
-            <Button
+            <div className="ml-3">
+                <h3>Contacts</h3>
+                {Object.entries(userInfo.contacts! || {})?.map(
+                    ([key, value], i) => (
+                        <div
+                            key={i}
+                            className="flex justify-start items-start flex-row max-[640px]:flex-col"
+                        >
+                            <Autocomplete
+                                disablePortal
+                                freeSolo
+                                className="w-[430px] max-w-full mb-4 ml-3 block max-[480px]:ml-0"
+                                options={[
+                                    "phone number",
+                                    "facebook",
+                                    "linkedin",
+                                    "twitter",
+                                    "github",
+                                ]}
+                                defaultValue={key}
+                                sx={{ width: 300 }}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Label"
+                                        required
+                                    />
+                                )}
+                                inputValue={key}
+                                onInputChange={(e, newKey) => {
+                                    setUserInfo((prev) => {
+                                        let n = { ...prev };
+                                        if (n.contacts) {
+                                            n.contacts[newKey] = value;
+                                            delete n.contacts[key];
+                                        }
+                                        return n;
+                                    });
+                                }}
+                            />
+                            <FormControl
+                                variant="outlined"
+                                className="w-[430px] max-w-[calc(100%-2rem)] mb-4 ml-8 block"
+                            >
+                                <InputLabel>How to reach</InputLabel>
+                                <OutlinedInput
+                                    value={value}
+                                    label="How to reach"
+                                    onChange={(e) => {
+                                        setUserInfo((prev) => {
+                                            let n = { ...prev };
+                                            if (n.contacts) {
+                                                n.contacts[key] =
+                                                    e.target.value;
+                                            }
+                                            return n;
+                                        });
+                                    }}
+                                    fullWidth
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                edge="end"
+                                                size="small"
+                                                onClick={() => {
+                                                    setUserInfo((prev) => {
+                                                        let n = { ...prev };
+                                                        if (n.contacts) {
+                                                            delete n.contacts[
+                                                                key
+                                                            ];
+                                                        }
+                                                        return n;
+                                                    });
+                                                }}
+                                            >
+                                                <VscChromeClose />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    }
+                                />
+                            </FormControl>
+                        </div>
+                    )
+                )}
+                <Button
+                    type="button"
+                    variant="contained"
+                    onClick={() => {
+                        setUserInfo((prev) => {
+                            let n = { ...prev };
+                            if (n.contacts) {
+                                n.contacts[""] = "";
+                            }
+                            return n;
+                        });
+                    }}
+                >
+                    Add field
+                </Button>
+            </div>
+            <LoadingButton
                 type="submit"
                 size="large"
                 className="block mx-auto"
                 variant="contained"
+                loading={loading}
             >
-                Submit
-            </Button>
+                <span>Submit</span>
+            </LoadingButton>
         </form>
     );
 }
@@ -331,19 +460,15 @@ function AdornmentInput({
 }
 
 function purifyUserInfo(
-    setUserInfo: React.Dispatch<React.SetStateAction<Partial<UserType>>>,
-    name: string | undefined,
-    photoURL: string | undefined
+    setUserInfo: React.Dispatch<React.SetStateAction<Partial<UserType>>>
 ) {
     setUserInfo((prev) => {
         let n = prev;
-        n.name = name ? name : n.name;
-        n.photoURL = photoURL ? photoURL : n.photoURL;
+        n.name = n.name?.trim();
+        n.photoURL = n.photoURL?.trim();
         n.works = n.works?.filter((e) => e);
         n.studies = n.studies?.filter((e) => e);
 
         return n;
     });
 }
-
-// https://www.bing.com/th?id=OIP.PztowP3ljup0SM75tkDimQHaHa&w=112&h=106&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2

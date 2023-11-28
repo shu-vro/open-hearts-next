@@ -10,6 +10,7 @@ import { auth, sendPasswordResetEmail } from "@/firebase";
 import AuthForm from "../AuthForm";
 import MuiLink from "@/app/MuiLink";
 import { SITEMAP } from "@/lib/variables";
+import { LoadingButton } from "@mui/lab";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -41,14 +42,14 @@ export default function ForgotPassword() {
             <br />
             Didn&apos;t Receive email?
             <br />
-            <Button
+            <LoadingButton
                 variant="contained"
                 onClick={handleSubmit}
-                disabled={submitted}
+                loading={submitted}
                 title="You can resend only once. Try reloading the webpage and try again if you don't get password reset email."
             >
-                Resend
-            </Button>
+                <span>Resend</span>
+            </LoadingButton>
         </h3>
     ) : (
         <>
@@ -70,14 +71,14 @@ export default function ForgotPassword() {
                         Reset Password
                     </h2>
                     <EmailInputField email={email} setEmail={setEmail} />
-                    <Button
+                    <LoadingButton
                         type="submit"
                         variant="contained"
                         fullWidth
-                        disabled={submitted}
+                        loading={submitted}
                     >
-                        Send forgot password email
-                    </Button>
+                        <span>Send forgot password email</span>
+                    </LoadingButton>
                     <FormHelperText className="text-base italic my-2">
                         Feeling ready?{" "}
                         <MuiLink href={SITEMAP.login}>Log in</MuiLink>

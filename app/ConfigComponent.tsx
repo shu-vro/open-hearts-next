@@ -1,12 +1,12 @@
 "use client";
 
 import { useColorMode } from "@/contexts/ColorModeContext";
-import useDeviceType from "@/lib/hooks/useDeviceType";
+// import useDeviceType from "@/lib/hooks/useDeviceType";
 import React, { useEffect } from "react";
 
 export default function ConfigComponent() {
     const { setMode } = useColorMode();
-    const deviceType = useDeviceType();
+    // const deviceType = useDeviceType();
     useEffect(() => {
         if (
             localStorage.theme === "dark" ||
@@ -32,13 +32,13 @@ export default function ConfigComponent() {
         }
     }, []);
 
-    useEffect(() => {
-        if (!localStorage.deviceType) {
-            localStorage.deviceType = deviceType;
-        } else if (localStorage.deviceType !== deviceType) {
-            localStorage.deviceType = deviceType;
-        }
-    }, [deviceType]);
+    // useEffect(() => {
+    //     if (!localStorage.deviceType) {
+    //         localStorage.deviceType = deviceType;
+    //     } else if (localStorage.deviceType !== deviceType) {
+    //         localStorage.deviceType = deviceType;
+    //     }
+    // }, [deviceType]);
 
     return <></>;
 }

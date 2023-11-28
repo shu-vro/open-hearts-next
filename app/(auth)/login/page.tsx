@@ -13,6 +13,7 @@ import GoogleSignInButton from "../GoogleSignInButton";
 import AuthForm from "../AuthForm";
 import MuiLink from "@/app/MuiLink";
 import { SITEMAP } from "@/lib/variables";
+import { LoadingButton } from "@mui/lab";
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -31,11 +32,7 @@ export default function Login() {
             if (!user!.emailVerified) {
                 return router.push(SITEMAP.verify_email);
             }
-            return router.push(
-                localStorage.deviceType === "desktop"
-                    ? SITEMAP.chats
-                    : SITEMAP.all_messages
-            );
+            return router.push(SITEMAP.chats);
         } catch (e: unknown) {
             setMessage(e as string);
             console.log(e);
@@ -65,14 +62,14 @@ export default function Login() {
                         setPassword={setPassword1}
                         label="Password"
                     />
-                    <Button
+                    <LoadingButton
                         type="submit"
                         variant="contained"
                         fullWidth
-                        disabled={submitted}
+                        loading={submitted}
                     >
-                        Login
-                    </Button>
+                        <span>Login</span>
+                    </LoadingButton>
                     <FormHelperText className="text-lg font-bold my-2">
                         Or
                     </FormHelperText>

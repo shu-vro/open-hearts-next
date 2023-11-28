@@ -1,6 +1,8 @@
-import "@mui/material/styles";
+/// <reference types="original-module" />
 
-declare module "adapterjs" {}
+import "@mui/material/styles";
+import { ROLE, STATUS } from "@/types/app";
+import { FieldValue, serverTimestamp, Timestamp } from "firebase/firestore";
 
 declare module "@mui/material/styles" {
     interface Palette {
@@ -14,23 +16,33 @@ declare module "@mui/material/styles" {
         }; // or any other type that suits your needs
     }
 }
-declare type MessageType = {
-    text: string;
-    imageLink: string[];
-    emoji: string;
-    voice: string;
-    deleted: boolean;
-    hash: string | null;
-    reply: IReplyMessage | null;
-};
 
-declare interface IReplyMessage {
-    message: MessageType;
-    type: TypesOfMessage;
-    to: string;
+declare interface ReportDocument {
+    path: string;
+    reported_by: UserType["uid"];
+    reported_to: MessageType["sender_id"];
+    group: string;
+    report_created_at: Timestamp;
 }
 
-export type TypesOfMessage = "text" | "image" | "emoji" | "voice";
+declare type MessageType = {
+    id: string;
+    text: string;
+    emoji: string;
+    hash: string | null;
+    deleted: boolean;
+    imageLink: string[];
+    voice: string;
+    reply: string | null;
+    reactions: {
+        [x: string]: string;
+    };
+    created_at: Timestamp;
+    sender_id: string;
+    info: string;
+};
+
+export type TypesOfMessage = "text" | "image" | "emoji" | "voice" | "info";
 
 export interface UserType {
     name: string;
@@ -41,11 +53,31 @@ export interface UserType {
     uid: string;
     studies: (string | never)[];
     works: (string | never)[];
+    contacts: { [x: string]: any };
     status: STATUS.active;
 }
 
-export enum STATUS {
-    active = "active",
-    away = "away",
-    inactive = "inactive",
+export type TGroupMembersBasicDetails = {
+    id: string;
+    addedBy: string;
+    nickname: string;
+    role: ROLE;
+};
+
+type TLastMessage<T> = {
+    message: string;
+    sentTime: Timestamp;
+    by: T;
+    seenBy: T[];
+};
+
+export interface IGroupDetails {
+    id: string;
+    name: string;
+    emoji: string;
+    inviteLink: string;
+    groupMembers: IGroupDetails["id"][];
+    lastMessage: TLastMessage<IGroupDetails["id"]>;
+    groupMembersBasicDetails: TGroupMembersBasicDetails[];
+    photoURL: string;
 }

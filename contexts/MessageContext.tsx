@@ -1,6 +1,8 @@
 "use client";
 
-import { IReplyMessage, MessageType } from "@/app";
+import { MessageType } from "@/app";
+import { Timestamp, serverTimestamp } from "firebase/firestore";
+import { nanoid } from "nanoid";
 import React, { createContext, useContext, useState } from "react";
 
 const Context = createContext({} as UseMessageProp);
@@ -8,10 +10,6 @@ const Context = createContext({} as UseMessageProp);
 type UseMessageProp = {
     message: MessageType;
     setMessage: React.Dispatch<React.SetStateAction<MessageType>>;
-    replyMessage: IReplyMessage;
-    setReplyMessage: React.Dispatch<
-        React.SetStateAction<UseMessageProp["replyMessage"]>
-    >;
 };
 export function useMessage() {
     return useContext(Context);
@@ -20,26 +18,22 @@ export function useMessage() {
 export default function MessageContext({
     children,
 }: {
-    children: React.ReactElement;
+    children: React.ReactNode;
 }) {
     const [message, setMessage] = useState<UseMessageProp["message"]>({
         ...defaultMessage,
     });
-    const [replyMessage, setReplyMessage] = useState<
-        UseMessageProp["replyMessage"]
-    >({ message: { ...defaultMessage }, type: "text", to: "shirshen shuvro" });
     return (
         <>
-            <Context.Provider
-                value={{ message, setMessage, replyMessage, setReplyMessage }}
-            >
+            <Context.Provider value={{ message, setMessage }}>
                 {children}
             </Context.Provider>
         </>
     );
 }
 
-export const defaultMessage: MessageType = Object.freeze({
+export const defaultMessage = Object.freeze({
+    id: nanoid(),
     emoji: "",
     text: "",
     imageLink: [],
@@ -47,4 +41,8 @@ export const defaultMessage: MessageType = Object.freeze({
     deleted: false,
     hash: null,
     reply: null,
-});
+    reactions: {},
+    created_at: serverTimestamp() as Timestamp,
+    sender_id: "",
+    info: "",
+} as MessageType);

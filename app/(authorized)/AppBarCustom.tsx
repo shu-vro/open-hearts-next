@@ -13,11 +13,17 @@ import { BsCardList, BsSun, BsThreeDotsVertical } from "react-icons/bs";
 import MobileNotificationItem from "./MobileNotificationItem";
 import DesktopNotificationItem from "./DesktopNotificationItem";
 import { useColorMode } from "@/contexts/ColorModeContext";
-import HoverWrapper from "./chats/HoverWrapper";
+import HoverWrapper from "./HoverWrapper";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase";
-import { Avatar, Divider, ListItemIcon, ListItemText } from "@mui/material";
-import { useRouter } from "next/navigation";
+import {
+    Avatar,
+    Divider,
+    ListItemIcon,
+    ListItemText,
+    Tooltip,
+} from "@mui/material";
+import { redirect } from "next/navigation";
 import { PiChatsTeardropDuotone } from "react-icons/pi";
 import { HiOutlineCog6Tooth } from "react-icons/hi2";
 import { IoIosLogOut } from "react-icons/io";
@@ -25,7 +31,6 @@ import Link from "next/link";
 import { SITEMAP } from "@/lib/variables";
 
 export default function AppBarCustom() {
-    const router = useRouter();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
         React.useState<null | HTMLElement>(null);
@@ -43,7 +48,6 @@ export default function AppBarCustom() {
 
     const handleMenuClose = () => {
         setAnchorEl(null);
-        handleMobileMenuClose();
     };
 
     const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -51,85 +55,13 @@ export default function AppBarCustom() {
     };
 
     const menuId = "primary-search-account-menu";
-    const renderMenu = (
-        <Menu
-            anchorEl={anchorEl}
-            anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-            }}
-            transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-            }}
-            id={menuId}
-            open={isMenuOpen}
-            onClose={handleMenuClose}
-        >
-            <MenuItem
-                onClick={handleMenuClose}
-                component={Link}
-                href={SITEMAP.profile}
-            >
-                <ListItemIcon>
-                    <VscAccount />
-                </ListItemIcon>
-                <ListItemText>Profile</ListItemText>
-            </MenuItem>
-            <Divider />
-            <MenuItem
-                onClick={handleMenuClose}
-                component={Link}
-                href={SITEMAP.chats}
-            >
-                <ListItemIcon>
-                    <PiChatsTeardropDuotone />
-                </ListItemIcon>
-                <ListItemText>Chats</ListItemText>
-            </MenuItem>
-            <Divider />
-            <MenuItem
-                onClick={handleMenuClose}
-                component={Link}
-                href={SITEMAP.general_settings}
-            >
-                <ListItemIcon>
-                    <HiOutlineCog6Tooth />
-                </ListItemIcon>
-                <ListItemText>Settings</ListItemText>
-            </MenuItem>
-            <Divider />
-            <MenuItem
-                onClick={async () => {
-                    try {
-                        await signOut(auth);
-                        router.push(SITEMAP.login);
-                    } catch (e) {
-                        console.warn(e);
-                    }
-                    handleMenuClose();
-                }}
-            >
-                <ListItemIcon>
-                    <IoIosLogOut />
-                </ListItemIcon>
-                <ListItemText>Log out</ListItemText>
-            </MenuItem>
-        </Menu>
-    );
 
     const mobileMenuId = "primary-search-account-menu-mobile";
     const renderMobileMenu = (
         <Menu
             anchorEl={mobileMoreAnchorEl}
-            anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-            }}
-            transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-            }}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             id={mobileMenuId}
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
@@ -234,8 +166,102 @@ export default function AppBarCustom() {
                     </Toolbar>
                 </AppBar>
                 {renderMobileMenu}
-                {renderMenu}
+                <RenderMenu
+                    handleMenuClose={handleMenuClose}
+                    anchorEl={anchorEl}
+                    isMenuOpen={isMenuOpen}
+                />
             </Box>
         </HoverWrapper>
+    );
+}
+
+function RenderMenu({
+    handleMenuClose,
+    anchorEl,
+    isMenuOpen,
+}: {
+    anchorEl: HTMLElement | null;
+    isMenuOpen: boolean;
+    handleMenuClose: () => void;
+}) {
+    return (
+        <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+            }}
+            transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+            }}
+            open={isMenuOpen}
+            onClose={handleMenuClose}
+        >
+            <MenuItem component={"h2"} className="uppercase">
+                <ListItemText>
+                    <Tooltip
+                        title={auth.currentUser?.displayName || ""}
+                        placement="top"
+                        arrow
+                    >
+                        <Typography noWrap maxWidth="18rem">
+                            {auth.currentUser?.displayName || ""}
+                        </Typography>
+                    </Tooltip>
+                </ListItemText>
+            </MenuItem>
+            <Divider />
+            <MenuItem
+                onClick={handleMenuClose}
+                component={Link}
+                href={SITEMAP.profile}
+            >
+                <ListItemIcon>
+                    <VscAccount />
+                </ListItemIcon>
+                <ListItemText>Profile</ListItemText>
+            </MenuItem>
+            <Divider />
+            <MenuItem
+                onClick={handleMenuClose}
+                component={Link}
+                href={SITEMAP.chats}
+            >
+                <ListItemIcon>
+                    <PiChatsTeardropDuotone />
+                </ListItemIcon>
+                <ListItemText>Chats</ListItemText>
+            </MenuItem>
+            <Divider />
+            <MenuItem
+                onClick={handleMenuClose}
+                component={Link}
+                href={SITEMAP.general_settings}
+            >
+                <ListItemIcon>
+                    <HiOutlineCog6Tooth />
+                </ListItemIcon>
+                <ListItemText>Settings</ListItemText>
+            </MenuItem>
+            <Divider />
+            <MenuItem
+                onClick={async () => {
+                    try {
+                        await signOut(auth);
+                        redirect(SITEMAP.login);
+                    } catch (e) {
+                        console.warn(e);
+                    }
+                    handleMenuClose();
+                }}
+            >
+                <ListItemIcon>
+                    <IoIosLogOut />
+                </ListItemIcon>
+                <ListItemText>Log out</ListItemText>
+            </MenuItem>
+        </Menu>
     );
 }

@@ -6,26 +6,53 @@ import { Imbue } from "next/font/google";
 import { Avatar, Box, Typography } from "@mui/material";
 import { auth, firestoreDb } from "@/firebase";
 import { FaRegHandPointRight } from "react-icons/fa";
-import { DocumentData, doc, getDoc } from "firebase/firestore";
-import { DATABASE_PATH } from "@/lib/variables";
+import { doc, getDoc } from "firebase/firestore";
+import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
+import { redirect, useSearchParams } from "next/navigation";
+import { UserType } from "@/app";
+import { MAIL_REGEX, URL_REGEX } from "@/lib/utils";
 
 const imbue = Imbue({
     subsets: ["latin"],
     display: "swap",
     weight: ["100", "600"],
 });
-// Meet [Name], a fantastic friend who's smart, compassionate, and full of life. They bring positivity wherever they go
 
-export default function Page() {
-    const [userData, setUserData] = useState<DocumentData>();
+/**
+ * if url have a uid, then go to that uid.
+ * if it doesn't, show user's profile
+ * if url have a uid but it's not valid,
+ *      say sorry to user and request him to go back
+ */
+
+export default function ProfilePage({ uid }: { uid: string }) {
+    const searchParam = useSearchParams();
+    const [userData, setUserData] = useState<UserType>();
     useEffect(() => {
         (async () => {
             try {
-                if (!auth.currentUser) return;
+                let uid_temp: string | null | undefined = auth.currentUser?.uid;
+
+                if (
+                    (!searchParam || searchParam.get("uid") === null) &&
+                    !auth.currentUser
+                ) {
+                    return redirect(SITEMAP.chats);
+                    // if (searchParam && searchParam.get("uid") !== null) {
+                    //     uid = searchParam.get("uid");
+                    // }
+                }
+                if (uid) {
+                    uid_temp = uid;
+                } else if (searchParam && searchParam.get("uid") !== null) {
+                    if (searchParam && searchParam.get("uid") !== null) {
+                        uid_temp = searchParam.get("uid");
+                    }
+                }
                 const document = await getDoc(
-                    doc(firestoreDb, DATABASE_PATH.users, auth.currentUser.uid)
+                    doc(firestoreDb, DATABASE_PATH.users, uid_temp || "")
                 );
-                setUserData(document.data());
+                setUserData(document.data() as UserType);
             } catch (e) {
                 console.log(
                     `%c${JSON.stringify(e, null, 2)}`,
@@ -50,8 +77,8 @@ export default function Page() {
                     <Box className="flex justify-start items-start flex-col">
                         <Avatar
                             src={userData?.photoURL || ""}
-                            alt="Shirshen Shuvro"
-                            className="w-full max-w-xs max-h-xs min-w-[200px] min-h-[200px] h-fit rounded-2xl"
+                            alt={userData?.name || "User"}
+                            className="w-full max-w-xs max-h-xs min-w-[300px] min-h-[300px] h-fit rounded-2xl"
                         />
                         <div>
                             <Typography
@@ -75,23 +102,72 @@ export default function Page() {
                     </div>
                 </Box>
                 <Box className="ml-20 max-[811px]:ml-0">
-                    {Array(5)
-                        .fill("")
-                        .map((_, i) => (
-                            <Box
-                                className="list text-[2rem] flex justify-start items-center flex-row mb-4 px-2 group rounded-md max-sm:bg-white max-sm:bg-opacity-20"
-                                key={i}
-                            >
-                                <FaRegHandPointRight className="group-hover:ml-4 max-[811px]:group-hover:ml-0 duration-500" />
-                                <b>Hometown: </b>
-                                <span className="ml-4">
-                                    Lorem ipsum, dolor sit amet consectetur
-                                    adipisicing elit.
-                                </span>
-                            </Box>
-                        ))}
+                    {userData?.email && (
+                        <ListItem key_="Email" value={userData.email} />
+                    )}
+                    {userData?.hometown && (
+                        <ListItem key_="Hometown" value={userData.hometown} />
+                    )}
+                    {userData?.works.map((work, i) => (
+                        <ListItem key_="Works at" value={work} key={i} />
+                    ))}
+                    {userData?.studies.map((study, i) => (
+                        <ListItem key_="Studies at" value={study} key={i} />
+                    ))}
+                    {Object.entries(userData?.contacts || {}).map(
+                        ([key, value], i) => (
+                            <ListItem key_={key} value={value} key={i} />
+                        )
+                    )}
                 </Box>
             </Box>
         </div>
+    );
+}
+
+function ListItem({ key_, value }: { key_: string; value: string }) {
+    let refinedValue: React.ReactNode = "";
+    if (value.match(MAIL_REGEX)) {
+        refinedValue = (
+            <a
+                href={`mailto:${value}`}
+                className="underline text-inherit"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {value}
+            </a>
+        );
+    } else if (value.match(URL_REGEX)) {
+        refinedValue = (
+            <a
+                href={value}
+                className="underline text-inherit"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {value}
+            </a>
+        );
+    } else if (value.match(/\d{4,15}/)) {
+        refinedValue = (
+            <a
+                href={`tel:${value}`}
+                className="underline text-inherit"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {value}
+            </a>
+        );
+    } else {
+        refinedValue = value;
+    }
+    return (
+        <Box className="list text-[2rem] flex justify-start items-center flex-row mb-4 px-2 group rounded-md max-sm:bg-white max-sm:bg-opacity-20">
+            <FaRegHandPointRight className="group-hover:ml-4 max-[811px]:group-hover:ml-0 duration-500" />
+            <b className="ml-3">{key_}: </b>
+            <span className="ml-4">{refinedValue}</span>
+        </Box>
     );
 }

@@ -16,6 +16,9 @@ function ThemeControl({ children, theme, mainColor }: Props) {
             primary: {
                 main: mainColor,
             },
+            secondary: {
+                main: "#ff8f1e",
+            },
             mySwatch: {
                 messageBG: "#2a2d3a",
             },
@@ -27,6 +30,9 @@ function ThemeControl({ children, theme, mainColor }: Props) {
             mode: "light",
             primary: {
                 main: mainColor,
+            },
+            secondary: {
+                main: "#ff8f1e",
             },
             mySwatch: {
                 messageBG: "rgb(186 199 255)",

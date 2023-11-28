@@ -2,11 +2,10 @@
 import { auth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { Button } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { SITEMAP } from "@/lib/variables";
 
 export default function Logout() {
-    const router = useRouter();
     return (
         <Button
             type="button"
@@ -14,7 +13,7 @@ export default function Logout() {
             onClick={async () => {
                 try {
                     await signOut(auth);
-                    router.push(SITEMAP.login);
+                    redirect(SITEMAP.login);
                 } catch (e) {
                     console.log(
                         `%c${JSON.stringify(e, null, 2)}`,

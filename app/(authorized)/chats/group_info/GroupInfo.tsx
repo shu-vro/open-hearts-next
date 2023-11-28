@@ -1,11 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import ImagePreviewModal from "../ImagePreviewModal";
+import ImagePreviewModal from "../[group]/ImagePreviewModal";
 import {
+    AccordionDetails,
     Avatar,
     Box,
+    Button,
+    ButtonGroup,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     FilledInput,
     FormControl,
     IconButton,
@@ -16,49 +24,75 @@ import {
     Tooltip,
     Typography,
 } from "@mui/material";
-import HoverWrapper from "../HoverWrapper";
+import HoverWrapper from "../../HoverWrapper";
 import { LuCopy } from "react-icons/lu";
-import GroupInfoTab from "./GroupInfoTab";
 import SharedLink from "./SharedLink";
 import { Swiper as SwiperType } from "swiper/types";
-import { RiVoiceprintFill } from "react-icons/ri";
-import { IoMdPause } from "react-icons/io";
-import { cn, normalizeTimeFormat } from "@/lib/utils";
+import { Accordion, AccordionSummary } from "./GroupInfoHelpers";
+import { MemberTile } from "./MemberTile";
+import { EditMemberTile } from "./EditMemberTile";
+import ChangeGroupEmoji from "./ChangeGroupEmoji";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
+import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
+import { auth, firestoreDb } from "@/firebase";
+import { useRouter } from "next/navigation";
+import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
+import AddMembersAlertDialog from "./AddMembersAlertDialog";
+import { collection, getDocs, query } from "firebase/firestore";
+import { IGroupDetails, MessageType, UserType } from "@/app";
+import { URL_REGEX } from "@/lib/utils";
+import { LoadingButton } from "@mui/lab";
+import VoiceMessageBox from "../[group]/VoiceMessageBox";
 
-type Props = {};
-
-export default function GroupInfo({}: Props) {
-    const [activeTab, setActiveTab] = useState(0);
+export default function GroupInfo({
+    messages = [],
+    group = null,
+}: {
+    messages?: MessageType[];
+    group: IGroupDetails | null;
+}) {
+    const [activeTab, setActiveTab] = useState<0 | 1 | 2 | number>(0);
     const [swiper, setSwiper] = useState<SwiperType>();
     const [showImageModal, setShowImageModal] = useState("");
+    const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
+    const [addUserDialog, setAddUserDialog] = useState(false);
+    const [allUsers, setAllUsers] = useState<UserType[]>([]);
+    const [loading, setLoading] = useState(false);
     const handleTabChange = (newValue: number) => {
         setActiveTab(newValue);
         if (swiper) {
             swiper.slideTo(newValue);
         }
     };
-    const groupURL = "https://localhost:3000/chats/123456789";
+    const handleCloseLeaveDialog = () => {
+        setOpenLeaveDialog(false);
+    };
+    const { setMessage } = useToastAlert();
+    const { push } = useRouter();
 
-    let imageLink = [
-        "https://images.unsplash.com/photo-1668162692136-9c490f102de2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1926&q=80",
-        "https://images.unsplash.com/photo-1692284759956-ad1330507a1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
-        "https://images.unsplash.com/photo-1682685797857-97de838c192e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
-        "https://plus.unsplash.com/premium_photo-1666648220960-da4b99a3a17f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80",
-        "https://images.unsplash.com/photo-1693588312088-a37c2a329982?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2127&q=80",
-        "https://images.unsplash.com/photo-1692284759956-ad1330507a1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
-        "https://plus.unsplash.com/premium_photo-1693155671457-e97a909b5fc8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-        "https://images.unsplash.com/photo-1682685797406-97f364419b4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-        "https://images.unsplash.com/photo-1693588312088-a37c2a329982?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2127&q=80",
-        "https://images.unsplash.com/photo-1668162692136-9c490f102de2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1926&q=80",
-        "https://images.unsplash.com/photo-1692284759956-ad1330507a1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
-        "https://images.unsplash.com/photo-1682685797857-97de838c192e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
-        "https://plus.unsplash.com/premium_photo-1666648220960-da4b99a3a17f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80",
-        "https://images.unsplash.com/photo-1693588312088-a37c2a329982?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2127&q=80",
-        "https://images.unsplash.com/photo-1692284759956-ad1330507a1f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80",
-        "https://plus.unsplash.com/premium_photo-1693155671457-e97a909b5fc8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-        "https://images.unsplash.com/photo-1682685797406-97f364419b4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-        "https://images.unsplash.com/photo-1693588312088-a37c2a329982?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2127&q=80",
-    ];
+    useEffect(() => {
+        (async () => {
+            if (!group) return;
+            if (!auth.currentUser?.uid)
+                return setMessage(
+                    "User might be logged out. If this error continues, login again"
+                );
+            const q = query(collection(firestoreDb, DATABASE_PATH.users));
+            let allDocs = await getDocs(q);
+            if (!allDocs.empty) {
+                setAllUsers(
+                    allDocs.docs
+                        .map((doc) => doc.data() as UserType)
+                        .sort((a, b) => -b.name[0].localeCompare(a.name[0]))
+                    // .filter((el) => !group.groupMembers?.includes(el.uid))
+                );
+            }
+        })();
+    }, [group?.groupMembers]);
+
+    let imageLink = messages
+        .map((msg) => msg.imageLink)
+        .flat(Infinity) as string[];
 
     const handleClose = () => {
         setShowImageModal("");
@@ -67,12 +101,12 @@ export default function GroupInfo({}: Props) {
         <>
             <Box className="w-full overflow-y-auto h-full">
                 <Avatar
-                    src=""
+                    src={group?.photoURL || ""}
                     alt="Some Avatar"
                     className="mx-auto mt-6 w-24 h-24"
                 />
                 <Typography variant="h5" align="center" className="my-2">
-                    Shirshen Shuvro
+                    {group?.name || "Group name"}
                 </Typography>
                 <HoverWrapper className="mx-4 w-[calc(100%-2.1rem)]">
                     <FormControl variant="filled" fullWidth>
@@ -83,7 +117,11 @@ export default function GroupInfo({}: Props) {
                             Group Link
                         </InputLabel>
                         <FilledInput
-                            value={groupURL}
+                            value={
+                                !!location
+                                    ? location.origin + group?.inviteLink
+                                    : group?.inviteLink
+                            }
                             disabled
                             fullWidth
                             endAdornment={
@@ -93,7 +131,12 @@ export default function GroupInfo({}: Props) {
                                             aria-label="toggle password visibility"
                                             onClick={() => {
                                                 navigator.clipboard.writeText(
-                                                    groupURL
+                                                    !!location
+                                                        ? location.origin +
+                                                              (group?.inviteLink ||
+                                                                  "")
+                                                        : group?.inviteLink ||
+                                                              ""
                                                 );
                                             }}
                                             edge="end"
@@ -106,148 +149,268 @@ export default function GroupInfo({}: Props) {
                         />
                     </FormControl>
                 </HoverWrapper>
-                <Box className="flex justify-between items-center my-1.5 mx-4 w-[calc(100%-2.5em)] flex-row">
-                    <GroupInfoTab
-                        onClick={() => {
-                            handleTabChange(0);
-                        }}
-                        selected={activeTab === 0}
-                    >
-                        Media
-                    </GroupInfoTab>
-                    <GroupInfoTab
-                        onClick={() => {
-                            handleTabChange(1);
-                        }}
-                        selected={activeTab === 1}
-                    >
-                        Links
-                    </GroupInfoTab>
-                    <GroupInfoTab
-                        onClick={() => {
-                            handleTabChange(2);
-                        }}
-                        selected={activeTab === 2}
-                    >
-                        Voice
-                    </GroupInfoTab>
-                </Box>
-                <Swiper
-                    onSwiper={(swiper) => {
-                        setSwiper(swiper);
-                    }}
-                    onActiveIndexChange={(swiper) => {
-                        setActiveTab(swiper.activeIndex);
+                <Accordion className="mt-4">
+                    <AccordionSummary>Change Group Emoji</AccordionSummary>
+                    <AccordionDetails>
+                        <ChangeGroupEmoji />
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                    <AccordionSummary>See Members</AccordionSummary>
+                    <AccordionDetails>
+                        <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
+                            <Box
+                                className="grid p-2 py-7 text-inherit hover:no-underline place-items-center cursor-pointer"
+                                onClick={() => {
+                                    setAddUserDialog(true);
+                                }}
+                            >
+                                <span>Add member</span>
+                            </Box>
+                            <AddMembersAlertDialog
+                                open={addUserDialog}
+                                allUsers={allUsers}
+                                setOpen={setAddUserDialog}
+                            />
+                        </HoverWrapper>
+                        {group?.groupMembersBasicDetails.map((member) => (
+                            <MemberTile
+                                member={member}
+                                key={member.id}
+                                user={allUsers.find((e) => e.uid === member.id)}
+                                myRole={
+                                    group?.groupMembersBasicDetails.find(
+                                        (e) => e.id === auth.currentUser?.uid
+                                    )?.role
+                                }
+                                addedBy={group?.groupMembersBasicDetails.find(
+                                    (e) => e.id === member.addedBy
+                                )}
+                            />
+                        ))}
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                    <AccordionSummary>Nicknames</AccordionSummary>
+                    <AccordionDetails>
+                        {group?.groupMembersBasicDetails.map((member) => (
+                            <EditMemberTile
+                                member={member}
+                                user={allUsers.find((e) => e.uid === member.id)}
+                                key={member.id}
+                            />
+                        ))}
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion>
+                    <AccordionSummary>
+                        Manage Group (Only admins)
+                    </AccordionSummary>
+                    <AccordionDetails></AccordionDetails>
+                </Accordion>
+                <Accordion className="mb-4">
+                    <AccordionSummary>Media and files</AccordionSummary>
+                    <AccordionDetails>
+                        <ButtonGroup
+                            variant="outlined"
+                            aria-label="Group's sharing"
+                            fullWidth
+                            className="my-3 w-full"
+                        >
+                            <Button
+                                onClick={() => {
+                                    handleTabChange(0);
+                                }}
+                                variant={
+                                    activeTab === 0 ? "contained" : "outlined"
+                                }
+                            >
+                                Media
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    handleTabChange(1);
+                                }}
+                                variant={
+                                    activeTab === 1 ? "contained" : "outlined"
+                                }
+                            >
+                                Links
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    handleTabChange(2);
+                                }}
+                                variant={
+                                    activeTab === 2 ? "contained" : "outlined"
+                                }
+                            >
+                                Voice
+                            </Button>
+                        </ButtonGroup>
+                        <Swiper
+                            onSwiper={(swiper) => {
+                                setSwiper(swiper);
+                            }}
+                            onActiveIndexChange={(swiper) => {
+                                setActiveTab(swiper.activeIndex);
+                            }}
+                        >
+                            <SwiperSlide>
+                                <HoverWrapper className="w-[100%-1rem]">
+                                    <ImageList
+                                        variant="masonry"
+                                        cols={3}
+                                        gap={8}
+                                        className="my-0 rounded-[inherit] w-[100%-1rem]"
+                                    >
+                                        {imageLink.map((src, i) => {
+                                            return (
+                                                <ImageListItem
+                                                    key={i}
+                                                    component="a"
+                                                    href={`#${i + 1}`}
+                                                    onClick={() => {
+                                                        setShowImageModal(
+                                                            i.toString()
+                                                        );
+                                                    }}
+                                                >
+                                                    <img
+                                                        src={`${src}?w=248&fit=crop&auto=format`}
+                                                        srcSet={`${src}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                                                        alt={src}
+                                                        loading="lazy"
+                                                    />
+                                                </ImageListItem>
+                                            );
+                                        })}
+                                        <ImagePreviewModal
+                                            images={imageLink}
+                                            handleClose={handleClose}
+                                            showImageModal={showImageModal}
+                                        />
+                                    </ImageList>
+                                </HoverWrapper>
+                            </SwiperSlide>
+                            <SwiperSlide>
+                                <Box>
+                                    {messages.map((msg) => {
+                                        if (!msg.text) return null;
+                                        return msg.text
+                                            .match(URL_REGEX)
+                                            ?.map((text_message, j) => {
+                                                return (
+                                                    <SharedLink
+                                                        link={text_message}
+                                                        messageTime={
+                                                            msg.created_at
+                                                        }
+                                                        sender={allUsers.find(
+                                                            (user) =>
+                                                                user.uid ===
+                                                                msg.sender_id
+                                                        )}
+                                                        key={j}
+                                                    />
+                                                );
+                                            });
+                                    })}
+                                </Box>
+                            </SwiperSlide>
+                            <SwiperSlide>
+                                <Box>
+                                    {messages.map((msg) => {
+                                        if (!msg.voice) return null;
+                                        return (
+                                            <VoiceMessageBox
+                                                key={msg.id}
+                                                by="him"
+                                                msg={{
+                                                    id: msg.id,
+                                                    reply: "",
+                                                    voice: msg.voice,
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </Box>
+                            </SwiperSlide>
+                        </Swiper>
+                    </AccordionDetails>
+                </Accordion>
+                <Button
+                    color="error"
+                    variant="contained"
+                    className="block max-w-[600px] mx-auto"
+                    fullWidth
+                    onClick={() => {
+                        setOpenLeaveDialog(true);
                     }}
                 >
-                    <SwiperSlide>
-                        <HoverWrapper className=" w-[calc(100%-2rem)] mx-auto">
-                            <ImageList
-                                variant="masonry"
-                                cols={3}
-                                gap={8}
-                                className="my-0 rounded-[inherit]"
-                            >
-                                {imageLink.map((src, i) => (
-                                    <ImageListItem
-                                        key={i}
-                                        component="a"
-                                        href={`#${i + 1}`}
-                                        onClick={() => {
-                                            setShowImageModal(i.toString());
-                                        }}
-                                    >
-                                        <img
-                                            src={`${src}?w=248&fit=crop&auto=format`}
-                                            srcSet={`${src}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                                            alt={src}
-                                            loading="lazy"
-                                        />
-                                    </ImageListItem>
-                                ))}
-                                <ImagePreviewModal
-                                    images={imageLink}
-                                    handleClose={handleClose}
-                                    showImageModal={showImageModal}
-                                />
-                            </ImageList>
-                        </HoverWrapper>
-                    </SwiperSlide>
-                    <SwiperSlide>
-                        <Box>
-                            {Array(3)
-                                .fill("")
-                                .map((_, i) => {
-                                    return (
-                                        <SharedLink
-                                            link="https://youtube.com/"
-                                            key={i}
-                                        />
+                    Leave Group
+                </Button>
+                <Dialog
+                    open={openLeaveDialog}
+                    onClose={handleCloseLeaveDialog}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle>Leave Group?</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Are you sure to leave{" "}
+                            <Typography color="primary.main" component={"span"}>
+                                {group?.name || "<group-name>"}
+                            </Typography>{" "}
+                            group?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <LoadingButton
+                            loading={loading}
+                            onClick={async () => {
+                                setLoading(true);
+                                try {
+                                    if (!group) return;
+                                    let groupMembers =
+                                        group.groupMembers.filter(
+                                            (member) =>
+                                                member !== auth.currentUser?.uid
+                                        );
+                                    let groupMembersBasicDetails =
+                                        group.groupMembersBasicDetails.filter(
+                                            (member) =>
+                                                member.id !==
+                                                auth.currentUser?.uid
+                                        );
+                                    await changeGroupInformation(
+                                        group?.id || "",
+                                        {
+                                            groupMembers,
+                                            groupMembersBasicDetails,
+                                        }
                                     );
-                                })}
-                        </Box>
-                    </SwiperSlide>
-                    <SwiperSlide>
-                        {Array(2)
-                            .fill("")
-                            .map((_, i) => (
-                                <VoiceMessage key={i} />
-                            ))}
-                    </SwiperSlide>
-                </Swiper>
+                                    setMessage("You left from group.");
+                                    push(SITEMAP.chats);
+                                } catch (e) {
+                                    setMessage("Error: check console");
+                                    console.log(e);
+                                }
+                                setLoading(false);
+                                handleCloseLeaveDialog();
+                            }}
+                            variant="contained"
+                            color="error"
+                        >
+                            <span>Yes</span>
+                        </LoadingButton>
+                        <Button onClick={handleCloseLeaveDialog} autoFocus>
+                            No
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </Box>
         </>
-    );
-}
-
-function VoiceMessage({}) {
-    const [voiceMessageDone, setVoiceMessageDone] = useState(0);
-    return (
-        <HoverWrapper className="my-1.5 mx-auto w-[calc(100%-2rem)]  max-w-sm">
-            <Box
-                className={cn(
-                    "message text-sm p-3 rounded-lg flex justify-between items-center flex-row gap-2"
-                )}
-            >
-                <IconButton size="small">
-                    <IoMdPause />
-                </IconButton>
-                <span className="start font-bold">
-                    {normalizeTimeFormat(0)}
-                </span>
-                <Box
-                    className="relative text-3xl max-[865px]:text-2xl overflow-hidden"
-                    onClick={(e) => {
-                        let rect = e.currentTarget.getBoundingClientRect();
-                        setVoiceMessageDone(
-                            ((e.clientX - rect.x) / rect.width) * 100
-                        );
-                    }}
-                >
-                    <Box className="base opacity-40 flex justify-center items-center flex-row">
-                        {Array(6)
-                            .fill("")
-                            .map((_, i) => (
-                                <RiVoiceprintFill key={i} />
-                            ))}
-                    </Box>
-                    <Box
-                        className="slider absolute top-0 left-0 w-full h-full"
-                        style={{
-                            clipPath: `polygon(0 0, ${voiceMessageDone}% 0, ${voiceMessageDone}% 100%, 0% 100%)`,
-                        }}
-                    >
-                        {Array(6)
-                            .fill("")
-                            .map((_, i) => (
-                                <RiVoiceprintFill key={i} />
-                            ))}
-                    </Box>
-                </Box>
-                <span className="end font-bold">
-                    {normalizeTimeFormat(400)}
-                </span>
-            </Box>
-        </HoverWrapper>
     );
 }
