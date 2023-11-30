@@ -1,0 +1,60 @@
+name: Add need-attention label to all issues
+
+on:
+    issues:
+        types:
+            - reopened
+            - opened
+
+jobs:
+    add_label:
+        runs-on: ubuntu-latest
+        permissions:
+            issues: write
+        steps:
+            - name: check if task
+              id: check_if_task
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                    let result = false;
+                    if (typeof context?.payload?.issue?.body === "string") {
+                        result = context.payload.issue.body.startsWith('/task')
+                    }
+                    return result
+
+            - name: console log
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                    const check = ${{steps.check_if_task.outputs.result}}
+                    console.log(check, typeof check)
+            - name: add task label
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                    if (${{steps.check_if_task.outputs.result}}) {
+                        github.rest.issues.addLabels({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        labels: ["task"],
+                        });
+                    } else {
+                        console.log("not task");
+                    }
+
+            - name: add_need_attention_label
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                    if (!${{steps.check_if_task.outputs.result}}) {
+                        github.rest.issues.addLabels({
+                            issue_number: context.issue.number,
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            labels: ["need-attention"]
+                        })
+                        } else {
+                            console.log("not adding need-attention");
+                        }
