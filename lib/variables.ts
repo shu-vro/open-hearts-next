@@ -47,8 +47,7 @@ export const DEFAULT_GROUP_DETAILS = Object.freeze({
     inviteLink: `/chats/${id}`,
     groupMembers: [],
     groupMembersBasicDetails: [],
-    photoURL:
-        "https://img.fixthephoto.com/blog/images/gallery/news_preview_mob_image__preview_404.jpg",
+    photoURL: "",
     lastMessage: {
         message: "You joined this chat",
         by: "You",
