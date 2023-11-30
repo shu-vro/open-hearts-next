@@ -1,43 +1,75 @@
 name: Remove need-attention and add started-working labels
 
-on:
-    push:
-        branches:
-            - issues/**
+on: create
 
 jobs:
-    update-labels:
-        runs-on: ubuntu-latest
-        permissions:
-            issues: write
+  update-labels:
+    runs-on: ubuntu-latest
+    permissions: 
+        issues: write
 
-        steps:
-            - name: Get Issue Number
-              id: get_issue_num
-              uses: actions/github-script@v6
-              with:
-                  script: |
-                      const result = parseInt(context.ref.split("#")[1])
-                      return result
+    steps:
+      - name: Get Issue Number
+        id: get_issue_num
+        uses: actions/github-script@v6
+        with:
+            script: |
+                const result = parseInt(context.ref.split("#")[1])
+                return result
 
-            - name: Add started-working label
-              uses: actions/github-script@v6
-              with:
-                  script: |
-                      github.rest.issues.addLabels({
-                        issue_number: ${{steps.get_issue_num.outputs.result}},
+
+      - name: Add assignee
+        uses: actions/github-script@v6
+        with:
+            script: |
+                const issue_num = ${{steps.get_issue_num.outputs.result}}
+                console.log(issue_num, typeof issue_num)
+                if (!isNaN(parseInt(issue_num))) {
+                    console.log("Valid issue number! ", context.ref)
+                    github.rest.issues.addAssignees({
+                        issue_number: issue_num,
+                        owner: context.repo.owner,
+                        repo: context.repo.repo,
+                        assignees: [context.actor]
+                    })
+                } else {
+                    console.log("not valid issue: ", context.ref)
+                }
+
+
+
+      - name: Add started-working label
+        uses: actions/github-script@v6
+        with:
+            script: |
+                const issue_num = ${{steps.get_issue_num.outputs.result}}
+                console.log(issue_num, typeof issue_num)
+                if (!isNaN(parseInt(issue_num))) {
+                    console.log("Valid issue number! ", context.ref)
+                    github.rest.issues.addLabels({
+                        issue_number: issue_num,
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         labels: ["started-working"]
-                      })
+                    })
+                } else {
+                    console.log("not valid issue: ", context.ref)
+                }
 
-            - name: Remove need-attention label
-              uses: actions/github-script@v6
-              with:
-                  script: |
-                      github.rest.issues.removeLabel({
-                        issue_number: ${{steps.get_issue_num.outputs.result}},
+      - name: Remove need-attention label
+        uses: actions/github-script@v6
+        with:
+            script: |
+                const issue_num = ${{steps.get_issue_num.outputs.result}}
+                console.log(issue_num, typeof issue_num)
+                if (!isNaN(parseInt(issue_num))) {
+                    console.log("Valid issue number! ", context.ref)
+                    github.rest.issues.removeLabel({
+                        issue_number: issue_num,
                         owner: context.repo.owner,
                         repo: context.repo.repo,
                         name: ["need-attention"]
                       })
+                } else {
+                    console.log("not valid issue: ", context.ref)
+                }
