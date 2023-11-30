@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import {
     Avatar,
     Box,
-    IconButton,
     ImageList,
     ImageListItem,
     Typography,
@@ -15,23 +14,10 @@ import ReplyBox from "./ReplyBox";
 import { Props, NativeHoverWrapper } from "./Message";
 import { OgObject } from "open-graph-scraper/dist/lib/types";
 import HoverWrapper from "../../HoverWrapper";
-import { sanitize } from "isomorphic-dompurify";
 import { URL_REGEX } from "@/lib/utils";
 import VoiceMessageBox from "./VoiceMessageBox";
-
-function DangerousHtml(text: string, urls: string[] = []) {
-    let result = text;
-    for (let i = 0; i < urls.length; i++) {
-        result = result.replaceAll(
-            urls[i],
-            `<a href="${urls[i]}" target="_blank" rel="noopener noreferrer">${urls[i]}</a>`
-        );
-    }
-    return sanitize(result, {
-        ALLOWED_TAGS: ["a"],
-        ALLOWED_ATTR: ["href", "target", "rel"],
-    });
-}
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export function MessageBox({
     by,
@@ -161,10 +147,11 @@ export function MessageBox({
                                     textDecoration: "underline",
                                 },
                             }}
-                            dangerouslySetInnerHTML={{
-                                __html: DangerousHtml(msg.text, urls || []),
-                            }}
-                        ></Box>
+                        >
+                            <Markdown remarkPlugins={[remarkGfm]}>
+                                {msg.text}
+                            </Markdown>
+                        </Box>
                     </Box>
                 </NativeHoverWrapper>
 
@@ -196,8 +183,7 @@ export function MessageBox({
                 <NativeHoverWrapper replied={!!msg.reply}>
                     <Box
                         className={cn(
-                            "message text-sm p-3 rounded-lg break-all",
-                            by === "me" && "text-right"
+                            "message text-sm p-3 rounded-lg break-all"
                         )}
                         sx={{
                             background: (theme) =>
@@ -212,15 +198,16 @@ export function MessageBox({
                                       )
                                     : "inherit",
 
-                            "& > a": {
+                            "& a": {
                                 color: "inherit",
                                 textDecoration: "underline",
                             },
                         }}
-                        dangerouslySetInnerHTML={{
-                            __html: DangerousHtml(msg.text, urls || []),
-                        }}
-                    ></Box>
+                    >
+                        <Markdown remarkPlugins={[remarkGfm]}>
+                            {msg.text}
+                        </Markdown>
+                    </Box>
                 </NativeHoverWrapper>
                 <div
                     className={cn(

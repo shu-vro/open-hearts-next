@@ -52,7 +52,7 @@ export default function DeleteOrReportChip({ msg, by }: Props) {
                     />
                 </HoverWrapper>
             )}
-            {by === "me" && (
+            {by === "me" && !msg.deleted && (
                 <HoverWrapper className="rounded-full">
                     <Chip
                         icon={<RiDeleteBin6Fill size="18" />}

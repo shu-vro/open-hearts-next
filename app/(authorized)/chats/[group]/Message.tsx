@@ -123,7 +123,7 @@ function PickEmoji({
                             firestoreDb,
                             DATABASE_PATH.groupDetails,
                             group.id,
-                            "messages",
+                            DATABASE_PATH.messages,
                             newMsg.id
                         ),
                         newMsg,
@@ -350,7 +350,7 @@ export default function Message({ by, type = "text", msg }: Props) {
                                     firestoreDb,
                                     DATABASE_PATH.groupDetails,
                                     group.id,
-                                    "messages",
+                                    DATABASE_PATH.messages,
                                     msg.id
                                 ),
                                 newMsg,

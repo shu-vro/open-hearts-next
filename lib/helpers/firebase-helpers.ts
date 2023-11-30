@@ -15,7 +15,6 @@ import {
 } from "firebase/firestore";
 import { DEFAULT_GROUP_DETAILS } from "@/lib/variables";
 import { nanoid } from "nanoid";
-import { determineMessageType } from "../utils";
 import { ROLE } from "@/lib/variables";
 
 /**
@@ -130,7 +129,6 @@ export async function setChatMessage(
     const id = chatId || nanoid();
     try {
         if (!by) throw new Error("Sent by not defined!");
-        const typeOfMessage = determineMessageType(obj);
         await setDoc(
             doc(
                 firestoreDb,
@@ -147,10 +145,7 @@ export async function setChatMessage(
             {
                 lastMessage: {
                     by: by.nickname,
-                    message:
-                        typeOfMessage === "text"
-                            ? obj.text
-                            : `sent a ${typeOfMessage}`,
+                    message: obj.id,
                     seenBy: [by.id],
                     sentTime: serverTimestamp() as Timestamp,
                 },

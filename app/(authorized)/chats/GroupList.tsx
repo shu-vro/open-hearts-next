@@ -1,17 +1,29 @@
 "use client";
 import { Avatar, Box, Typography } from "@mui/material";
 import HoverWrapper from "../HoverWrapper";
-import { cn, repeat } from "@/lib/utils";
-import { IGroupDetails } from "@/app";
+import { cn, determineMessageType, repeat } from "@/lib/utils";
+import { IGroupDetails, MessageType } from "@/app";
 import Link from "next/link";
 import { auth } from "@/firebase";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useAllMessages } from "@/contexts/AllMessagesContext";
+import removeMd from "remove-markdown";
 
 dayjs.extend(relativeTime);
 
 export function GroupList({ group }: { group: IGroupDetails }) {
     const isActive = Math.random() <= 0.5 ? true : false;
+    const { messages } = useAllMessages();
+    const lastMessage = messages.find(
+        (e) => e.id === group.lastMessage.message
+    );
+    let typeOfMessage = determineMessageType(
+        lastMessage as MessageType
+    ) as string;
+
+    typeOfMessage ??= "message";
+
     return (
         <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
             <Box
@@ -26,8 +38,8 @@ export function GroupList({ group }: { group: IGroupDetails }) {
                 }}
             >
                 <Avatar
-                    src="https://mui.com/static/images/avatar/3.jpg"
-                    alt="friend's photo"
+                    src={group?.photoURL}
+                    alt={group?.name || "Group"}
                     sx={{
                         gridArea: "avatar",
                     }}
@@ -65,7 +77,12 @@ export function GroupList({ group }: { group: IGroupDetails }) {
                         gridArea: "message",
                     }}
                 >
-                    {group.lastMessage.by}: {group.lastMessage.message}
+                    {group.lastMessage.by}:{" "}
+                    {lastMessage?.deleted
+                        ? `deleted a message`
+                        : typeOfMessage === "text"
+                        ? removeMd(lastMessage?.text || "")
+                        : `sent a ${typeOfMessage}`}
                 </Typography>
             </Box>
         </HoverWrapper>
