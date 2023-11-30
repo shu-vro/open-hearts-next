@@ -64,12 +64,24 @@ jobs:
                 console.log(issue_num, typeof issue_num)
                 if (!isNaN(parseInt(issue_num))) {
                     console.log("Valid issue number! ", context.ref)
-                    github.rest.issues.removeLabel({
+
+                    let list_of_labels = await github.rest.issues.listLabelsOnIssue({
                         issue_number: issue_num,
                         owner: context.repo.owner,
                         repo: context.repo.repo,
-                        name: ["need-attention"]
-                      })
+                    });
+                    list_of_labels = list_of_labels.data.map(e => e.name)
+
+                    if (list_of_labels.indexOf('need-attention') > -1) {
+                        await github.rest.issues.removeLabel({
+                            issue_number: issue_num,
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            name: ["need-attention"]
+                        })
+                    } else {
+                        console.log("need-attention label is not present. skipping")
+                    }
                 } else {
                     console.log("not valid issue: ", context.ref)
                 }
