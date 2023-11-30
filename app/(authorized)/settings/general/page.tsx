@@ -37,6 +37,7 @@ export default function General() {
     const [userInfo, setUserInfo] = useState<Partial<UserType>>({});
     const [userInfoConst, setUserInfoConst] = useState<Partial<UserType>>({});
     const [loading, setLoading] = useState(false);
+
     const handleFileChange = (file: File) => {
         const reader = new FileReader();
         reader.onload = () => {
@@ -66,9 +67,15 @@ export default function General() {
 
                 image.onload = async () => {
                     try {
+                        if (!auth.currentUser) {
+                            return;
+                        }
                         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-                        const storageRef = ref(storage, auth.currentUser!.uid);
+                        const storageRef = ref(
+                            storage,
+                            "users/" + auth.currentUser.uid
+                        );
                         const result = await uploadString(
                             storageRef,
                             canvas.toDataURL(),

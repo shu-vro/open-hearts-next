@@ -70,7 +70,7 @@ export async function FirstTimeOpeningGroup(
             }
         } else {
             const groupId = nanoid();
-            const storageRef = ref(storage, groupId + "profile");
+            const storageRef = ref(storage, groupId + "/profile");
             const result = await uploadString(
                 storageRef,
                 obj?.photoURL || "",

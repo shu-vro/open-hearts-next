@@ -26,7 +26,13 @@ import {
     signOut,
 } from "firebase/auth";
 import { getDatabase, connectDatabaseEmulator } from "firebase/database";
-import { getStorage, connectStorageEmulator } from "firebase/storage";
+import {
+    getStorage,
+    connectStorageEmulator,
+    ref,
+    uploadString,
+    getDownloadURL,
+} from "firebase/storage";
 import { DefaultUserConfig } from "@/lib/utils";
 import { DATABASE_PATH } from "@/lib/variables";
 // @ts-ignore
@@ -90,7 +96,7 @@ async function setDocumentToUsersCollection(
 
 export async function createUserWithPassword(
     name: string,
-    photoURL: string,
+    photo: string,
     email: string,
     password: string
 ) {
@@ -100,6 +106,9 @@ export async function createUserWithPassword(
             email,
             password
         );
+        const storageRef = ref(storage, "users/" + user.uid);
+        const result = await uploadString(storageRef, photo, "data_url");
+        let photoURL = await getDownloadURL(result.ref);
         await setDocumentToUsersCollection(user.uid, {
             ...DefaultUserConfig,
             uid: user.uid,
@@ -114,7 +123,7 @@ export async function createUserWithPassword(
         return user;
     } catch (e) {
         console.warn(e);
-        alert("There was an error at createUserWithPassword");
+        alert("There was an error creating user: " + name);
         await signOut(auth);
     }
 }
