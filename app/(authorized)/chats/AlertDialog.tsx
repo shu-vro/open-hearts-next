@@ -14,6 +14,8 @@ import { UserType } from "@/app";
 import { useRouter } from "next/navigation";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { ROLE } from "@/lib/variables";
+// @ts-ignore
+import Identicon from "react-identicons";
 
 export function AlertDialog({
     open,
@@ -22,11 +24,11 @@ export function AlertDialog({
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-    const { setMessage } = useToastAlert();
     const [name, setName] = useState("");
     const [value, setValue] = useState<UserType[]>([]);
     const [allUsers, setAllUsers] = useState<UserType[]>([]);
     const router = useRouter();
+    const [photoURL, setPhotoURL] = useState("");
 
     const handleClose = () => {
         setOpen(false);
@@ -50,6 +52,13 @@ export function AlertDialog({
         })();
     }, []);
 
+    useEffect(() => {
+        const canvas = document.querySelector(
+            "canvas.identicon"
+        ) as HTMLCanvasElement;
+        setPhotoURL(canvas?.toDataURL("image/png"));
+    }, [name]);
+
     return (
         <Dialog
             open={open}
@@ -58,30 +67,30 @@ export function AlertDialog({
             onSubmit={async (e) => {
                 e.preventDefault();
 
-                try {
-                    const groupDetails = await FirstTimeOpeningGroup(false, {
-                        name,
-                        invited: value.map((el) => ({
-                            id: el.uid,
-                            nickname: el.name,
-                            role: ROLE.member,
-                            addedBy:
-                                auth.currentUser?.uid ||
-                                "creator of this group",
-                        })),
-                    });
-                    handleClose();
-                    if (groupDetails) {
-                        router.push(`/chats/${groupDetails.id}`);
-                    }
-                } catch (e) {
-                    setMessage("Error! \ncheck console");
-                    console.log(e);
+                const groupDetails = await FirstTimeOpeningGroup(false, {
+                    name,
+                    invited: value.map((el) => ({
+                        id: el.uid,
+                        nickname: el.name,
+                        role: ROLE.member,
+                        addedBy:
+                            auth.currentUser?.uid || "creator of this group",
+                    })),
+                    photoURL,
+                });
+                handleClose();
+                if (groupDetails) {
+                    router.push(`/chats/${groupDetails.id}`);
                 }
             }}
         >
             <DialogTitle id="alert-dialog-title">Create a group</DialogTitle>
             <DialogContent>
+                <Identicon
+                    string={name}
+                    size="80"
+                    className="identicon border border-[#444] border-solid my-4 p-3 mx-auto block"
+                />
                 <TextField
                     className="w-[500px] max-w-full mt-4"
                     label="Pick a name"

@@ -1,4 +1,4 @@
-import { firestoreDb, auth } from "@/firebase";
+import { firestoreDb, auth, storage } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
 import { IGroupDetails, MessageType, TGroupMembersBasicDetails } from "@/app";
 import {
@@ -16,6 +16,7 @@ import {
 import { DEFAULT_GROUP_DETAILS } from "@/lib/variables";
 import { nanoid } from "nanoid";
 import { ROLE } from "@/lib/variables";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 
 /**
  * This function creates a group if there is no groupId, or
@@ -32,6 +33,10 @@ export async function FirstTimeOpeningGroup(
     obj?: {
         name: string;
         invited: IGroupDetails["groupMembersBasicDetails"];
+        /**
+         * base64 string
+         */
+        photoURL: string;
     },
     groupId?: string
 ) {
@@ -65,6 +70,14 @@ export async function FirstTimeOpeningGroup(
             }
         } else {
             const groupId = nanoid();
+            const storageRef = ref(storage, groupId + "profile");
+            const result = await uploadString(
+                storageRef,
+                obj?.photoURL || "",
+                "data_url"
+            );
+            let photoURL = await getDownloadURL(result.ref);
+
             let setThisObject = {
                 ...DEFAULT_GROUP_DETAILS,
                 id: groupId,
@@ -83,6 +96,9 @@ export async function FirstTimeOpeningGroup(
                     ...(obj?.invited || []),
                 ],
                 inviteLink: `/chats/${groupId}`,
+                photoURL:
+                    photoURL ||
+                    "https://img.fixthephoto.com/blog/images/gallery/news_preview_mob_image__preview_404.jpg",
             } as IGroupDetails;
 
             await setDoc(
