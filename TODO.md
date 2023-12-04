@@ -14,8 +14,6 @@ They are unfinished because the relevant features aren't introduced yet.
 -   [x] implement group information message
 -   [x] implement delete message feature
 -   [ ] Create admin panel for groups
-    -   [ ] if present, good. fetch chat, group info
-    -   [ ] if not present, show all group's list
 -   [x] Update workflows again. they are not perfect yet.
 
     -   [x] task label is added to all issues. the if statement is not executed

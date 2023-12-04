@@ -22,7 +22,7 @@ import { LoadingButton } from "@mui/lab";
 
 dayjs.extend(relativeTime);
 
-export function EditMemberTile({
+export default function EditMemberTile({
     member,
     user,
 }: {

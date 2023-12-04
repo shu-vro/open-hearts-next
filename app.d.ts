@@ -1,7 +1,7 @@
 /// <reference types="original-module" />
 
 import "@mui/material/styles";
-import { ROLE, STATUS } from "@/types/app";
+import { ROLE, STATUS } from "@/lib/variables";
 import { FieldValue, serverTimestamp, Timestamp } from "firebase/firestore";
 
 declare module "@mui/material/styles" {

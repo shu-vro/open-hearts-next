@@ -3,16 +3,16 @@
 import { auth } from "@/firebase";
 import { Button } from "@mui/material";
 import React, { useState } from "react";
-import AlertBox from "@/app/(auth)/AlertBox";
 import { updatePassword } from "firebase/auth";
 import ReauthenticateDialog from "../ReauthenticateDialog";
 import PasswordInputField from "@/app/(auth)/PasswordInputField";
 import { testPassword } from "@/lib/utils";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
 
 export default function Password() {
     const [password, setPassword] = useState("");
     const [reenterPassword, setReenterPassword] = useState("");
-    const [message, setMessage] = useState("");
+    const { setMessage } = useToastAlert();
     const [reauthenticate, setReauthenticate] = useState(false);
 
     const handleSubmit = async () => {
@@ -48,7 +48,6 @@ export default function Password() {
             }}
         >
             <h1>Change Password</h1>
-            <AlertBox message={message} setMessage={setMessage} />
             <PasswordInputField
                 password={password}
                 setPassword={setPassword}
