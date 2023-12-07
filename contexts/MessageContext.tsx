@@ -39,7 +39,7 @@ export const defaultMessage = Object.freeze({
     imageLink: [],
     voice: "",
     deleted: false,
-    hash: null,
+    reportCount: 0,
     reply: null,
     reactions: {},
     created_at: serverTimestamp() as Timestamp,
