@@ -99,6 +99,8 @@ export default function GroupInfo({
     const handleClose = () => {
         setShowImageModal("");
     };
+
+    console.log(group);
     return (
         <>
             <Box className="w-full overflow-y-auto h-full">
@@ -208,7 +210,7 @@ export default function GroupInfo({
                 {/* ADMIN PANEL */}
                 {(group?.groupMembersBasicDetails.find(
                     (e) => e.id === auth.currentUser?.uid
-                )?.role || ROLE.member) < ROLE.member && (
+                )?.role ?? ROLE.member) < ROLE.member && (
                     <Accordion>
                         <AccordionSummary>
                             Manage Group (Only admins or higher)
