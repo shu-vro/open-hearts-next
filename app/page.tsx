@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 function Home() {
     if (process.env.NODE_ENV !== "production") {
-        redirect("/settings");
+        redirect("/chats");
     }
     return (
         <main className="flex min-h-screen flex-col items-center justify-between p-24">

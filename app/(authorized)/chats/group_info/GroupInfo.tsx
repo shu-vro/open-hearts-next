@@ -5,7 +5,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import ImagePreviewModal from "../[group]/ImagePreviewModal";
 import {
     AccordionDetails,
-    Avatar,
     Box,
     Button,
     ButtonGroup,
@@ -21,6 +20,7 @@ import {
     ImageListItem,
     InputAdornment,
     InputLabel,
+    OutlinedInput,
     Tooltip,
     Typography,
 } from "@mui/material";
@@ -30,23 +30,24 @@ import SharedLink from "./SharedLink";
 import { Swiper as SwiperType } from "swiper/types";
 import { Accordion, AccordionSummary } from "./GroupInfoHelpers";
 import { MemberTile } from "./MemberTile";
-import { EditMemberTile } from "./EditMemberTile";
+import EditMemberNicknameTile from "./EditMemberNicknameTile";
 import ChangeGroupEmoji from "./ChangeGroupEmoji";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
 import { auth, firestoreDb } from "@/firebase";
 import { useRouter } from "next/navigation";
-import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
+import { DATABASE_PATH, ROLE, SITEMAP } from "@/lib/variables";
 import AddMembersAlertDialog from "./AddMembersAlertDialog";
 import { collection, getDocs, query } from "firebase/firestore";
 import { IGroupDetails, MessageType, UserType } from "@/app";
 import { URL_REGEX } from "@/lib/utils";
 import { LoadingButton } from "@mui/lab";
 import VoiceMessageBox from "../[group]/VoiceMessageBox";
+import EditAndDisplayAvatar from "./EditAndDisplayAvatar";
 
 export default function GroupInfo({
     messages = [],
-    group = null,
+    group,
 }: {
     messages?: MessageType[];
     group: IGroupDetails | null;
@@ -58,6 +59,7 @@ export default function GroupInfo({
     const [addUserDialog, setAddUserDialog] = useState(false);
     const [allUsers, setAllUsers] = useState<UserType[]>([]);
     const [loading, setLoading] = useState(false);
+    const [groupname, setGroupname] = useState(group?.name || "");
     const handleTabChange = (newValue: number) => {
         setActiveTab(newValue);
         if (swiper) {
@@ -97,15 +99,17 @@ export default function GroupInfo({
     const handleClose = () => {
         setShowImageModal("");
     };
+
+    console.log(group);
     return (
         <>
             <Box className="w-full overflow-y-auto h-full">
-                <Avatar
-                    src={group?.photoURL || ""}
-                    alt="Some Avatar"
-                    className="mx-auto mt-6 w-24 h-24"
-                />
-                <Typography variant="h5" align="center" className="my-2">
+                <EditAndDisplayAvatar />
+                <Typography
+                    variant="h4"
+                    align="center"
+                    className="my-2 capitalize"
+                >
                     {group?.name || "Group name"}
                 </Typography>
                 <HoverWrapper className="mx-4 w-[calc(100%-2.1rem)]">
@@ -194,7 +198,7 @@ export default function GroupInfo({
                     <AccordionSummary>Nicknames</AccordionSummary>
                     <AccordionDetails>
                         {group?.groupMembersBasicDetails.map((member) => (
-                            <EditMemberTile
+                            <EditMemberNicknameTile
                                 member={member}
                                 user={allUsers.find((e) => e.uid === member.id)}
                                 key={member.id}
@@ -202,12 +206,80 @@ export default function GroupInfo({
                         ))}
                     </AccordionDetails>
                 </Accordion>
-                <Accordion>
-                    <AccordionSummary>
-                        Manage Group (Only admins)
-                    </AccordionSummary>
-                    <AccordionDetails></AccordionDetails>
-                </Accordion>
+
+                {/* ADMIN PANEL */}
+                {(group?.groupMembersBasicDetails.find(
+                    (e) => e.id === auth.currentUser?.uid
+                )?.role ?? ROLE.member) < ROLE.member && (
+                    <Accordion>
+                        <AccordionSummary>
+                            Manage Group (Only admins or higher)
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <FormControl
+                                variant="outlined"
+                                fullWidth
+                                sx={{
+                                    gridArea: "edit",
+                                }}
+                            >
+                                <OutlinedInput
+                                    fullWidth
+                                    defaultValue={group?.name}
+                                    // value={groupname}
+                                    onChange={(e) => {
+                                        setGroupname(e.target.value);
+                                    }}
+                                    endAdornment={
+                                        <InputAdornment position="end">
+                                            <LoadingButton
+                                                size="small"
+                                                variant="contained"
+                                                loading={loading}
+                                                sx={{
+                                                    fontSize: ".70rem",
+                                                }}
+                                                onClick={async () => {
+                                                    if (!group)
+                                                        return setMessage(
+                                                            "Warning: Group is not resolved"
+                                                        );
+                                                    if (groupname.length < 3) {
+                                                        return setMessage(
+                                                            "Error: cancelling operation. Name must be at least 3 characters long"
+                                                        );
+                                                    }
+                                                    if (groupname.length > 20) {
+                                                        return setMessage(
+                                                            "Error: cancelling operation. Name must be less than 20 characters long"
+                                                        );
+                                                    }
+                                                    if (
+                                                        groupname === group.name
+                                                    ) {
+                                                        return setMessage(
+                                                            "Error: group name didn't change"
+                                                        );
+                                                    }
+
+                                                    changeGroupInformation(
+                                                        group.id,
+                                                        {
+                                                            name: groupname,
+                                                        }
+                                                    );
+                                                }}
+                                            >
+                                                <span>set</span>
+                                            </LoadingButton>
+                                        </InputAdornment>
+                                    }
+                                />
+                            </FormControl>
+                        </AccordionDetails>
+                    </Accordion>
+                )}
+
                 <Accordion className="mb-4">
                     <AccordionSummary>Media and files</AccordionSummary>
                     <AccordionDetails>

@@ -24,14 +24,21 @@ import {
 } from "firebase/firestore";
 import { DATABASE_PATH } from "@/lib/variables";
 import { MessageType, ReportDocument } from "@/app";
+import { useAllMessages } from "@/contexts/AllMessagesContext";
 
-type Props = { msg: MessageType; by: "me" | "him" };
+type Props = {
+    msg: MessageType;
+    by: "me" | "him";
+};
 
 export default function DeleteOrReportChip({ msg, by }: Props) {
     const { group } = useGroup();
     const { setMessage: setToastMessage } = useToastAlert();
     const [showDeleteMessageModal, setShowDeleteMessageModal] = useState(false);
     const [showReportMessageModal, setShowReportMessageModal] = useState(false);
+    const {
+        messages: { length: lenOfMessages },
+    } = useAllMessages();
 
     const handleShowDeleteMessageModalClose = () => {
         setShowDeleteMessageModal(false);
@@ -109,6 +116,26 @@ export default function DeleteOrReportChip({ msg, by }: Props) {
                                     report_created_at:
                                         serverTimestamp() as Timestamp,
                                 } as ReportDocument
+                            );
+                            await setDoc(
+                                doc(
+                                    firestoreDb,
+                                    DATABASE_PATH.groupDetails,
+                                    group.id,
+                                    DATABASE_PATH.messages,
+                                    msg.id
+                                ),
+                                {
+                                    reportCount: (msg?.reportCount ?? 0) + 1,
+                                    deleted:
+                                        Math.ceil(Math.sqrt(lenOfMessages)) <
+                                            msg?.reportCount + 1 ?? 0
+                                            ? true
+                                            : false,
+                                } as Partial<MessageType>,
+                                {
+                                    merge: true,
+                                }
                             );
 
                             setToastMessage("Reported Successfully");

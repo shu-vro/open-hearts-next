@@ -1,7 +1,7 @@
 /// <reference types="original-module" />
 
 import "@mui/material/styles";
-import { ROLE, STATUS } from "@/types/app";
+import { ROLE, STATUS } from "@/lib/variables";
 import { FieldValue, serverTimestamp, Timestamp } from "firebase/firestore";
 
 declare module "@mui/material/styles" {
@@ -29,7 +29,6 @@ declare type MessageType = {
     id: string;
     text: string;
     emoji: string;
-    hash: string | null;
     deleted: boolean;
     imageLink: string[];
     voice: string;
@@ -40,6 +39,7 @@ declare type MessageType = {
     created_at: Timestamp;
     sender_id: string;
     info: string;
+    reportCount: number;
 };
 
 export type TypesOfMessage = "text" | "image" | "emoji" | "voice" | "info";

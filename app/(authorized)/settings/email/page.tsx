@@ -2,20 +2,19 @@
 
 import EmailInputField from "@/app/(auth)/EmailInputField";
 import { auth, firestoreDb } from "@/firebase";
-import { Button } from "@mui/material";
 import React, { useState } from "react";
-import AlertBox from "@/app/(auth)/AlertBox";
 import { updateEmail } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import ReauthenticateDialog from "../ReauthenticateDialog";
 import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import { doc, setDoc } from "firebase/firestore";
 import { LoadingButton } from "@mui/lab";
+import { useToastAlert } from "@/contexts/ToastAlertContext";
 
 export default function Email() {
     const router = useRouter();
     const [email, setEmail] = useState(auth.currentUser?.email || "");
-    const [message, setMessage] = useState("");
+    const { setMessage } = useToastAlert();
     const [reauthenticate, setReauthenticate] = useState(false);
     const handleSubmit = async () => {
         if (auth.currentUser?.email === email) {
@@ -63,7 +62,6 @@ export default function Email() {
             }}
         >
             <h1>Change Email</h1>
-            <AlertBox message={message} setMessage={setMessage} />
             <EmailInputField
                 email={email}
                 setEmail={setEmail}
