@@ -5,7 +5,7 @@ import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import { IoIosCreate } from "react-icons/io";
 import { BsSearch } from "react-icons/bs";
-import { AlertDialog } from "./AlertDialog";
+import CreateGroupDialog from "./CreateGroupDialog";
 
 export default function SpeedDialTooltip({
     setSearching,
@@ -79,7 +79,7 @@ export default function SpeedDialTooltip({
                     }}
                 />
             </SpeedDial>
-            <AlertDialog
+            <CreateGroupDialog
                 open={openCreateGroupDialog}
                 setOpen={setOpenCreateGroupDialog}
             />

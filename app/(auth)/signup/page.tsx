@@ -47,8 +47,14 @@ export default function SignUp() {
                 email,
                 password1
             );
-            setMessage(`User ${user!.email} created successfully`);
-            setSubmitted(false);
+
+            if (typeof user !== "string") {
+                setMessage(`User ${user!.email} created successfully`);
+                setSubmitted(false);
+            } else {
+                setMessage("error: " + user);
+                setSubmitted(false);
+            }
             router.push(SITEMAP.verify_email);
         } catch (e: unknown) {
             setMessage(JSON.stringify(e));

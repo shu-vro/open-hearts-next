@@ -19,16 +19,13 @@ export default function MessageForm() {
     const { group } = useGroup();
     const { setMessage: setToastMessage } = useToastAlert();
     const { message, setMessage } = useMessage();
-    const form = useRef<HTMLFormElement>(null);
-
-    useEffect(() => {
-        console.log(message);
-    }, [message]);
+    const submit_form_button = useRef<HTMLButtonElement>(null);
 
     return (
         <form
-            onSubmit={async (e) => {
+            onSubmit={async function (e) {
                 e.preventDefault();
+
                 if (!group)
                     return setToastMessage(
                         "error: Group is not set. Refresh the browser or navigate using group tile"
@@ -48,14 +45,12 @@ export default function MessageForm() {
                 }
                 setMessage(() => ({ ...defaultMessage, id: nanoid() }));
             }}
-            ref={form}
             className="input-area flex justify-end items-center w-full relative"
-            action="get"
         >
             <MessageFormStack
                 open={Boolean(message.reply || message.imageLink.length)}
             />
-            <AddMoreButton form={form.current!} />
+            <AddMoreButton submit_form_button={submit_form_button.current!} />
             <TextField
                 label="Type something..."
                 variant="outlined"
@@ -74,22 +69,25 @@ export default function MessageForm() {
                 onKeyUp={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                         // Submit the form when Enter is pressed without Shift
-                        form.current?.dispatchEvent(
-                            new Event("submit", {
-                                bubbles: true,
-                            })
-                        );
+                        submit_form_button.current?.click();
                         setMessage((prev) => ({ ...prev, text: "" }));
                     }
                 }}
             />
-            <GifButton form={form.current!} />
+            <button
+                className="hidden opacity-0 select-none"
+                type="submit"
+                ref={submit_form_button}
+            >
+                submit
+            </button>
+            <GifButton submit_form_button={submit_form_button.current!} />
             {message.text === "" &&
             message.voice === "" &&
             message.imageLink.length === 0 ? (
                 <IconButton
                     size="large"
-                    type="button"
+                    type="submit"
                     onClick={() => {
                         setMessage((prev) => {
                             return {
@@ -98,13 +96,6 @@ export default function MessageForm() {
                                 emoji: group?.emoji || "1f44d",
                             };
                         });
-                        setTimeout(() => {
-                            form.current?.dispatchEvent(
-                                new Event("submit", {
-                                    bubbles: true,
-                                })
-                            );
-                        }, 100);
                     }}
                 >
                     <GetEmojiLink unified={group?.emoji || "1f44d"} size={28} />

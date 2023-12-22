@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 type Props = {
-    children: React.ReactElement;
+    children: React.ReactNode;
     onSubmit: React.FormEventHandler<HTMLFormElement>;
 };
 export default function AuthForm({ children, onSubmit }: Props) {

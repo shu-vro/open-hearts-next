@@ -63,9 +63,8 @@ export default function ReplySection() {
                 </Typography>
             ) : (
                 <Typography
-                    className="message line-clamp-3 w-full text-sm"
+                    className="message line-clamp-3 w-full text-sm opacity-60"
                     style={{
-                        maxWidth: "300px",
                         gridArea: "message",
                     }}
                 >

@@ -55,7 +55,7 @@ export default function EditMemberTile({
                     sx={{
                         gridArea: "avatar",
                     }}
-                    className={cn("self-center mr-2 w-10 h-10")}
+                    className={"self-center mr-2"}
                 />
                 <FormControl
                     variant="outlined"

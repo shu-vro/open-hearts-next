@@ -14,6 +14,7 @@ import {
     DialogContent,
     DialogTitle,
     IconButton,
+    useMediaQuery,
 } from "@mui/material";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import React, { useState } from "react";
@@ -31,6 +32,7 @@ export default function EditAndDisplayAvatar() {
         setOpen(false);
     };
     const { setMessage } = useToastAlert();
+    const matches_962 = useMediaQuery("(max-width: 962px)");
 
     const handleFileChange = (file: File) => {
         const reader = new FileReader();
@@ -41,25 +43,35 @@ export default function EditAndDisplayAvatar() {
     };
 
     return (
-        <Box className="mx-auto mt-6 relative w-24 h-24 max-[962px]:w-[min(100%,360px)] max-[962px]:h-[min(100%,360px)] group">
-            <Avatar
-                src={group?.photoURL || ""}
-                alt="Some Avatar"
-                className="mx-auto mt-6 w-full h-full rounded-2xl"
-            />
-            {(group?.groupMembersBasicDetails.find(
-                (e) => e.id === auth.currentUser?.uid
-            )?.role || ROLE.member) < ROLE.member && (
-                <IconButton
-                    size="small"
-                    className="absolute bottom-0 right-0  md:opacity-0 group-hover:opacity-100"
-                    onClick={() => {
-                        setOpen(true);
+        <>
+            <Box className="group/avatar mx-auto my-6 relative w-fit">
+                <Avatar
+                    src={group?.photoURL || ""}
+                    alt="Some Avatar"
+                    sx={{
+                        width: matches_962 ? `360px` : `160px`,
+                        height: matches_962 ? `360px` : `160px`,
                     }}
-                >
-                    <IoPencil />
-                </IconButton>
-            )}
+                />
+                {(group?.groupMembersBasicDetails.find(
+                    (e) => e.id === auth.currentUser?.uid
+                )?.role ?? ROLE.member) < ROLE.member && (
+                    <IconButton
+                        size="small"
+                        className={cn(
+                            "bottom-0 right-0 invisible group-hover/avatar:visible"
+                        )}
+                        sx={{
+                            position: "absolute",
+                        }}
+                        onClick={() => {
+                            setOpen(true);
+                        }}
+                    >
+                        <IoPencil />
+                    </IconButton>
+                )}
+            </Box>
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -75,16 +87,21 @@ export default function EditAndDisplayAvatar() {
                         handleChange={handleFileChange}
                         name="file"
                         types={["jpeg", "jpg", "png"]}
-                        // className="bg-white bg-opacity-20"
                         classes={cn(
                             "cursor-pointer flex justify-start items-center flex-row w-[460px] h-[460px] max-w-full",
-                            "grid place-items-center"
+                            "grid place-items-center relative"
                         )}
                     >
                         <Avatar
                             src={file || group?.photoURL || ""}
                             alt={group?.name || "Group Name"}
-                            className="rounded-none w-[460px] h-[460px] object-contain"
+                            className="object-contain absolute top-1/2 left-1/2"
+                            sx={{
+                                width: `100%`,
+                                height: `100%`,
+                                transform: `translate(-50%, -50%)`,
+                                borderRadius: 0,
+                            }}
                         />
                         <h1 className="mix-blend-soft-light text-center text-[2.5rem] font-extrabold color-black absolute">
                             Click <br />
@@ -166,6 +183,6 @@ export default function EditAndDisplayAvatar() {
                     </LoadingButton>
                 </DialogActions>
             </Dialog>
-        </Box>
+        </>
     );
 }

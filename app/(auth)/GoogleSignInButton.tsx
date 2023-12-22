@@ -31,11 +31,16 @@ export default function GoogleSignInButton({
                 setSubmitted(true);
                 try {
                     let user = await signInWithGoogle();
-                    setMessage(
-                        `User ${user?.displayName} created successfully`
-                    );
+                    if (typeof user !== "string") {
+                        setMessage(
+                            `User ${user?.displayName} created successfully`
+                        );
+                        setSubmitted(false);
+                        return push(SITEMAP.chats);
+                    } else {
+                        setMessage("error: " + user);
+                    }
                     setSubmitted(false);
-                    return push(SITEMAP.chats);
                 } catch (e) {
                     console.log(
                         `%c${JSON.stringify(e, null, 2)}`,

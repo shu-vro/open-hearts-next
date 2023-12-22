@@ -16,7 +16,7 @@ export default function ForgotPassword() {
     const [email, setEmail] = useState("");
     const [submitted, setSubmitted] = useState(false);
     const [message, setMessage] = useState("");
-    const [submittedSuccess, setSubmittedSuccess] = useState(false);
+    const [submittedSuccessful, setSubmittedSuccessful] = useState(false);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -26,13 +26,13 @@ export default function ForgotPassword() {
                 url: location.origin + "/chats",
             });
             setSubmitted(false);
-            setSubmittedSuccess(true);
-        } catch (e) {
-            setMessage(JSON.stringify(e, null, 4));
+            setSubmittedSuccessful(true);
+        } catch (e: any) {
+            setMessage(e.code);
             setSubmitted(false);
         }
     }
-    return submittedSuccess ? (
+    return submittedSuccessful ? (
         <h3 className="text-center">
             A Reset Password Email was sent to{" "}
             <a href="https://mail.google.com/">

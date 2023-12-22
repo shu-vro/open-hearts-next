@@ -25,12 +25,13 @@ const imbue = Imbue({
  *      say sorry to user and request him to go back
  */
 
-export default function ProfilePage({ uid }: { uid: string }) {
+function ProfilePage(props: any) {
     const searchParam = useSearchParams();
     const [userData, setUserData] = useState<UserType>();
     useEffect(() => {
         (async () => {
             try {
+                let { uid } = props as { uid: string | undefined };
                 let uid_temp: string | null | undefined = auth.currentUser?.uid;
 
                 if (
@@ -38,16 +39,11 @@ export default function ProfilePage({ uid }: { uid: string }) {
                     !auth.currentUser
                 ) {
                     return redirect(SITEMAP.chats);
-                    // if (searchParam && searchParam.get("uid") !== null) {
-                    //     uid = searchParam.get("uid");
-                    // }
                 }
-                if (uid) {
+                if (uid as string) {
                     uid_temp = uid;
                 } else if (searchParam && searchParam.get("uid") !== null) {
-                    if (searchParam && searchParam.get("uid") !== null) {
-                        uid_temp = searchParam.get("uid");
-                    }
+                    uid_temp = searchParam.get("uid");
                 }
                 const document = await getDoc(
                     doc(firestoreDb, DATABASE_PATH.users, uid_temp || "")
@@ -79,6 +75,9 @@ export default function ProfilePage({ uid }: { uid: string }) {
                             src={userData?.photoURL || ""}
                             alt={userData?.name || "User"}
                             className="w-full max-w-xs max-h-xs min-w-[300px] min-h-[300px] h-fit rounded-2xl"
+                            sx={{
+                                borderRadius: `1rem`,
+                            }}
                         />
                         <div>
                             <Typography
@@ -171,3 +170,5 @@ function ListItem({ key_, value }: { key_: string; value: string }) {
         </Box>
     );
 }
+
+export default ProfilePage;

@@ -19,6 +19,7 @@ import { GrUnorderedList } from "react-icons/gr";
 export default function AppBarChat() {
     const { group } = useGroup();
     const matches_535 = useMediaQuery("(max-width: 535px)");
+    const matches_962 = useMediaQuery("(max-width: 962px)");
     return (
         <AppBar
             position="static"
@@ -43,11 +44,7 @@ export default function AppBarChat() {
                         className="hidden max-[962px]:flex"
                         LinkComponent={Link}
                         href={SITEMAP.chats}
-                        sx={{
-                            display: {
-                                "962px": "none",
-                            },
-                        }}
+                        sx={{ display: matches_962 ? "flex" : "none" }}
                         size={matches_535 ? "small" : "medium"}
                     >
                         <GrUnorderedList />
@@ -73,9 +70,7 @@ export default function AppBarChat() {
                     LinkComponent={Link}
                     href={`${SITEMAP.group_info}/${group?.id}`}
                     sx={{
-                        display: {
-                            "962px": "none",
-                        },
+                        display: matches_962 ? "flex" : "none",
                     }}
                 >
                     <BsInfoLg />
