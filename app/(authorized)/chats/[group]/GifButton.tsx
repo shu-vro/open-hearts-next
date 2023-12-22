@@ -8,7 +8,11 @@ import { useState } from "react";
 import { PiGifFill } from "react-icons/pi";
 import { defaultMessage, useMessage } from "@/contexts/MessageContext";
 
-export default function GifButton({ form }: { form: HTMLFormElement }) {
+export default function GifButton({
+    submit_form_button,
+}: {
+    submit_form_button: HTMLButtonElement;
+}) {
     const [anchorElPopover, setAnchorElPopover] = useState<null | HTMLElement>(
         null
     );
@@ -42,11 +46,7 @@ export default function GifButton({ form }: { form: HTMLFormElement }) {
                             };
                         });
                         setTimeout(() => {
-                            form?.dispatchEvent(
-                                new Event("submit", {
-                                    bubbles: true,
-                                })
-                            );
+                            submit_form_button?.click();
                             setAnchorElPopover(null);
                         }, 100);
                     }}

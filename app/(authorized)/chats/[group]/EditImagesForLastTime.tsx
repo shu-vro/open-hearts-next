@@ -159,7 +159,8 @@ export function EditImagesForLastTime() {
             >
                 {message.imageLink.map((link) => (
                     <HoverWrapper
-                        className="ml-2 first:ml-4 relative"
+                        className="ml-2 first:ml-4"
+                        classNameInner="relative"
                         key={link}
                     >
                         <Box
@@ -176,7 +177,10 @@ export function EditImagesForLastTime() {
                             />
                         </Box>
                         <IconButton
-                            className="absolute right-0 top-0"
+                            className="right-0 top-0"
+                            sx={{
+                                position: "absolute",
+                            }}
                             size="small"
                             onClick={() => {
                                 setMessage((prev) => {

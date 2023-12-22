@@ -1,4 +1,4 @@
-import { AppBar, Button, Dialog } from "@mui/material";
+import { AppBar, Button, Dialog, Toolbar } from "@mui/material";
 import { IoCloseCircle } from "react-icons/io5";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Scrollbar, Keyboard } from "swiper/modules";
@@ -14,19 +14,18 @@ export default function ImagePreviewModal({
 }) {
     return (
         <Dialog open={Boolean(showImageModal)} fullScreen onClose={handleClose}>
-            <AppBar
-                className="flex justify-between items-center flex-row"
-                position="sticky"
-            >
-                <div className="grow">&nbsp;</div>
-                <Button
-                    onClick={handleClose}
-                    startIcon={<IoCloseCircle />}
-                    variant="contained"
-                    color="error"
-                >
-                    Close
-                </Button>
+            <AppBar position="sticky">
+                <Toolbar>
+                    <div className="grow"></div>
+                    <Button
+                        onClick={handleClose}
+                        startIcon={<IoCloseCircle />}
+                        variant="contained"
+                        color="error"
+                    >
+                        Close
+                    </Button>
+                </Toolbar>
             </AppBar>
             <Swiper
                 modules={[Navigation, Pagination, Scrollbar, Keyboard]}

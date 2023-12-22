@@ -1,6 +1,6 @@
-import { IGroupDetails, MessageType } from "@/app";
-import { useEffect, useState } from "react";
-import { firestoreDb, auth } from "@/firebase";
+import { MessageType } from "@/app";
+import { useEffect } from "react";
+import { firestoreDb } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
 import {
     collection,

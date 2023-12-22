@@ -252,7 +252,7 @@ export default function Message({ by, type = "text", msg }: Props) {
                         : `
                         'time    name       name'
                         'message message message'
-                        'likes   likes      reply'
+                        'reply   likes      likes'
                         `,
             }}
         >
@@ -294,7 +294,10 @@ export default function Message({ by, type = "text", msg }: Props) {
                 <MessageBox by={by} type={type} msg={msg} />
             )}
             <div
-                className="likes flex justify-start items-center flex-row gap-2"
+                className={cn(
+                    "likes flex justify-start items-center flex-row gap-2",
+                    by === "me" ? "justify-self-end" : "justify-self-start"
+                )}
                 style={{ gridArea: "likes" }}
             >
                 {!!Object.keys(msg.reactions).length && (
@@ -405,7 +408,10 @@ export default function Message({ by, type = "text", msg }: Props) {
                 </Dialog>
             </div>
             <div
-                className="reply justify-self-end flex justify-center items-center flex-row"
+                className={cn(
+                    "reply flex justify-center items-center flex-row",
+                    by === "him" ? "justify-self-end" : "justify-self-start"
+                )}
                 style={{ gridArea: "reply" }}
             >
                 <HoverWrapper className="rounded-full">

@@ -100,7 +100,6 @@ export default function GroupInfo({
         setShowImageModal("");
     };
 
-    console.log(group);
     return (
         <>
             <Box className="w-full overflow-y-auto h-full">
@@ -414,7 +413,8 @@ export default function GroupInfo({
                 <Button
                     color="error"
                     variant="contained"
-                    className="block max-w-[600px] mx-auto"
+                    className="block max-w-[600px] mx-auto my-4"
+                    sx={{ mx: "auto", display: `block` }}
                     fullWidth
                     onClick={() => {
                         setOpenLeaveDialog(true);

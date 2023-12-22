@@ -121,10 +121,11 @@ export async function createUserWithPassword(
             photoURL,
         });
         return user;
-    } catch (e) {
+    } catch (e: any) {
         console.warn(e);
         alert("There was an error creating user: " + name);
         await signOut(auth);
+        return e.code as string;
     }
 }
 
@@ -132,9 +133,9 @@ export async function loginWithPassword(email: string, password: string) {
     try {
         let { user } = await signInWithEmailAndPassword(auth, email, password);
         return user;
-    } catch (e) {
-        console.warn(e);
-        alert("There was an error at loginWithPassword");
+    } catch (e: any) {
+        console.warn("There was an error at loginWithPassword");
+        return e.code as string;
     }
 }
 
@@ -160,10 +161,10 @@ export async function signInWithGoogle() {
             photoURL: user.photoURL,
         } as UserType);
         return user;
-    } catch (e) {
-        console.warn(e);
-        alert("There was an error at signInWithGoogle");
+    } catch (e: any) {
+        console.warn("There was an error at signInWithGoogle");
         await signOut(auth);
+        return e.code as string;
     }
 }
 

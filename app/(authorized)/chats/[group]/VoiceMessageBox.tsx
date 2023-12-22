@@ -84,10 +84,13 @@ export default function VoiceMessageBox({ msg, by }: Props) {
                         onClick={() => {
                             if (!audioRef.current) return;
                             setFirstTimePlayingVoice(true);
-                            if (audioRef.current.paused) {
-                                audioRef.current.play();
-                            } else {
-                                audioRef.current.pause();
+
+                            if (firstTimePlayingVoice) {
+                                if (audioRef.current.paused) {
+                                    audioRef.current.play();
+                                } else {
+                                    audioRef.current.pause();
+                                }
                             }
                         }}
                         sx={{

@@ -25,16 +25,24 @@ export default function Login() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setSubmitted(true);
+
         try {
             const user = await loginWithPassword(email, password1);
-            setMessage(`User ${email} login successfully`);
-            setSubmitted(false);
-            if (!user!.emailVerified) {
-                return router.push(SITEMAP.verify_email);
+
+            if (typeof user !== "string") {
+                // valid
+                setMessage(`User ${email} login successfully`);
+                setSubmitted(false);
+                if (!user.emailVerified) {
+                    return router.push(SITEMAP.verify_email);
+                }
+                return router.push(SITEMAP.chats);
+            } else {
+                setMessage("error: " + user);
+                setSubmitted(false);
             }
-            return router.push(SITEMAP.chats);
-        } catch (e: unknown) {
-            setMessage(e as string);
+        } catch (e: any) {
+            setMessage(e.message);
             console.log(e);
             return setSubmitted(false);
         }
@@ -53,41 +61,38 @@ export default function Login() {
                 />
             )}
             <AuthForm onSubmit={handleSubmit}>
-                <>
-                    <AlertBox setMessage={setMessage} message={message} />
-                    <h2 className={cn("text-center m-0 p-0 mb-10")}>Login</h2>
-                    <EmailInputField email={email} setEmail={setEmail} />
-                    <PasswordInputField
-                        password={password1}
-                        setPassword={setPassword1}
-                        label="Password"
-                    />
-                    <LoadingButton
-                        type="submit"
-                        variant="contained"
-                        fullWidth
-                        loading={submitted}
-                    >
-                        <span>Login</span>
-                    </LoadingButton>
-                    <FormHelperText className="text-lg font-bold my-2">
-                        Or
-                    </FormHelperText>
-                    <GoogleSignInButton
-                        submitted={submitted}
-                        setSubmitted={setSubmitted}
-                        setMessage={setMessage}
-                    />
-                    <FormHelperText className="text-base italic my-2">
-                        <MuiLink href={SITEMAP.forgot_password}>
-                            forgot password?
-                        </MuiLink>
-                    </FormHelperText>
-                    <FormHelperText className="text-base italic my-2">
-                        New Here?{" "}
-                        <MuiLink href={SITEMAP.signup}>Sign Up</MuiLink>
-                    </FormHelperText>
-                </>
+                <AlertBox setMessage={setMessage} message={message} />
+                <h2 className={cn("text-center m-0 p-0 mb-10")}>Login</h2>
+                <EmailInputField email={email} setEmail={setEmail} />
+                <PasswordInputField
+                    password={password1}
+                    setPassword={setPassword1}
+                    label="Password"
+                />
+                <LoadingButton
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    loading={submitted}
+                >
+                    <span>Login</span>
+                </LoadingButton>
+                <FormHelperText className="text-lg font-bold my-2">
+                    Or
+                </FormHelperText>
+                <GoogleSignInButton
+                    submitted={submitted}
+                    setSubmitted={setSubmitted}
+                    setMessage={setMessage}
+                />
+                <FormHelperText className="text-base italic my-2">
+                    <MuiLink href={SITEMAP.forgot_password}>
+                        forgot password?
+                    </MuiLink>
+                </FormHelperText>
+                <FormHelperText className="text-base italic my-2">
+                    New Here? <MuiLink href={SITEMAP.signup}>Sign Up</MuiLink>
+                </FormHelperText>
             </AuthForm>
         </>
     );

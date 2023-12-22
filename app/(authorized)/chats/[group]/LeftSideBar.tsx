@@ -5,7 +5,7 @@ import { GroupList } from "../GroupList";
 import { useState } from "react";
 import SearchGroup from "../SearchGroup";
 import { Box, Button, ButtonGroup } from "@mui/material";
-import { AlertDialog } from "../AlertDialog";
+import CreateGroupDialog from "../CreateGroupDialog";
 
 export default function LeftSideBar() {
     const groups = useFetchGroups();
@@ -74,7 +74,7 @@ function TopBarAllMessage({
                     Search
                 </Button>
             </ButtonGroup>
-            <AlertDialog
+            <CreateGroupDialog
                 open={openCreateGroupDialog}
                 setOpen={setOpenCreateGroupDialog}
             />

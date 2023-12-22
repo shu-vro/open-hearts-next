@@ -31,7 +31,7 @@ export default function Page({
                 sx={{ position: "absolute", bottom: 16, right: 16 }}
                 icon={<RiArrowGoBackLine />}
                 onClick={() => {
-                    push(SITEMAP.chats);
+                    push(SITEMAP.chats + `/${params.groupId}`);
                 }}
             />
         </div>

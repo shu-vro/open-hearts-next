@@ -16,6 +16,8 @@ import {
     TableBody,
     Tooltip,
     useMediaQuery,
+    Toolbar,
+    Box,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import {
@@ -112,7 +114,7 @@ function DisplayRow({ file, setFiles, k }: DisplayRowProps) {
 }
 
 function ImageFileSelect({
-    form,
+    submit_form_button,
     setMenuOpen,
 }: {
     setMenuOpen: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
@@ -164,85 +166,82 @@ function ImageFileSelect({
                 onClose={handleClose}
                 hidden={!Boolean(files.length)}
             >
-                <AppBar
-                    className="flex justify-between items-center flex-row"
-                    position="sticky"
-                >
-                    <h3 className="grow capitalize ml-3">select images</h3>
-                    <Button
-                        onClick={() => {
-                            setOpen(false);
-                        }}
-                        startIcon={<IoCloseCircle />}
-                        variant="contained"
-                        color="error"
-                        size={matches649 ? "small" : "medium"}
-                    >
-                        Close
-                    </Button>
-                    <LoadingButton
-                        onClick={async () => {
-                            if (!group) return;
-                            setLoading(true);
-                            let tempFiles = await UploadImagesToFirebase(
-                                files,
-                                group.id,
-                                chatId || nanoid()
-                            );
-                            setMessage((prev) => {
-                                return {
-                                    ...prev,
-                                    imageLink: tempFiles.filter((e) => e),
-                                };
-                            });
-                            setLoading(false);
-                            handleClose();
-                        }}
-                        startIcon={<BsCheck2 />}
-                        variant="contained"
-                        color="warning"
-                        className="mx-2"
-                        size={matches649 ? "small" : "medium"}
-                        loading={loading}
-                        loadingPosition="start"
-                    >
-                        <span>Save</span>
-                    </LoadingButton>
-                    <LoadingButton
-                        onClick={async () => {
-                            if (!group) return;
-                            setLoading(true);
-                            let tempFiles = await UploadImagesToFirebase(
-                                files,
-                                group.id,
-                                chatId || nanoid()
-                            );
-                            setMessage((prev) => {
-                                return {
-                                    ...prev,
-                                    imageLink: tempFiles.filter((e) => e),
-                                };
-                            });
-
-                            setTimeout(() => {
-                                form?.dispatchEvent(
-                                    new Event("submit", {
-                                        bubbles: true,
-                                    })
+                <AppBar position="sticky">
+                    <Toolbar className="gap-1">
+                        <h3 className="grow capitalize ml-3">select images</h3>
+                        <div className="grow"></div>
+                        <Button
+                            onClick={() => {
+                                setOpen(false);
+                            }}
+                            startIcon={<IoCloseCircle />}
+                            variant="contained"
+                            color="error"
+                            size={matches649 ? "small" : "medium"}
+                        >
+                            Close
+                        </Button>
+                        <LoadingButton
+                            onClick={async () => {
+                                if (!group) return;
+                                setLoading(true);
+                                let tempFiles = await UploadImagesToFirebase(
+                                    files,
+                                    group.id,
+                                    chatId || nanoid()
                                 );
-                            }, 100);
-                            setLoading(false);
-                            handleClose();
-                        }}
-                        startIcon={<BsCheck2All />}
-                        variant="contained"
-                        color="success"
-                        size={matches649 ? "small" : "medium"}
-                        loading={loading}
-                        loadingPosition="start"
-                    >
-                        <span>Save and Send</span>
-                    </LoadingButton>
+                                setMessage((prev) => {
+                                    return {
+                                        ...prev,
+                                        imageLink: tempFiles.filter((e) => e),
+                                    };
+                                });
+                                setLoading(false);
+                                handleClose();
+                            }}
+                            startIcon={<BsCheck2 />}
+                            variant="contained"
+                            color="warning"
+                            className="mx-2"
+                            size={matches649 ? "small" : "medium"}
+                            loading={loading}
+                            loadingPosition="start"
+                        >
+                            <span>Save</span>
+                        </LoadingButton>
+                        <LoadingButton
+                            onClick={async () => {
+                                if (!group) return;
+                                setLoading(true);
+                                let tempFiles = await UploadImagesToFirebase(
+                                    files,
+                                    group.id,
+                                    chatId || nanoid()
+                                );
+                                setMessage((prev) => {
+                                    return {
+                                        ...prev,
+                                        imageLink: tempFiles.filter((e) => e),
+                                    };
+                                });
+
+                                setTimeout(() => {
+                                    // let's hope, react's rerender cannot delay 100ms
+                                    submit_form_button?.click();
+                                }, 100);
+                                setLoading(false);
+                                handleClose();
+                            }}
+                            startIcon={<BsCheck2All />}
+                            variant="contained"
+                            color="success"
+                            size={matches649 ? "small" : "medium"}
+                            loading={loading}
+                            loadingPosition="start"
+                        >
+                            <span>Save and Send</span>
+                        </LoadingButton>
+                    </Toolbar>
                 </AppBar>
                 <DialogContent>
                     <Table className="overflow-x-hidden">
@@ -309,10 +308,11 @@ function ImageFileSelect({
         </>
     );
 }
+
 interface VoiceInputProps extends Props {
     setMenuOpen: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
 }
-function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
+function VoiceInput({ submit_form_button, setMenuOpen }: VoiceInputProps) {
     const { message, setMessage } = useMessage();
     const { setMessage: setToastMessage } = useToastAlert();
     const [open, setOpen] = useState(false);
@@ -324,6 +324,12 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
     const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
     const navigator = globalThis?.navigator || null;
     const { group } = useGroup();
+
+    useEffect(() => {
+        if (message.voice) {
+            submit_form_button?.click();
+        }
+    }, [message.voice]);
 
     async function handleVoiceInput(el: HTMLButtonElement) {
         try {
@@ -367,7 +373,8 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
             }
             setRecordStart(RegExp("true").test(el.dataset.open!));
         } catch (e) {
-            alert(JSON.stringify(e, null, 4));
+            console.log(e);
+            alert(e);
         }
     }
 
@@ -390,79 +397,73 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
                     }
                 }}
             >
-                <AppBar
-                    className="flex justify-between items-center flex-row"
-                    position="sticky"
-                >
-                    <h3 className="grow capitalize ml-3">say something</h3>
-                    <Button
-                        onClick={() => {
-                            setOpen(false);
-                            setRecordStart(false);
-                            if (mediaRecorder) {
-                                mediaRecorder.stop();
-                            }
-                            if (mediaStream) {
-                                mediaStream.getTracks().forEach((track) => {
-                                    track.stop();
-                                });
-                            }
-                            setMenuOpen(null);
-                        }}
-                        startIcon={<IoCloseCircle />}
-                        variant="contained"
-                        color="error"
-                        className="mr-2"
-                    >
-                        Close
-                    </Button>
-                    <Button
-                        onClick={async () => {
-                            setOpen(false);
-                            setRecordStart(false);
-                            if (!audioBlob) return setMenuOpen(null);
-                            if (!group) {
-                                setToastMessage("error: group is not resolved");
+                <AppBar position="sticky">
+                    <Toolbar>
+                        <h3 className="capitalize ml-3">say something</h3>
+                        <Box sx={{ flexGrow: 1 }} />
+                        <Button
+                            onClick={() => {
+                                setOpen(false);
+                                setRecordStart(false);
+                                if (mediaRecorder) {
+                                    mediaRecorder.stop();
+                                }
+                                if (mediaStream) {
+                                    mediaStream.getTracks().forEach((track) => {
+                                        track.stop();
+                                    });
+                                }
                                 setMenuOpen(null);
-                                return;
-                            }
-                            // upload voice to firebase storage -- done
-                            const storageRef = ref(
-                                storage,
-                                `${group.id}/${message.id}/${nanoid()}`
-                            );
-                            const result = await uploadBytes(
-                                storageRef,
-                                audioBlob
-                            );
-                            let voiceURL = await getDownloadURL(result.ref);
-                            setMessage((prev) => {
-                                return {
-                                    ...defaultMessage,
-                                    id: prev.id,
-                                    voice: voiceURL,
-                                };
-                            });
-                            setTimeout(() => {
-                                form?.dispatchEvent(
-                                    new Event("submit", {
-                                        bubbles: true,
-                                    })
+                            }}
+                            startIcon={<IoCloseCircle />}
+                            variant="contained"
+                            color="error"
+                            className="mr-2"
+                        >
+                            Close
+                        </Button>
+                        <Button
+                            onClick={async () => {
+                                setOpen(false);
+                                setRecordStart(false);
+                                if (!audioBlob) return setMenuOpen(null);
+                                if (!group) {
+                                    setToastMessage(
+                                        "error: group is not resolved"
+                                    );
+                                    setMenuOpen(null);
+                                    return;
+                                }
+                                // upload voice to firebase storage -- done
+                                const storageRef = ref(
+                                    storage,
+                                    `${group.id}/${message.id}/${nanoid()}`
                                 );
-                            }, 100);
-                            setMenuOpen(null);
-                        }}
-                        disabled={recordStart || !audioBlob}
-                        startIcon={<BsCheck2All />}
-                        variant="contained"
-                        color="success"
-                    >
-                        Send
-                    </Button>
+                                const result = await uploadBytes(
+                                    storageRef,
+                                    audioBlob
+                                );
+                                let voiceURL = await getDownloadURL(result.ref);
+                                setMessage((prev) => {
+                                    return {
+                                        ...defaultMessage,
+                                        id: prev.id,
+                                        voice: voiceURL,
+                                    };
+                                });
+                                setMenuOpen(null);
+                            }}
+                            disabled={recordStart || !audioBlob}
+                            startIcon={<BsCheck2All />}
+                            variant="contained"
+                            color="success"
+                        >
+                            Send
+                        </Button>
+                    </Toolbar>
                 </AppBar>
-                <DialogContent>
+                <DialogContent className="grid place-items-center">
                     <IconButton
-                        className="block m-auto mb-9 mt-5"
                         onClick={(e) => {
                             if (
                                 !RegExp("true").test(
@@ -528,10 +529,10 @@ function VoiceInput({ form, setMenuOpen }: VoiceInputProps) {
 }
 
 interface Props {
-    form: HTMLFormElement;
+    submit_form_button: HTMLButtonElement;
 }
 
-export default function AddMoreButton({ form }: Props) {
+export default function AddMoreButton({ submit_form_button }: Props) {
     const [MenuOpen, setMenuOpen] = useState<HTMLButtonElement | null>(null);
     return (
         <>
@@ -550,8 +551,14 @@ export default function AddMoreButton({ form }: Props) {
                     horizontal: "left",
                 }}
             >
-                <VoiceInput form={form} setMenuOpen={setMenuOpen} />
-                <ImageFileSelect form={form} setMenuOpen={setMenuOpen} />
+                <VoiceInput
+                    submit_form_button={submit_form_button}
+                    setMenuOpen={setMenuOpen}
+                />
+                <ImageFileSelect
+                    submit_form_button={submit_form_button}
+                    setMenuOpen={setMenuOpen}
+                />
             </Menu>
             <IconButton
                 size="large"

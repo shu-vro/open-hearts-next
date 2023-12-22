@@ -17,7 +17,7 @@ import { ROLE } from "@/lib/variables";
 // @ts-ignore
 import Identicon from "react-identicons";
 
-export function AlertDialog({
+export default function CreateGroupDialog({
     open,
     setOpen,
 }: {

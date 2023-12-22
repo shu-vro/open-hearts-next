@@ -5,13 +5,10 @@ import MessageForm from "./MessageForm";
 import LeftSideBar from "./LeftSideBar";
 import RightSideBar from "./RightSideBar";
 import MessageContext from "@/contexts/MessageContext";
-import { MessageType } from "@/app";
 import AppBarChat from "./AppBarChat";
 import useGetGroup from "@/lib/hooks/useGetGroup";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { auth, firestoreDb } from "@/firebase";
-import { DATABASE_PATH } from "@/lib/variables";
-import { useEffect } from "react";
+import { auth } from "@/firebase";
+import { useEffect, useRef } from "react";
 import { determineMessageType } from "@/lib/utils";
 import svgBG from "@/assets/dribbble-kc-removebg-preview.svg";
 import { Box } from "@mui/material";
@@ -23,34 +20,22 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 export default function Chats({ params }: { params: { group: string } }) {
-    const { messages, setMessages } = useAllMessages();
+    const { messages } = useAllMessages();
+    const chat_section = useRef<HTMLDivElement>(null);
     useGetGroup(params.group);
     useFetchAllMessages(params.group);
 
     useEffect(() => {
-        if (!params || !params.group) return;
-        const q = query(
-            collection(
-                firestoreDb,
-                DATABASE_PATH.groupDetails,
-                params.group,
-                DATABASE_PATH.messages
-            ),
-            orderBy("created_at" as keyof MessageType)
-        );
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            if (!snapshot.empty) {
-                setMessages(
-                    snapshot.docs.map((doc) => {
-                        return doc.data();
-                    }) as MessageType[]
-                );
-            } else {
-                setMessages([]);
-            }
-        });
-        return unsubscribe;
-    }, []);
+        if (!auth.currentUser) return;
+        if (!messages.length) return;
+        if (messages[messages.length - 1].sender_id !== auth.currentUser.uid) {
+            chat_section.current?.scrollTo({
+                top: chat_section.current.scrollHeight,
+                left: 0,
+                behavior: "smooth",
+            });
+        }
+    }, [messages]);
 
     return (
         <div className="w-full grow flex flex-row h-[calc(100%-4rem)]">
@@ -58,7 +43,10 @@ export default function Chats({ params }: { params: { group: string } }) {
                 <LeftSideBar />
                 <main className="grow w-1/2 flex justify-start items-start flex-col h-full">
                     <AppBarChat />
-                    <div className="chat-section w-full overflow-y-auto h-full relative">
+                    <div
+                        className="chat-section w-full overflow-y-auto h-full relative"
+                        ref={chat_section}
+                    >
                         {messages.map((msg, i) => (
                             <MessageSent
                                 key={i}
