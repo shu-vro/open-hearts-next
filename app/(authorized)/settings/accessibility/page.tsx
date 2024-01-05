@@ -39,9 +39,16 @@ export default function Accessibility() {
                 />
             </SettingsList>
             <SettingsList>
-                <Typography variant="h5">Main Color</Typography>
+                <Typography
+                    variant="h5"
+                    component={"label"}
+                    htmlFor="color_picker"
+                >
+                    Main Color
+                </Typography>
                 <input
                     type="color"
+                    id="color_picker"
                     onChange={(e) => {
                         if (timeout) {
                             return;

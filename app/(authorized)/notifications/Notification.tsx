@@ -3,18 +3,28 @@
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { IconButton, useTheme } from "@mui/material";
+import { Badge, IconButton, useTheme } from "@mui/material";
 import { BsCheck2All } from "react-icons/bs";
 import { cn, repeat } from "@/lib/utils";
 import MuiLink from "@/app/MuiLink";
+import { type Timestamp } from "firebase/firestore";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import HoverWrapper from "../HoverWrapper";
+import { INotification } from "@/app";
+import { auth } from "@/firebase";
+
+dayjs.extend(relativeTime);
 
 type Props = {
     name: string;
     photoURL: string;
-    time: number | string;
+    time: Timestamp;
     description: string;
     url: string;
+    seenData: INotification["seen"];
     iconOnly?: boolean;
+    onClick: (e: any) => any;
 };
 
 export default function Notification({
@@ -23,6 +33,8 @@ export default function Notification({
     photoURL,
     time,
     url,
+    seenData,
+    onClick,
     iconOnly = false,
 }: Props) {
     const theme = useTheme();
@@ -32,83 +44,117 @@ export default function Notification({
     const handleMarkAsRead = (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        console.log("the notification is read");
+        onClick(e);
     };
     return (
-        <MuiLink
-            href={url}
-            className={cn(
-                "grid h-full mx-8 rounded-lg p-2 border-4 border-gray-400 dark:border-black border-solid first:mt-4 hover:no-underline",
-                "max-[538px]:text-[10px] max-[438px]:mx-2 max-[900px]:text-sm first:mt-4"
-            )}
+        <HoverWrapper
+            className="mx-8 w-full max-[438px]:mx-2 first:mt-4"
             style={{
-                color: theme.palette.text.primary,
-                width: matches438 ? "calc(100% - 4rem)" : "calc(100% - 1rem)",
-                background:
-                    theme.palette.mode === "dark"
-                        ? "linear-gradient(to bottom, #252525 50%, #444 100%)"
-                        : `#dfe1eb`,
-
-                gridTemplateAreas:
-                    matches668 && !iconOnly
-                        ? `
-                'avatar ${repeat("info", 100)}'
-                '.    button   .  ${repeat("time", 98)}'`
-                        : `'avatar info info info info info button'
-                          '   .    .     .     .  time  time  time'`,
+                width: matches438 ? "calc(100% - 5rem)" : "calc(100% - 1.5rem)",
             }}
         >
-            <Avatar
-                alt="Cindy Baker"
-                src={photoURL}
-                className="w-12 h-12 mx-6 max-[762px]:mx-2"
+            <MuiLink
+                href={url}
+                className={cn(
+                    "grid hover:no-underline rounded-[inherit]",
+                    "max-[538px]:text-[10px] max-[900px]:text-sm px-3 py-2",
+                    seenData.findIndex(
+                        (member) =>
+                            member.id === auth.currentUser?.uid &&
+                            member.done === true
+                    ) > -1 && "opacity-60"
+                )}
                 style={{
-                    gridArea: "avatar",
+                    textDecoration: "none",
+                    color: theme.palette.text.primary,
+                    background:
+                        theme.palette.mode === "dark"
+                            ? "linear-gradient(to bottom, #252525 50%, #333 100%)"
+                            : `#d2d9ff`,
+                    gridTemplateAreas:
+                        matches668 && !iconOnly
+                            ? `
+                    'avatar ${repeat("info", 100)}'
+                    'avatar    button   .  ${repeat("time", 98)}'`
+                            : `'avatar info info info info info button'
+                              '   .    .     .     .  time  time  time'`,
                 }}
-            />
-            <div
-                className="info truncate"
-                style={{
-                    gridArea: "info",
+                onClick={(e) => {
+                    onClick(e);
                 }}
             >
-                <h3 className="m-0 p-0 mb-2 truncate">{name}</h3>
-                <div className="text-slate-500 dark:text-slate-400 truncate">
-                    {description}
-                </div>
-            </div>
-            {matches668 && !iconOnly ? (
-                <Button
-                    variant="outlined"
-                    style={{
-                        gridArea: "button",
-                    }}
-                    onClick={handleMarkAsRead}
-                >
-                    Mark as read
-                </Button>
-            ) : (
-                <IconButton
+                <Badge
+                    badgeContent=" "
                     color="primary"
-                    className="border-rounded border-2 border-solid border-[currentColor] justify-self-center items-center"
-                    size="small"
-                    style={{
-                        gridArea: "button",
+                    sx={{
                         alignSelf: "center",
+                        gridArea: "avatar",
                     }}
-                    onClick={handleMarkAsRead}
+                    className="mx-6 max-[762px]:mx-2"
+                    invisible={
+                        seenData.findIndex(
+                            (member) =>
+                                member.id === auth.currentUser?.uid &&
+                                member.done === true
+                        ) > -1
+                    }
                 >
-                    <BsCheck2All />
-                </IconButton>
-            )}
-            <span
-                style={{
-                    gridArea: "time",
-                }}
-                className="text-gray-400 place-self-end text-[1em]"
-            >
-                {time}
-            </span>
-        </MuiLink>
+                    <Avatar
+                        alt={name}
+                        src={photoURL}
+                        sx={{
+                            width: "4rem",
+                            height: "4rem",
+                        }}
+                    />
+                </Badge>
+                <div
+                    className="info truncate"
+                    style={{
+                        gridArea: "info",
+                    }}
+                >
+                    <h3 className="m-0 p-0 mb-2 truncate">{name}</h3>
+                    <div
+                        className="text-slate-500 dark:text-slate-400 truncate"
+                        dangerouslySetInnerHTML={{
+                            __html: description,
+                        }}
+                    ></div>
+                </div>
+                {matches668 && !iconOnly ? (
+                    <Button
+                        variant="outlined"
+                        style={{
+                            gridArea: "button",
+                        }}
+                        onClick={handleMarkAsRead}
+                    >
+                        Mark as read
+                    </Button>
+                ) : (
+                    <IconButton
+                        color="primary"
+                        className="border-rounded border-2 border-solid border-[currentColor] justify-self-center items-center"
+                        size="small"
+                        style={{
+                            gridArea: "button",
+                            alignSelf: "center",
+                        }}
+                        onClick={handleMarkAsRead}
+                    >
+                        <BsCheck2All />
+                    </IconButton>
+                )}
+                <span
+                    style={{
+                        gridArea: "time",
+                    }}
+                    className="text-gray-400 place-self-end text-[1em]"
+                >
+                    {dayjs(time.toMillis()).fromNow()}
+                </span>
+            </MuiLink>
+        </HoverWrapper>
     );
 }

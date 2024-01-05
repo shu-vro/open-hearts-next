@@ -1,6 +1,11 @@
 import { firestoreDb, auth, storage } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
-import { IGroupDetails, MessageType, TGroupMembersBasicDetails } from "@/app";
+import {
+    IGroupDetails,
+    INotification,
+    MessageType,
+    TGroupMembersBasicDetails,
+} from "@/app";
 import {
     Timestamp,
     collection,
@@ -69,6 +74,8 @@ export async function FirstTimeOpeningGroup(
                 }
             }
         } else {
+            // CREATE NEW GROUP
+
             const groupId = nanoid();
             const storageRef = ref(storage, groupId + "/profile");
             const result = await uploadString(
@@ -104,6 +111,29 @@ export async function FirstTimeOpeningGroup(
             await setDoc(
                 doc(firestoreDb, DATABASE_PATH.groupDetails, groupId),
                 setThisObject,
+                {
+                    merge: true,
+                }
+            );
+            // SEND NOTIFICATIONS TO THEM
+
+            const notificationId = nanoid();
+
+            await setDoc(
+                doc(firestoreDb, DATABASE_PATH.notifications, notificationId),
+                {
+                    id: notificationId,
+                    receiverId: obj?.invited.map((e) => e.id),
+                    description: ``,
+                    photoURL,
+                    time: serverTimestamp() as Timestamp,
+                    extraInformation: {
+                        groupId,
+                        role: "member",
+                        groupName: obj?.name,
+                    },
+                    seen: obj?.invited.map((e) => ({ id: e.id, done: false })),
+                } as INotification,
                 {
                     merge: true,
                 }

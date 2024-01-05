@@ -2,13 +2,7 @@ import { MessageType } from "@/app";
 import { useEffect } from "react";
 import { firestoreDb } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
-import {
-    collection,
-    doc,
-    onSnapshot,
-    orderBy,
-    query,
-} from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useAllMessages } from "@/contexts/AllMessagesContext";
 
 export default function useFetchAllMessages(groupId: string) {

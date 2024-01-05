@@ -81,3 +81,18 @@ export interface IGroupDetails {
     groupMembersBasicDetails: TGroupMembersBasicDetails[];
     photoURL: string;
 }
+
+export interface INotification {
+    id: string;
+    receiverId: string[];
+    photoURL: string;
+    time: Timestamp;
+    description: string;
+    extraInformation: {
+        [x: string]: any;
+    };
+    seen: {
+        id: UserType["uid"];
+        done: boolean;
+    }[];
+}
