@@ -16,7 +16,6 @@ export default function PasswordInputField({
     const [passwordPrompt, setPasswordPrompt] = useState(``);
     return (
         <InputField
-            id="password"
             type="password"
             label="Password"
             value={password}

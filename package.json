@@ -19,6 +19,7 @@
     "@mui/material": "^5.14.4",
     "@types/three": "^0.156.0",
     "autoprefixer": "10.4.14",
+    "avataaars": "^2.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.9",
