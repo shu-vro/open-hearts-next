@@ -26,17 +26,17 @@ export default function EditMemberTile({
     member,
     user,
 }: {
-    member: TGroupMembersBasicDetails;
+    member: TGroupMembersBasicDetails | null;
     user?: UserType;
 }) {
     const params = useParams() as { group: string };
     const { group } = useGroup();
-    const [nickname, setNickname] = useState(member.nickname);
+    const [nickname, setNickname] = useState(member?.nickname || "");
     const [loading, setLoading] = useState(false);
 
     if (!user) return "";
 
-    return (
+    return member ? (
         <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
             <Box
                 className="grid p-2 text-inherit hover:no-underline"
@@ -142,5 +142,5 @@ export default function EditMemberTile({
                 </Typography>
             </Box>
         </HoverWrapper>
-    );
+    ) : null;
 }

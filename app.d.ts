@@ -55,6 +55,7 @@ export interface UserType {
     works: (string | never)[];
     contacts: { [x: string]: any };
     status: STATUS.active;
+    accept_all_invitations: boolean;
 }
 
 export type TGroupMembersBasicDetails = {

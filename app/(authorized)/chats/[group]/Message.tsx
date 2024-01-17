@@ -238,7 +238,7 @@ export default function Message({ by, type = "text", msg }: Props) {
     ) : (
         <div
             className={cn(
-                "grid w-fit max-w-[80%] pl-4 my-4",
+                "grid max-w-[80%] pl-4 my-4",
                 by === "me" ? "ml-auto mr-3" : ""
             )}
             style={{
@@ -281,7 +281,10 @@ export default function Message({ by, type = "text", msg }: Props) {
                 )}
             </div>
             <div
-                className="time justify-self-end text-xs text-gray-500"
+                className={cn(
+                    "time justify-self-end text-xs text-gray-500",
+                    by === "me" && "justify-self-start"
+                )}
                 style={{ gridArea: "time" }}
             >
                 {dayjs(msg.created_at?.seconds * 1000 || Date.now()).format(

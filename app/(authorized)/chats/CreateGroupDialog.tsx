@@ -1,5 +1,5 @@
 "use client";
-import { Autocomplete, Box, Checkbox, TextField } from "@mui/material";
+import { Autocomplete, Box, Checkbox, TextField, Tooltip } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -10,12 +10,13 @@ import { FirstTimeOpeningGroup } from "@/lib/helpers/firebase-helpers";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
-import { UserType } from "@/app";
+import { IGroupDetails, UserType } from "@/app";
 import { useRouter } from "next/navigation";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { ROLE } from "@/lib/variables";
 // @ts-ignore
 import Identicon from "react-identicons";
+import { cn } from "@/lib/utils";
 
 export default function CreateGroupDialog({
     open,
@@ -75,6 +76,8 @@ export default function CreateGroupDialog({
                         role: ROLE.member,
                         addedBy:
                             auth.currentUser?.uid || "creator of this group",
+                        should_be_added_automatically:
+                            el.accept_all_invitations,
                     })),
                     photoURL,
                 });
@@ -116,24 +119,54 @@ export default function CreateGroupDialog({
                     )}
                     getOptionLabel={(option) => option.name}
                     renderOption={(props, option, { selected }) => (
-                        <Box
-                            key={option.uid}
-                            component="li"
-                            sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
-                            {...props}
+                        <Tooltip
+                            arrow
+                            title={
+                                <>
+                                    Friend will{" "}
+                                    {option.accept_all_invitations ? (
+                                        <span className="text-green-400">
+                                            Instantly
+                                        </span>
+                                    ) : (
+                                        <span className="text-red-400">
+                                            Receive an Invitation to
+                                        </span>
+                                    )}{" "}
+                                    join the group
+                                </>
+                            }
                         >
-                            <Checkbox
-                                style={{ marginRight: 8 }}
-                                checked={selected}
-                            />
-                            <img
-                                loading="lazy"
-                                width="20"
-                                src={option.photoURL}
-                                alt=""
-                            />
-                            {option.name}
-                        </Box>
+                            <Box
+                                key={option.uid}
+                                component="li"
+                                sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                                {...props}
+                            >
+                                <>
+                                    <Checkbox
+                                        style={{ marginRight: 8 }}
+                                        checked={selected}
+                                    />
+                                    <img
+                                        loading="lazy"
+                                        width="20"
+                                        src={option.photoURL}
+                                        alt=""
+                                    />
+                                    {option.name}
+
+                                    <div
+                                        className={cn(
+                                            "w-4 h-4 rounded-full ml-auto",
+                                            option.accept_all_invitations
+                                                ? `bg-green-400`
+                                                : `bg-red-400`
+                                        )}
+                                    ></div>
+                                </>
+                            </Box>
+                        </Tooltip>
                     )}
                 />
             </DialogContent>

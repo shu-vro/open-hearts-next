@@ -16,17 +16,20 @@ import useFetchAllMessages from "@/lib/hooks/useFetchAllMessages";
 import { useAllMessages } from "@/contexts/AllMessagesContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useRouter } from "next/navigation";
+import { SITEMAP } from "@/lib/variables";
 
 dayjs.extend(relativeTime);
 
 export default function Chats({ params }: { params: { group: string } }) {
     const { messages } = useAllMessages();
+    const { push } = useRouter();
     const chat_section = useRef<HTMLDivElement>(null);
-    useGetGroup(params.group);
+    const group = useGetGroup(params.group);
     useFetchAllMessages(params.group);
 
     useEffect(() => {
-        if (!auth.currentUser) return;
+        if (!auth.currentUser) return push(SITEMAP.login);
         if (!messages.length) return;
         if (messages[messages.length - 1].sender_id !== auth.currentUser.uid) {
             chat_section.current?.scrollTo({
@@ -36,6 +39,14 @@ export default function Chats({ params }: { params: { group: string } }) {
             });
         }
     }, [messages]);
+
+    useEffect(() => {
+        if (!group) return;
+        if (!auth.currentUser) return push(SITEMAP.login);
+        if (!group.groupMembers.includes(auth.currentUser.uid)) {
+            return push(SITEMAP.chats);
+        }
+    }, [group]);
 
     return (
         <div className="w-full grow flex flex-row h-[calc(100%-4rem)]">

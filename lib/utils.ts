@@ -93,6 +93,7 @@ export const DefaultUserConfig = {
     works: [],
     contacts: {},
     status: STATUS.active,
+    accept_all_invitations: true,
 } as UserType;
 
 export const URL_REGEX =

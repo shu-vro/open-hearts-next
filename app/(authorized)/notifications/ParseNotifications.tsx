@@ -20,7 +20,7 @@ export default function ParseNotifications({
                     name={e.extraInformation.groupName}
                     photoURL={e.photoURL}
                     time={e.time}
-                    description={`You are requested to join <span style="color: dodgerblue;">${e.extraInformation.groupName}</span> as a(n) <span style="color: magenta;">${e.extraInformation.role}</span>`}
+                    description={`You are requested to join <span style="color: dodgerblue;">${e.extraInformation.groupName}</span> as a/an <span style="color: magenta;">${e.extraInformation.role}</span>`}
                     url={`${globalThis.location.origin}${SITEMAP.chats}/${e.extraInformation.groupId}`}
                     seenData={e.seen}
                     iconOnly={iconOnly}

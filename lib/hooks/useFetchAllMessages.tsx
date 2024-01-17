@@ -1,13 +1,24 @@
 import { MessageType } from "@/app";
 import { useEffect } from "react";
-import { firestoreDb } from "@/firebase";
-import { DATABASE_PATH } from "@/lib/variables";
+import { auth, firestoreDb } from "@/firebase";
+import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useAllMessages } from "@/contexts/AllMessagesContext";
+import { useGroup } from "@/contexts/GroupContext";
+import { useRouter } from "next/navigation";
 
 export default function useFetchAllMessages(groupId: string) {
     const { messages, setMessages } = useAllMessages();
+    const { push } = useRouter();
+    const { group } = useGroup();
+
     useEffect(() => {
+        if (!group) return;
+        if (!auth.currentUser) return push(SITEMAP.login);
+        if (!group.groupMembers.includes(auth.currentUser.uid)) {
+            return push(SITEMAP.chats);
+        }
+
         const q = query(
             collection(
                 firestoreDb,
@@ -29,6 +40,6 @@ export default function useFetchAllMessages(groupId: string) {
             }
         });
         return unsubscribe;
-    }, []);
+    }, [group]);
     return messages;
 }
