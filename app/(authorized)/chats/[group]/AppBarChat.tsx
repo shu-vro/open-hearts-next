@@ -33,12 +33,9 @@ export default function AppBarChat() {
                     alt="avatar"
                     sx={{ width: 56, height: 56 }}
                 />
-                <Typography
-                    noWrap
-                    className="grow text-2xl max-[535px]:text-xl capitalize font-semibold ml-3"
-                >
+                <span className="grow text-2xl max-[535px]:text-xl capitalize font-semibold ml-3 truncate">
                     {group?.name || "Group Name here"}
-                </Typography>
+                </span>
                 <Tooltip title="List Chats">
                     <IconButton
                         className="hidden max-[962px]:flex"

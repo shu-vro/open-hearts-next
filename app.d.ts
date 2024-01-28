@@ -55,6 +55,7 @@ export interface UserType {
     works: (string | never)[];
     contacts: { [x: string]: any };
     status: STATUS.active;
+    accept_all_invitations: boolean;
 }
 
 export type TGroupMembersBasicDetails = {
@@ -80,4 +81,22 @@ export interface IGroupDetails {
     lastMessage: TLastMessage<IGroupDetails["id"]>;
     groupMembersBasicDetails: TGroupMembersBasicDetails[];
     photoURL: string;
+}
+
+export type TNotificationType = "join-group" | "info-message";
+
+export interface INotification {
+    id: string;
+    receiverId: string[];
+    type: TNotificationType;
+    photoURL: string | null;
+    time: Timestamp;
+    description: string;
+    extraInformation: {
+        [x: string]: any;
+    };
+    seen: {
+        id: UserType["uid"];
+        done: boolean;
+    }[];
 }

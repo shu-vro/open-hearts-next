@@ -61,15 +61,16 @@ export default function SharedLink({
                     setPreview(
                         <Box className="flex gap-x-3 flex-row justify-start items-center w-full">
                             {favicon && (
-                                <img
+                                <Avatar
                                     src={favicon}
                                     alt={link}
-                                    style={{
-                                        width: "5rem",
+                                    sx={{
+                                        width: "4rem",
+                                        height: "4rem",
                                     }}
                                 />
                             )}
-                            <Box className="w-full">
+                            <Box className="">
                                 <span className="hidden">&nbsp;</span>
                                 {ogTitle && (
                                     <Typography
@@ -84,6 +85,7 @@ export default function SharedLink({
                                     noWrap
                                     variant="body2"
                                     sx={{
+                                        wordBreak: "break-word",
                                         color: (theme) =>
                                             theme.palette.primary.main,
                                     }}
@@ -95,6 +97,9 @@ export default function SharedLink({
                                         variant="caption"
                                         display="block"
                                         align="left"
+                                        sx={{
+                                            wordBreak: "break-word",
+                                        }}
                                     >
                                         {ogDescription}
                                     </Typography>
@@ -118,52 +123,42 @@ export default function SharedLink({
                 href={link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="grid p-2 text-inherit hover:no-underline"
-                sx={{
-                    /**
-                     * logic:
-                     * avatar, name {n times} time {n+1 times}
-                     * message {n * 2 + 2 times}
-                     * where n >= 0
-                     */
-                    gridTemplateAreas: `
-                        'avatar ${repeat("name   ", 50)} ${repeat("time", 51)}'
-                        '${repeat("message", 102)}'
-                        `,
-                }}
+                className="p-2 text-inherit hover:no-underline"
+                sx={
+                    {
+                        /**
+                         * logic:
+                         * avatar, name {n times} time {n+1 times}
+                         * message {n * 2 + 2 times}
+                         * where n >= 0
+                         */
+                        // gridTemplateAreas: `
+                        //         'avatar ${repeat("name   ", 50)} ${repeat(
+                        //     "time",
+                        //     51
+                        // )}'
+                        //         '${repeat("message", 102)}'
+                        //         `,
+                    }
+                }
             >
-                <Avatar
-                    src={sender?.photoURL || link}
-                    alt={sender?.name || "Friend's Name"}
-                    sx={{
-                        gridArea: "avatar",
-                    }}
-                    className={cn("self-center mr-2 w-11 h-11")}
-                />
-                <Typography
-                    noWrap
-                    className="name text-lg"
-                    sx={{
-                        gridArea: "name",
-                    }}
-                >
-                    {sender?.name || "Friend's name"}
-                </Typography>
-                <Typography
-                    className="justify-self-end opacity-70 font-[.8em]"
-                    sx={{
-                        gridArea: "time",
-                    }}
-                >
-                    {dayjs(messageTime?.toMillis()).fromNow()}
-                </Typography>
-                <Box
-                    sx={{
-                        gridArea: "message",
-                    }}
-                >
-                    {preview}
+                <Box className="flex flex-row justify-center items-center max-w-full">
+                    <Avatar
+                        src={sender?.photoURL || link}
+                        alt={sender?.name || "Friend's Name"}
+                        sx={{
+                            gridArea: "avatar",
+                        }}
+                        className={cn("self-center mr-2 w-11 h-11")}
+                    />
+                    <Typography noWrap className="name text-lg">
+                        {sender?.name || "Friend's name"}
+                    </Typography>
+                    <Typography className="justify-self-end opacity-70 font-[.8em] grow">
+                        {dayjs(messageTime?.toMillis()).fromNow()}
+                    </Typography>
                 </Box>
+                <Box>{preview}</Box>
             </Box>
         </HoverWrapper>
     );

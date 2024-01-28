@@ -1,6 +1,12 @@
 import { firestoreDb, auth, storage } from "@/firebase";
 import { DATABASE_PATH } from "@/lib/variables";
-import { IGroupDetails, MessageType, TGroupMembersBasicDetails } from "@/app";
+import {
+    IGroupDetails,
+    INotification,
+    MessageType,
+    TGroupMembersBasicDetails,
+    UserType,
+} from "@/app";
 import {
     Timestamp,
     collection,
@@ -32,7 +38,9 @@ export async function FirstTimeOpeningGroup(
     redirectToAnotherGroupIdIfDoes_notExist?: boolean,
     obj?: {
         name: string;
-        invited: IGroupDetails["groupMembersBasicDetails"];
+        invited: (TGroupMembersBasicDetails & {
+            should_be_added_automatically: UserType["accept_all_invitations"];
+        })[];
         /**
          * base64 string
          */
@@ -69,6 +77,8 @@ export async function FirstTimeOpeningGroup(
                 }
             }
         } else {
+            // CREATE NEW GROUP
+
             const groupId = nanoid();
             const storageRef = ref(storage, groupId + "/profile");
             const result = await uploadString(
@@ -84,7 +94,11 @@ export async function FirstTimeOpeningGroup(
                 name: obj?.name || "",
                 groupMembers: [
                     auth.currentUser.uid,
-                    ...(obj?.invited.map((e) => e.id) || []),
+                    ...(obj?.invited
+                        .filter((member) => {
+                            return member.should_be_added_automatically;
+                        })
+                        .map((e) => e.id) || []),
                 ],
                 groupMembersBasicDetails: [
                     {
@@ -104,6 +118,30 @@ export async function FirstTimeOpeningGroup(
             await setDoc(
                 doc(firestoreDb, DATABASE_PATH.groupDetails, groupId),
                 setThisObject,
+                {
+                    merge: true,
+                }
+            );
+            // SEND NOTIFICATIONS TO THEM
+
+            const notificationId = nanoid();
+
+            await setDoc(
+                doc(firestoreDb, DATABASE_PATH.notifications, notificationId),
+                {
+                    id: notificationId,
+                    receiverId: obj?.invited.map((e) => e.id),
+                    description: ``,
+                    type: "join-group",
+                    photoURL,
+                    time: serverTimestamp() as Timestamp,
+                    extraInformation: {
+                        groupId,
+                        role: "member",
+                        groupName: obj?.name,
+                    },
+                    seen: obj?.invited.map((e) => ({ id: e.id, done: false })),
+                } as INotification,
                 {
                     merge: true,
                 }

@@ -18,14 +18,14 @@ export function MemberTile({
     addedBy,
     myRole,
 }: {
-    member: TGroupMembersBasicDetails;
+    member: TGroupMembersBasicDetails | null;
     user?: UserType;
     addedBy: TGroupMembersBasicDetails | undefined;
-    myRole?: ROLE;
+    myRole?: ROLE | undefined;
 }) {
     const isActive = true;
     if (!user) return "";
-    return (
+    return member ? (
         <HoverWrapper className="mb-2 mx-1 w-[calc(100%-1rem)]">
             <Box
                 className="grid p-2 text-inherit hover:no-underline"
@@ -100,5 +100,5 @@ export function MemberTile({
                 )}
             </Box>
         </HoverWrapper>
-    );
+    ) : null;
 }

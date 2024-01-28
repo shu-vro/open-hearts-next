@@ -96,7 +96,7 @@ function ProfilePage(props: any) {
                             </Typography>
                         </div>
                     </Box>
-                    <div className="capitalize text-[1.5em] leading-[1.2] text-justify">
+                    <div className="capitalize text-[1.5em] leading-[1.2] text-justify ml-8">
                         {userData?.description || ""}
                     </div>
                 </Box>

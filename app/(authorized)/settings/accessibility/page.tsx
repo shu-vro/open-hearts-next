@@ -39,9 +39,16 @@ export default function Accessibility() {
                 />
             </SettingsList>
             <SettingsList>
-                <Typography variant="h5">Main Color</Typography>
+                <Typography
+                    variant="h5"
+                    component={"label"}
+                    htmlFor="color_picker"
+                >
+                    Main Color
+                </Typography>
                 <input
                     type="color"
+                    id="color_picker"
                     onChange={(e) => {
                         if (timeout) {
                             return;
@@ -102,6 +109,30 @@ export default function Accessibility() {
                     }}
                 />
             </SettingsList>
+            {/* ADD ANOTHER SETTINGS THAT WILL TOGGLE IF USER WANTS TO AUTOMATICALLY JOIN IN GROUP OR NEEDS CONFIRMATION */}
+            {/* IN EITHER CASE, THEY ARE GETTING A NOTIFICATION */}
+            {/* <SettingsList>
+                <Typography variant="h6">
+                    Do not show <i>Confirm to delete all images</i> Modal
+                </Typography>
+
+                <Switch
+                    checked={DO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN}
+                    onChange={() => {
+                        if (localStorage.DO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN) {
+                            localStorage.removeItem(
+                                "DO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN"
+                            );
+                        } else {
+                            localStorage.DO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN =
+                                "true";
+                        }
+                        setDO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN(
+                            !DO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN
+                        );
+                    }}
+                />
+            </SettingsList> */}
         </div>
     );
 }

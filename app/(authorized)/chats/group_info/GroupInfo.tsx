@@ -60,6 +60,7 @@ export default function GroupInfo({
     const [allUsers, setAllUsers] = useState<UserType[]>([]);
     const [loading, setLoading] = useState(false);
     const [groupname, setGroupname] = useState(group?.name || "");
+    const [myRole, setMyRole] = useState<number | undefined>();
     const handleTabChange = (newValue: number) => {
         setActiveTab(newValue);
         if (swiper) {
@@ -79,6 +80,11 @@ export default function GroupInfo({
                 return setMessage(
                     "User might be logged out. If this error continues, login again"
                 );
+            setMyRole(
+                group.groupMembersBasicDetails.find(
+                    (e) => e.id === auth.currentUser?.uid
+                )?.role
+            );
             const q = query(collection(firestoreDb, DATABASE_PATH.users));
             let allDocs = await getDocs(q);
             if (!allDocs.empty) {
@@ -178,14 +184,14 @@ export default function GroupInfo({
                         </HoverWrapper>
                         {group?.groupMembersBasicDetails.map((member) => (
                             <MemberTile
-                                member={member}
+                                member={
+                                    group.groupMembers.indexOf(member.id) > -1
+                                        ? member
+                                        : null
+                                }
                                 key={member.id}
                                 user={allUsers.find((e) => e.uid === member.id)}
-                                myRole={
-                                    group?.groupMembersBasicDetails.find(
-                                        (e) => e.id === auth.currentUser?.uid
-                                    )?.role
-                                }
+                                myRole={myRole}
                                 addedBy={group?.groupMembersBasicDetails.find(
                                     (e) => e.id === member.addedBy
                                 )}
@@ -198,7 +204,11 @@ export default function GroupInfo({
                     <AccordionDetails>
                         {group?.groupMembersBasicDetails.map((member) => (
                             <EditMemberNicknameTile
-                                member={member}
+                                member={
+                                    group?.groupMembers.includes(member.id)
+                                        ? member
+                                        : null
+                                }
                                 user={allUsers.find((e) => e.uid === member.id)}
                                 key={member.id}
                             />

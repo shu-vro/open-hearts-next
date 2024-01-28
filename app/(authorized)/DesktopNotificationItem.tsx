@@ -1,9 +1,12 @@
 import { Badge, IconButton, Popover, Typography } from "@mui/material";
 import { useState } from "react";
-import Notification from "./notifications/Notification";
 import { BsBell } from "react-icons/bs";
+import ParseNotifications from "./notifications/ParseNotifications";
+import useNotifications from "@/lib/hooks/useNotifications";
+import { auth } from "@/firebase";
 
 export default function DesktopNotificationItem() {
+    const notifications = useNotifications();
     const [anchorElForMessagesPopover, setAnchorElForMessagesPopover] =
         useState<null | HTMLElement>(null);
     return (
@@ -29,22 +32,11 @@ export default function DesktopNotificationItem() {
                     horizontal: "right",
                 }}
             >
-                <div className="w-full h-full flex flex-col justify-start items-start gap-4 max-[668px]:gap-2">
-                    {Array(15)
-                        .fill("")
-                        .map((e: unknown, i: number) => (
-                            <Notification
-                                name="my name"
-                                photoURL="https://mui.com/static/images/avatar/3.jpg"
-                                time={new Date().toISOString()}
-                                description={
-                                    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero impedit unde saepe eos, mollitia tenetur delectus reprehenderit, vitae deleniti molestiae quo harum? Dolore quibusdam saepe fugit odit odio maxime itaque!"
-                                }
-                                url="#"
-                                key={i}
-                                iconOnly={true}
-                            />
-                        ))}
+                <div className="w-full h-full flex flex-col justify-start items-start gap-4 max-[668px]:gap-2 py-4">
+                    <ParseNotifications
+                        iconOnly={true}
+                        notifications={notifications}
+                    />
                 </div>
             </Popover>
             <IconButton
@@ -52,7 +44,20 @@ export default function DesktopNotificationItem() {
                 aria-label="show 17 new notifications"
                 onClick={(e) => setAnchorElForMessagesPopover(e.currentTarget)}
             >
-                <Badge badgeContent={17} color="error">
+                <Badge
+                    badgeContent={
+                        notifications.filter((notification) => {
+                            return (
+                                notification.seen.findIndex(
+                                    (element) =>
+                                        element.id === auth.currentUser?.uid &&
+                                        element.done === false
+                                ) > -1
+                            );
+                        }).length
+                    }
+                    color="error"
+                >
                     <BsBell />
                 </Badge>
             </IconButton>

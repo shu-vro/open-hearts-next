@@ -17,6 +17,7 @@ import AuthForm from "../AuthForm";
 import MuiLink from "@/app/MuiLink";
 import { SITEMAP } from "@/lib/variables";
 import { LoadingButton } from "@mui/lab";
+import GenerateAvatar from "./GenerateAvatar";
 
 export default function SignUp() {
     const [name, setName] = useState("");
@@ -32,7 +33,7 @@ export default function SignUp() {
         e.preventDefault();
         setSubmitted(true);
         if (password1 !== password2) {
-            setMessage(`OpenHeartsError: Password do not match`);
+            setMessage(`PasswordError: Password do not match`);
             return setSubmitted(false);
         }
         let m = testPassword(password1);
@@ -63,13 +64,6 @@ export default function SignUp() {
         }
     }
 
-    useEffect(() => {
-        const canvas = document.querySelector(
-            "canvas.identicon"
-        ) as HTMLCanvasElement;
-        setPhotoURL(canvas.toDataURL("image/png"));
-    }, [name]);
-
     return (
         <>
             {submitted && (
@@ -87,11 +81,7 @@ export default function SignUp() {
                 <>
                     <AlertBox setMessage={setMessage} message={message} />
                     <h2 className={cn("text-center m-0 p-0")}>Sign Up</h2>
-                    <Identicon
-                        string={name}
-                        size="80"
-                        className="identicon border border-[#444] border-solid my-4 p-3"
-                    />
+                    <GenerateAvatar setPhotoURL={setPhotoURL} />
                     <InputField
                         id="name"
                         type="text"

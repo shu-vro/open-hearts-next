@@ -182,7 +182,12 @@ ${JSON.stringify(e, null, 2)}`);
                 <Avatar
                     src={file || auth.currentUser?.photoURL || ""}
                     alt="your uploaded"
-                    className="rounded-none w-36 h-36 object-contain"
+                    className="rounded-none object-contain"
+                    sx={{
+                        width: "9rem",
+                        height: "9rem",
+                        borderRadius: "0px",
+                    }}
                 />
                 <Box className="pl-4">
                     Click <br />
@@ -410,7 +415,10 @@ ${JSON.stringify(e, null, 2)}`);
             <LoadingButton
                 type="submit"
                 size="large"
-                className="block mx-auto"
+                sx={{
+                    display: "block",
+                    mx: "auto",
+                }}
                 variant="contained"
                 loading={loading}
             >
@@ -442,7 +450,12 @@ function AdornmentInput({
     return (
         <FormControl
             variant="outlined"
-            className="w-[430px] max-w-full mb-4 ml-3 block max-[480px]:ml-0"
+            className="w-[430px] max-w-full max-[480px]:ml-0"
+            sx={{
+                display: "block",
+                mb: "1rem",
+                ml: ".75rem",
+            }}
         >
             <InputLabel>{rest["label"]}</InputLabel>
             <OutlinedInput
