@@ -132,6 +132,7 @@ export async function FirstTimeOpeningGroup(
                     id: notificationId,
                     receiverId: obj?.invited.map((e) => e.id),
                     description: ``,
+                    type: "join-group",
                     photoURL,
                     time: serverTimestamp() as Timestamp,
                     extraInformation: {

@@ -83,10 +83,13 @@ export interface IGroupDetails {
     photoURL: string;
 }
 
+export type TNotificationType = "join-group" | "info-message";
+
 export interface INotification {
     id: string;
     receiverId: string[];
-    photoURL: string;
+    type: TNotificationType;
+    photoURL: string | null;
     time: Timestamp;
     description: string;
     extraInformation: {

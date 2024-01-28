@@ -3,7 +3,7 @@
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Badge, IconButton, useTheme } from "@mui/material";
+import { Badge, IconButton, styled, useTheme } from "@mui/material";
 import { BsCheck2All } from "react-icons/bs";
 import { cn, repeat } from "@/lib/utils";
 import MuiLink from "@/app/MuiLink";
@@ -11,8 +11,7 @@ import { type Timestamp } from "firebase/firestore";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import HoverWrapper from "../HoverWrapper";
-import { INotification } from "@/app";
-import { auth } from "@/firebase";
+import { LoadingButton, LoadingButtonProps } from "@mui/lab";
 
 dayjs.extend(relativeTime);
 
@@ -22,10 +21,31 @@ type Props = {
     time: Timestamp;
     description: string;
     url: string;
-    seenData: INotification["seen"];
+    seenData: boolean;
     iconOnly?: boolean;
+    loading: boolean;
     onClick: (e: any) => any;
+    extraButtons?: any[];
 };
+
+export function ExtraButton(
+    props: LoadingButtonProps & React.HTMLProps<HTMLButtonElement>
+) {
+    return (
+        <LoadingButton
+            type="button"
+            size="small"
+            variant="outlined"
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }}
+            {...props}
+        >
+            {props.children}
+        </LoadingButton>
+    );
+}
 
 export default function Notification({
     description,
@@ -36,6 +56,8 @@ export default function Notification({
     seenData,
     onClick,
     iconOnly = false,
+    loading,
+    extraButtons = [],
 }: Props) {
     const theme = useTheme();
     const matches668 = useMediaQuery("(min-width:668px)");
@@ -46,11 +68,14 @@ export default function Notification({
         e.preventDefault();
         onClick(e);
     };
+
     return (
         <HoverWrapper
             className="mx-8 w-full max-[438px]:mx-2 first:mt-4"
             style={{
                 width: matches438 ? "calc(100% - 5rem)" : "calc(100% - 1.5rem)",
+                pointerEvents: loading ? "none" : "auto",
+                userSelect: loading ? "none" : "all",
             }}
         >
             <MuiLink
@@ -58,18 +83,14 @@ export default function Notification({
                 className={cn(
                     "grid hover:no-underline rounded-[inherit]",
                     "max-[538px]:text-[10px] max-[900px]:text-sm px-3 py-2",
-                    seenData.findIndex(
-                        (member) =>
-                            member.id === auth.currentUser?.uid &&
-                            member.done === true
-                    ) > -1 && "opacity-60"
+                    (seenData || loading) && "opacity-60"
                 )}
                 style={{
                     textDecoration: "none",
                     color: theme.palette.text.primary,
                     background:
                         theme.palette.mode === "dark"
-                            ? "linear-gradient(to bottom, #252525 50%, #333 100%)"
+                            ? "linear-gradient(to bottom, #252525 50%, #2a2a2a 100%)"
                             : `#d2d9ff`,
                     gridTemplateAreas:
                         matches668 && !iconOnly
@@ -91,13 +112,7 @@ export default function Notification({
                         gridArea: "avatar",
                     }}
                     className="mx-6 max-[762px]:mx-2"
-                    invisible={
-                        seenData.findIndex(
-                            (member) =>
-                                member.id === auth.currentUser?.uid &&
-                                member.done === true
-                        ) > -1
-                    }
+                    invisible={seenData}
                 >
                     <Avatar
                         alt={name}
@@ -109,18 +124,22 @@ export default function Notification({
                     />
                 </Badge>
                 <div
-                    className="info truncate"
+                    className="info line-clamp-2 mb-3"
                     style={{
                         gridArea: "info",
                     }}
                 >
                     <h3 className="m-0 p-0 mb-2 truncate">{name}</h3>
                     <div
-                        className="text-slate-500 dark:text-slate-400 truncate"
+                        className="text-slate-500 dark:text-slate-400"
                         dangerouslySetInnerHTML={{
                             __html: description,
                         }}
                     ></div>
+
+                    <div className="overflow-x-auto mt-2">
+                        <div className="w-max">{extraButtons}</div>
+                    </div>
                 </div>
                 {matches668 && !iconOnly ? (
                     <Button
@@ -152,7 +171,7 @@ export default function Notification({
                     }}
                     className="text-gray-400 place-self-end text-[1em]"
                 >
-                    {dayjs(time.toMillis()).fromNow()}
+                    {dayjs(time?.toMillis() || Date.now()).fromNow()}
                 </span>
             </MuiLink>
         </HoverWrapper>
