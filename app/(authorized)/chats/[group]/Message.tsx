@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { DefaultUserConfig, cn } from "@/lib/utils";
 import Avatar from "@mui/material/Avatar";
 import React, { useEffect, useState } from "react";
 import { AiOutlineMessage, AiOutlinePlus } from "react-icons/ai";
@@ -46,6 +46,7 @@ import dayjs from "dayjs";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import MuiLink from "@/app/MuiLink";
 import DeleteOrReportChip from "./DeleteOrReportChip";
+import { useUsers } from "@/contexts/UsersInGroupContext";
 
 export type Props = {
     by: "me" | "him";
@@ -206,30 +207,20 @@ export default function Message({ by, type = "text", msg }: Props) {
     const { group } = useGroup();
     const [anchorElForEmojiPopover, setAnchorElForEmojiPopover] =
         useState<null | HTMLElement>(null);
-    const [user, setUser] = useState<UserType | null>(null);
+    const [user, setUser] = useState<UserType>(DefaultUserConfig);
+    const { getUserById, allUsers } = useUsers();
     const { setMessage } = useMessage();
     const { setMessage: setToastMessage } = useToastAlert();
     const [showReactors, setShowReactors] = useState(false);
-    const [showDeleteMessageModal, setShowDeleteMessageModal] = useState(false);
+
     useEffect(() => {
-        (async () => {
-            let q = doc(
-                collection(firestoreDb, DATABASE_PATH.users),
-                msg.sender_id
-            );
-            let user = await getDoc(q);
-            if (user.exists()) {
-                setUser(user.data() as UserType);
-            }
-        })();
-    }, []);
+        setUser(getUserById(msg.sender_id));
+    }, [allUsers]);
 
     const handleShowReactorsClose = () => {
         setShowReactors(false);
     };
-    const handleShowDeleteMessageModal = () => {
-        setShowDeleteMessageModal(false);
-    };
+
     return type === "info" ? (
         <div className="text-center w-full text-xs opacity-70">
             <div>{dayjs(msg.created_at.toMillis()).fromNow()}</div>
@@ -333,7 +324,6 @@ export default function Message({ by, type = "text", msg }: Props) {
                             setTimeout(function () {
                                 if (clickCount === 1) {
                                     setShowReactors(true);
-                                    console.log("Hello");
                                 }
                                 clickCount = 0;
                             }, 500);

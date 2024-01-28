@@ -34,16 +34,16 @@ import EditMemberNicknameTile from "./EditMemberNicknameTile";
 import ChangeGroupEmoji from "./ChangeGroupEmoji";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
-import { auth, firestoreDb } from "@/firebase";
+import { auth } from "@/firebase";
 import { useRouter } from "next/navigation";
-import { DATABASE_PATH, ROLE, SITEMAP } from "@/lib/variables";
+import { ROLE, SITEMAP } from "@/lib/variables";
 import AddMembersAlertDialog from "./AddMembersAlertDialog";
-import { collection, getDocs, query } from "firebase/firestore";
-import { IGroupDetails, MessageType, UserType } from "@/app";
+import { IGroupDetails, MessageType } from "@/app";
 import { URL_REGEX } from "@/lib/utils";
 import { LoadingButton } from "@mui/lab";
 import VoiceMessageBox from "../[group]/VoiceMessageBox";
 import EditAndDisplayAvatar from "./EditAndDisplayAvatar";
+import { useUsers } from "@/contexts/UsersInGroupContext";
 
 export default function GroupInfo({
     messages = [],
@@ -57,7 +57,7 @@ export default function GroupInfo({
     const [showImageModal, setShowImageModal] = useState("");
     const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
     const [addUserDialog, setAddUserDialog] = useState(false);
-    const [allUsers, setAllUsers] = useState<UserType[]>([]);
+    const { allUsers } = useUsers();
     const [loading, setLoading] = useState(false);
     const [groupname, setGroupname] = useState(group?.name || "");
     const [myRole, setMyRole] = useState<number | undefined>();
@@ -74,29 +74,13 @@ export default function GroupInfo({
     const { push } = useRouter();
 
     useEffect(() => {
-        (async () => {
-            if (!group) return;
-            if (!auth.currentUser?.uid)
-                return setMessage(
-                    "User might be logged out. If this error continues, login again"
-                );
-            setMyRole(
-                group.groupMembersBasicDetails.find(
-                    (e) => e.id === auth.currentUser?.uid
-                )?.role
-            );
-            const q = query(collection(firestoreDb, DATABASE_PATH.users));
-            let allDocs = await getDocs(q);
-            if (!allDocs.empty) {
-                setAllUsers(
-                    allDocs.docs
-                        .map((doc) => doc.data() as UserType)
-                        .sort((a, b) => -b.name[0].localeCompare(a.name[0]))
-                    // .filter((el) => !group.groupMembers?.includes(el.uid))
-                );
-            }
-        })();
-    }, [group?.groupMembers]);
+        if (!group) return;
+        setMyRole(
+            group?.groupMembersBasicDetails.find(
+                (e) => e.id === auth.currentUser?.uid
+            )?.role
+        );
+    }, [allUsers]);
 
     let imageLink = messages
         .map((msg) => msg.imageLink)
@@ -178,7 +162,6 @@ export default function GroupInfo({
                             </Box>
                             <AddMembersAlertDialog
                                 open={addUserDialog}
-                                allUsers={allUsers}
                                 setOpen={setAddUserDialog}
                             />
                         </HoverWrapper>
@@ -460,17 +443,10 @@ export default function GroupInfo({
                                             (member) =>
                                                 member !== auth.currentUser?.uid
                                         );
-                                    let groupMembersBasicDetails =
-                                        group.groupMembersBasicDetails.filter(
-                                            (member) =>
-                                                member.id !==
-                                                auth.currentUser?.uid
-                                        );
                                     await changeGroupInformation(
                                         group?.id || "",
                                         {
                                             groupMembers,
-                                            groupMembersBasicDetails,
                                         }
                                     );
                                     setMessage("You left from group.");

@@ -108,7 +108,7 @@ export default function SharedLink({
                         </Box>
                     );
                 } else {
-                    console.warn(json);
+                    console.info("failed to fetch link data ", json);
                 }
             } catch (error) {
                 console.info(error);

@@ -126,18 +126,14 @@ export default function AdminControlMember({ member }: Props) {
                                 return setMessage(
                                     "error: group is not resolved"
                                 );
+
                             let groupMembers = group.groupMembers.filter(
                                 (mbr) => mbr !== member.id
                             );
-                            let groupMembersBasicDetails =
-                                group.groupMembersBasicDetails.filter(
-                                    (mbr) => mbr.id !== member.id
-                                );
                             await changeGroupInformation(group?.id || "", {
                                 groupMembers,
-                                groupMembersBasicDetails,
                             });
-                            setMessage(`${member.nickname} was is gone.`);
+                            setMessage(`${member.nickname} was removed.`);
                         } catch (e) {
                             setMessage("Error: check console");
                             console.log(e);

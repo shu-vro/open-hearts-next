@@ -2,7 +2,7 @@
 
 import TextField from "@mui/material/TextField";
 import GifButton from "./GifButton";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { IconButton } from "@mui/material";
 import { MdSend } from "react-icons/md";
 import AddMoreButton from "./AddMoreButton";

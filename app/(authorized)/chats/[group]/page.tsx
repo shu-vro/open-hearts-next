@@ -4,20 +4,21 @@ import MessageSent from "./Message";
 import MessageForm from "./MessageForm";
 import LeftSideBar from "./LeftSideBar";
 import RightSideBar from "./RightSideBar";
-import MessageContext from "@/contexts/MessageContext";
+import MessageContext, { defaultMessage } from "@/contexts/MessageContext";
 import AppBarChat from "./AppBarChat";
 import useGetGroup from "@/lib/hooks/useGetGroup";
 import { auth } from "@/firebase";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { determineMessageType } from "@/lib/utils";
 import svgBG from "@/assets/dribbble-kc-removebg-preview.svg";
-import { Box } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 import useFetchAllMessages from "@/lib/hooks/useFetchAllMessages";
 import { useAllMessages } from "@/contexts/AllMessagesContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter } from "next/navigation";
 import { SITEMAP } from "@/lib/variables";
+import { Avatar } from "@mui/material";
 
 dayjs.extend(relativeTime);
 
@@ -27,6 +28,7 @@ export default function Chats({ params }: { params: { group: string } }) {
     const chat_section = useRef<HTMLDivElement>(null);
     const group = useGetGroup(params.group);
     useFetchAllMessages(params.group);
+    const [lastMessage, setLastMessage] = useState({ ...defaultMessage });
 
     useEffect(() => {
         if (!auth.currentUser) return push(SITEMAP.login);
@@ -38,6 +40,7 @@ export default function Chats({ params }: { params: { group: string } }) {
                 behavior: "smooth",
             });
         }
+        setLastMessage(messages[messages.length - 1]);
     }, [messages]);
 
     useEffect(() => {
@@ -47,6 +50,8 @@ export default function Chats({ params }: { params: { group: string } }) {
             return push(SITEMAP.chats);
         }
     }, [group]);
+
+    const lastMessageType = determineMessageType(lastMessage);
 
     return (
         <div className="w-full grow flex flex-row h-[calc(100%-4rem)]">
@@ -71,6 +76,30 @@ export default function Chats({ params }: { params: { group: string } }) {
                             />
                         ))}
                         {!messages.length && <EmptyMessage />}
+                        <Chip
+                            sx={{
+                                position: "fixed",
+                                left: "50%",
+                                bottom: "4.5rem",
+                                transform: "translateX(-50%)",
+                                zIndex: 1000,
+                            }}
+                            clickable
+                            label={
+                                (lastMessageType === "text" &&
+                                    lastMessage.text) ||
+                                (lastMessageType === "image" && "image") ||
+                                (lastMessageType === "voice" && "voice") ||
+                                (lastMessageType === "emoji" && "emoji")
+                            }
+                            onClick={() => {}}
+                            avatar={
+                                <Avatar
+                                    src="https://mui.com/static/images/avatar/1.jpg"
+                                    alt="Shuvro"
+                                />
+                            }
+                        />
                     </div>
                     <MessageForm />
                 </main>

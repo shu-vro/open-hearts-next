@@ -1,8 +1,8 @@
 import { TGroupMembersBasicDetails, UserType } from "@/app";
 import { useGroup } from "@/contexts/GroupContext";
-import { auth } from "@/firebase";
+import { auth, firestoreDb } from "@/firebase";
 import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
-import { ROLE } from "@/lib/variables";
+import { DATABASE_PATH, ROLE } from "@/lib/variables";
 
 import {
     Dialog,
@@ -15,22 +15,46 @@ import {
     Button,
     DialogTitle,
 } from "@mui/material";
-import { useState } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
 export default function AddMembersAlertDialog({
     open,
     setOpen,
-    allUsers,
 }: {
     open: boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-    allUsers: UserType[];
 }) {
+    const [allUsers, setAllUsers] = useState<UserType[]>([]);
     const [value, setValue] = useState<UserType[]>([]);
     const { group } = useGroup();
     const handleClose = () => {
         setOpen(false);
     };
+
+    useEffect(() => {
+        if (!group) return;
+        (async () => {
+            const au = await getDocs(
+                query(
+                    collection(firestoreDb, DATABASE_PATH.users),
+                    where("uid", "not-in", group.groupMembers)
+                )
+            );
+            if (group.groupMembers.length <= 10) {
+                setAllUsers(au.docs.map((e) => e.data() as UserType));
+            } else {
+                setAllUsers(
+                    au.docs
+                        .map((e) => e.data() as UserType)
+                        .filter(
+                            (user) =>
+                                group.groupMembers.indexOf(user.uid) === -1
+                        )
+                );
+            }
+        })();
+    }, [group?.groupMembers]);
 
     return (
         <Dialog
@@ -50,12 +74,38 @@ export default function AddMembersAlertDialog({
                             role: ROLE.member,
                         } as TGroupMembersBasicDetails)
                 );
+
+                let newGroupMember = Array.from(
+                    new Set([...group.groupMembers, ...members])
+                );
+                let newGroupMemberBasicDetails = [
+                    ...group.groupMembersBasicDetails,
+                ];
+
+                for (let i = 0; i < membersBasicDetails.length; i++) {
+                    const val = membersBasicDetails[i];
+
+                    let matched = false;
+                    for (
+                        let j = 0;
+                        j < group.groupMembersBasicDetails.length;
+                        j++
+                    ) {
+                        const member = group.groupMembersBasicDetails[j];
+                        if (member.id === val.id) {
+                            matched = true;
+                            break;
+                        }
+                    }
+
+                    if (!matched) {
+                        newGroupMemberBasicDetails.push(val);
+                    }
+                }
+
                 await changeGroupInformation(group.id, {
-                    groupMembers: group.groupMembers.concat(members),
-                    groupMembersBasicDetails:
-                        group.groupMembersBasicDetails.concat(
-                            membersBasicDetails
-                        ),
+                    groupMembers: newGroupMember,
+                    groupMembersBasicDetails: newGroupMemberBasicDetails,
                 });
                 handleClose();
             }}
