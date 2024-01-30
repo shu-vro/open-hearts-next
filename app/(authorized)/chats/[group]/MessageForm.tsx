@@ -43,6 +43,12 @@ export default function MessageForm() {
                 } catch (e: any) {
                     setToastMessage(e.message);
                 }
+                const chat_section = document.getElementById("chat_section");
+                chat_section?.scrollTo({
+                    top: chat_section.scrollHeight,
+                    left: 0,
+                    behavior: "smooth",
+                });
                 setMessage(() => ({ ...defaultMessage, id: nanoid() }));
             }}
             className="input-area flex justify-end items-center w-full relative"

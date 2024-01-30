@@ -303,15 +303,17 @@ export default function Message({ by, type = "text", msg }: Props) {
                                     marginRight: "-6px",
                                 }}
                             >
-                                {Object.entries(msg.reactions).map(
-                                    (emojiData) => (
+                                {Array.from(
+                                    new Set(Object.values(msg.reactions))
+                                ).map((emojiData) => {
+                                    return (
                                         <GetEmojiLink
-                                            key={emojiData[0]}
-                                            unified={emojiData[1]}
+                                            key={emojiData}
+                                            unified={emojiData}
                                             size={15}
                                         />
-                                    )
-                                )}
+                                    );
+                                })}
                             </div>
                         }
                         label={Object.keys(msg.reactions).length}
