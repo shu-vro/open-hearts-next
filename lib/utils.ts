@@ -118,7 +118,7 @@ export function computeSeverityMessage(text: string): AlertColor {
 }
 
 export function determineMessageType(
-    message: Partial<MessageType>
+    message: Partial<MessageType> | null
 ): TypesOfMessage | null {
     if (message?.info) {
         return "info";
