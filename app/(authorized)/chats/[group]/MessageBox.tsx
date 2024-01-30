@@ -278,7 +278,7 @@ function WebsiteInfoCard({ url }: { url: string }) {
                         gridArea: "icon",
                     }}
                     src={metadata.favicon}
-                    alt={new URL(url)?.host}
+                    alt={metadata.ogTitle || "favicon"}
                 />
                 <Typography noWrap gridArea="title">
                     {metadata.ogTitle || url}
