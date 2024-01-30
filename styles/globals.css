@@ -127,3 +127,7 @@ button:active {
 .firebase-emulator-warning {
     display: none !important;
 }
+
+pre {
+    white-space: break-spaces;
+}
