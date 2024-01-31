@@ -40,6 +40,7 @@ declare type MessageType = {
     sender_id: string;
     info: string;
     reportCount: number;
+    pinned: boolean;
 };
 
 export type TypesOfMessage = "text" | "image" | "emoji" | "voice" | "info";

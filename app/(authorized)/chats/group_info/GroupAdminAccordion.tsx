@@ -3,16 +3,15 @@ import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
 import { LoadingButton } from "@mui/lab";
 import {
-    Accordion,
     AccordionDetails,
-    AccordionSummary,
     FormControl,
     InputAdornment,
     OutlinedInput,
 } from "@mui/material";
 import React, { useState } from "react";
 
-export default function GroupAdminAccordion({ loading }: { loading: boolean }) {
+export default function GroupAdminAccordion() {
+    const [loading, setLoading] = useState(false);
     const { group } = useGroup();
     const [groupname, setGroupname] = useState(group?.name || "");
     const { setMessage } = useToastAlert();
@@ -61,10 +60,11 @@ export default function GroupAdminAccordion({ loading }: { loading: boolean }) {
                                             "Error: group name didn't change"
                                         );
                                     }
-
-                                    changeGroupInformation(group.id, {
+                                    setLoading(true);
+                                    await changeGroupInformation(group.id, {
                                         name: groupname,
                                     });
+                                    setLoading(false);
                                 }}
                             >
                                 <span>set</span>

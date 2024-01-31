@@ -3,11 +3,14 @@ import { SwiperSlide } from "swiper/react";
 import HoverWrapper from "../../HoverWrapper";
 import { ImageList, ImageListItem } from "@mui/material";
 import ImagePreviewModal from "../[group]/ImagePreviewModal";
-import { useAllMessages } from "@/contexts/AllMessagesContext";
+import { MessageType } from "@/app";
 
-export default function ImageSwiperSlide() {
+export default function ImageSwiperSlide({
+    messages,
+}: {
+    messages: MessageType[];
+}) {
     const [showImageModal, setShowImageModal] = useState("");
-    const { messages } = useAllMessages();
 
     const handleClose = () => {
         setShowImageModal("");

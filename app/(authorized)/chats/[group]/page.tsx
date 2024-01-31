@@ -2,25 +2,23 @@
 
 import MessageSent from "./Message";
 import MessageForm from "./MessageForm";
-import LeftSideBar from "./LeftSideBar";
-import RightSideBar from "./RightSideBar";
-import MessageContext, { defaultMessage } from "@/contexts/MessageContext";
 import AppBarChat from "./AppBarChat";
 import useGetGroup from "@/lib/hooks/useGetGroup";
 import { auth } from "@/firebase";
 import { useEffect, useRef, useState } from "react";
 import { determineMessageType } from "@/lib/utils";
 import svgBG from "@/assets/dribbble-kc-removebg-preview.svg";
-import { Box, Chip, Fade, Grow } from "@mui/material";
+import { AppBar, Box, Button, Chip, Grow, Toolbar } from "@mui/material";
 import useFetchAllMessages from "@/lib/hooks/useFetchAllMessages";
 import { useAllMessages } from "@/contexts/AllMessagesContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SITEMAP } from "@/lib/variables";
 import { Avatar } from "@mui/material";
 import { MessageType, UserType } from "@/app";
 import { useUsers } from "@/contexts/UsersInGroupContext";
+import Link from "next/link";
 
 dayjs.extend(relativeTime);
 
@@ -28,6 +26,8 @@ export default function Chats({ params }: { params: { group: string } }) {
     const { messages } = useAllMessages();
     const { getUserById } = useUsers();
     const { push } = useRouter();
+    const searchParams = useSearchParams();
+    const pinned = searchParams?.get("pinned") === "1";
     const chat_section = useRef<HTMLDivElement>(null);
     const group = useGetGroup(params.group);
     useFetchAllMessages(params.group);
@@ -40,13 +40,6 @@ export default function Chats({ params }: { params: { group: string } }) {
         if (!auth.currentUser) return push(SITEMAP.login);
         if (!messages.length) return;
         let lastMessage = messages[messages.length - 1];
-        // if (lastMessage.sender_id === auth.currentUser.uid) {
-        //     chat_section.current?.scrollTo({
-        //         top: chat_section.current.scrollHeight,
-        //         left: 0,
-        //         behavior: "smooth",
-        //     });
-        // }
 
         setLastMessage(
             lastMessage.sender_id !== auth.currentUser.uid ? lastMessage : null
@@ -84,76 +77,99 @@ export default function Chats({ params }: { params: { group: string } }) {
     const lastMessageType = determineMessageType(lastMessage);
 
     return (
-        <div className="w-full grow flex flex-row h-[calc(100%-4rem)]">
-            <MessageContext>
-                <LeftSideBar />
-                <main className="grow w-1/2 flex justify-start items-start flex-col h-full">
-                    <AppBarChat />
-                    <div
-                        className="chat-section w-full overflow-y-auto h-full relative"
-                        id="chat_section"
-                        ref={chat_section}
-                    >
-                        {messages.map((msg, i) => (
-                            <MessageSent
-                                key={i}
-                                by={
-                                    auth.currentUser?.uid === msg.sender_id
-                                        ? "me"
-                                        : "him"
-                                }
-                                type={determineMessageType(msg)}
-                                msg={msg}
-                            />
-                        ))}
-                        {!messages.length && <EmptyMessage />}
-                    </div>
-                    <Grow
-                        in={!!lastMessage}
-                        timeout={{
-                            enter: 250,
-                            appear: 500,
-                            exit: 500,
-                        }}
-                    >
-                        <Chip
-                            clickable
-                            sx={{
-                                position: "fixed",
-                                left: "50%",
-                                bottom: "4.5rem",
-                                translate: "-50%",
-                                zIndex: 1000,
-                            }}
-                            label={
-                                (lastMessageType === "text" &&
-                                    lastMessage?.text) ||
-                                (lastMessageType === "image" && "image") ||
-                                (lastMessageType === "voice" && "voice") ||
-                                (lastMessageType === "emoji" && "emoji")
+        <main className="grow w-1/2 flex justify-start items-start flex-col h-full">
+            <AppBarChat />
+            {pinned && (
+                <AppBar
+                    position="static"
+                    sx={{
+                        bgcolor: (theme) => theme.palette.mySwatch.messageBG,
+                    }}
+                >
+                    <Toolbar>
+                        <span className="grow capitalize font-semibold ml-3 truncate">
+                            Pinned Messages
+                        </span>
+                        <Button
+                            variant="outlined"
+                            size="small"
+                            LinkComponent={Link}
+                            href={SITEMAP.group.replace(
+                                `[group]`,
+                                group?.id || ""
+                            )}
+                        >
+                            all messages
+                        </Button>
+                    </Toolbar>
+                </AppBar>
+            )}
+            <div
+                className="chat-section w-full overflow-y-auto h-full relative"
+                id="chat_section"
+                ref={chat_section}
+            >
+                {messages
+                    .filter((msg) => {
+                        return pinned ? msg.pinned : msg;
+                    })
+                    .map((msg, i) => (
+                        <MessageSent
+                            key={i}
+                            by={
+                                auth.currentUser?.uid === msg.sender_id
+                                    ? "me"
+                                    : "him"
                             }
-                            onClick={() => {
-                                chat_section.current?.scrollTo({
-                                    top: chat_section.current.scrollHeight,
-                                    left: 0,
-                                    behavior: "smooth",
-                                });
-                            }}
-                            avatar={
-                                <Avatar
-                                    src={lastMessageSender?.photoURL || ""}
-                                    alt={
-                                        lastMessageSender?.name || "Sender name"
-                                    }
-                                />
-                            }
+                            type={determineMessageType(msg)}
+                            msg={msg}
                         />
-                    </Grow>
-                    <MessageForm />
-                </main>
-                <RightSideBar messages={messages} />
-            </MessageContext>
-        </div>
+                    ))}
+                {!messages.length && <EmptyMessage />}
+            </div>
+            {!pinned && (
+                <Grow
+                    in={!!lastMessage}
+                    timeout={{
+                        enter: 250,
+                        appear: 500,
+                        exit: 500,
+                    }}
+                >
+                    <Chip
+                        clickable
+                        sx={{
+                            position: "fixed",
+                            left: "50%",
+                            bottom: "4.5rem",
+                            translate: "-50%",
+                            zIndex: 1000,
+                            maxWidth: "300px",
+                        }}
+                        label={
+                            (lastMessageType === "text" && lastMessage?.text) ||
+                            (lastMessageType === "image" && "image") ||
+                            (lastMessageType === "voice" && "voice") ||
+                            (lastMessageType === "emoji" && "emoji")
+                        }
+                        onClick={() => {
+                            chat_section.current?.scrollTo({
+                                top: chat_section.current.scrollHeight,
+                                left: 0,
+                                behavior: "smooth",
+                            });
+                        }}
+                        avatar={
+                            <Avatar
+                                src={lastMessageSender?.photoURL || ""}
+                                alt={lastMessageSender?.name || "Sender name"}
+                            />
+                        }
+                    />
+                </Grow>
+            )}
+            {!pinned && <MessageForm />}
+        </main>
     );
 }
 

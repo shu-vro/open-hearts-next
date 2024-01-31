@@ -8,5 +8,11 @@ export default function MuiLink({
 }: LinkProps &
     React.AnchorHTMLAttributes<HTMLAnchorElement> &
     TypographyOwnProps) {
-    return <MuiMaterialLink component={Link} {...rest}></MuiMaterialLink>;
+    return (
+        <MuiMaterialLink
+            component={Link}
+            {...rest}
+            underline="hover"
+        ></MuiMaterialLink>
+    );
 }

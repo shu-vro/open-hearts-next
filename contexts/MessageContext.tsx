@@ -45,4 +45,5 @@ export const defaultMessage = Object.freeze({
     created_at: serverTimestamp() as Timestamp,
     sender_id: "",
     info: "",
+    pinned: false,
 } as MessageType);

@@ -19,7 +19,7 @@ import ChangeGroupEmoji from "./ChangeGroupEmoji";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { auth } from "@/firebase";
 import { useRouter } from "next/navigation";
-import { ROLE } from "@/lib/variables";
+import { ROLE, SITEMAP } from "@/lib/variables";
 import AddMembersAlertDialog from "./AddMembersAlertDialog";
 import { IGroupDetails, MessageType } from "@/app";
 import { URL_REGEX } from "@/lib/utils";
@@ -30,6 +30,7 @@ import GroupLink from "./GroupLink";
 import GroupAdminAccordion from "./GroupAdminAccordion";
 import ImageSwiperSlide from "./ImageSwiperSlide";
 import LeaveGroup from "./LeaveGroup";
+import Link from "next/link";
 
 export default function GroupInfo({
     messages = [],
@@ -40,10 +41,8 @@ export default function GroupInfo({
 }) {
     const [activeTab, setActiveTab] = useState<0 | 1 | 2 | number>(0);
     const [swiper, setSwiper] = useState<SwiperType>();
-    const [openLeaveDialog, setOpenLeaveDialog] = useState(false);
     const [addUserDialog, setAddUserDialog] = useState(false);
     const { allUsers } = useUsers();
-    const [loading, setLoading] = useState(false);
     const [myRole, setMyRole] = useState<number | undefined>();
     const handleTabChange = (newValue: number) => {
         setActiveTab(newValue);
@@ -51,11 +50,6 @@ export default function GroupInfo({
             swiper.slideTo(newValue);
         }
     };
-    const handleCloseLeaveDialog = () => {
-        setOpenLeaveDialog(false);
-    };
-    const { setMessage } = useToastAlert();
-    const { push } = useRouter();
 
     useEffect(() => {
         if (!group) return;
@@ -90,7 +84,7 @@ export default function GroupInfo({
                 )?.role ?? ROLE.member) < ROLE.member && (
                     <Accordion elevation={3}>
                         <AccordionSummary>✨ Manage Group ✨</AccordionSummary>
-                        <GroupAdminAccordion loading={loading} />
+                        <GroupAdminAccordion />
                     </Accordion>
                 )}
                 <Accordion>
@@ -145,7 +139,24 @@ export default function GroupInfo({
                 </Accordion>
                 <Accordion>
                     <AccordionSummary>Pinned Message</AccordionSummary>
-                    <AccordionDetails></AccordionDetails>
+                    <AccordionDetails>
+                        <Button
+                            LinkComponent={Link}
+                            href={SITEMAP.pinned.replace(
+                                "[group]",
+                                group?.id || ""
+                            )}
+                            variant="contained"
+                            color="warning"
+                            sx={{
+                                display: "block",
+                                mx: "auto",
+                                width: "fit-content",
+                            }}
+                        >
+                            go to pinned message
+                        </Button>
+                    </AccordionDetails>
                 </Accordion>
 
                 <Accordion className="mb-4">
@@ -197,7 +208,7 @@ export default function GroupInfo({
                             }}
                         >
                             <SwiperSlide>
-                                <ImageSwiperSlide />
+                                <ImageSwiperSlide messages={messages} />
                             </SwiperSlide>
                             <SwiperSlide>
                                 <Box>

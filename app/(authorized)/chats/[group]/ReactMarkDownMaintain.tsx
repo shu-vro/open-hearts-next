@@ -1,4 +1,4 @@
-import Link from "next/link";
+import MuiLink from "@/app/MuiLink";
 import React from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -15,18 +15,18 @@ export default function ReactMarkDownMaintain({
                 a(props) {
                     const { href, children } = props;
                     return (
-                        <Link
+                        <MuiLink
                             href={href as string}
                             target="_blank"
                             rel="noopener noreferrer"
                         >
                             {children}
-                        </Link>
+                        </MuiLink>
                     );
                 },
                 img(props) {
                     return (
-                        <Link
+                        <MuiLink
                             href={props.src as string}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -41,7 +41,7 @@ export default function ReactMarkDownMaintain({
                                     maxWidth: "100%",
                                 }}
                             />
-                        </Link>
+                        </MuiLink>
                     );
                 },
                 blockquote(props) {
