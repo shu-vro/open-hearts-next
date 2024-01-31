@@ -33,10 +33,13 @@ import { MemberTile } from "./MemberTile";
 import EditMemberNicknameTile from "./EditMemberNicknameTile";
 import ChangeGroupEmoji from "./ChangeGroupEmoji";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
-import { changeGroupInformation } from "@/lib/helpers/firebase-helpers";
-import { auth } from "@/firebase";
+import {
+    changeGroupInformation,
+    sendInfoMessageToGroup,
+} from "@/lib/helpers/firebase-helpers";
+import { auth, firestoreDb } from "@/firebase";
 import { useRouter } from "next/navigation";
-import { ROLE, SITEMAP } from "@/lib/variables";
+import { DATABASE_PATH, ROLE, SITEMAP } from "@/lib/variables";
 import AddMembersAlertDialog from "./AddMembersAlertDialog";
 import { IGroupDetails, MessageType } from "@/app";
 import { URL_REGEX } from "@/lib/utils";
@@ -44,6 +47,7 @@ import { LoadingButton } from "@mui/lab";
 import VoiceMessageBox from "../[group]/VoiceMessageBox";
 import EditAndDisplayAvatar from "./EditAndDisplayAvatar";
 import { useUsers } from "@/contexts/UsersInGroupContext";
+import { arrayRemove, doc, updateDoc } from "firebase/firestore";
 
 export default function GroupInfo({
     messages = [],
@@ -438,15 +442,35 @@ export default function GroupInfo({
                                 setLoading(true);
                                 try {
                                     if (!group) return;
-                                    let groupMembers =
-                                        group.groupMembers.filter(
-                                            (member) =>
-                                                member !== auth.currentUser?.uid
+                                    if (!auth.currentUser) return;
+
+                                    const myInfoOnGroup =
+                                        group.groupMembersBasicDetails.find(
+                                            (e) =>
+                                                e.id === auth.currentUser?.uid
                                         );
-                                    await changeGroupInformation(
-                                        group?.id || "",
+
+                                    if (!myInfoOnGroup) {
+                                        return setMessage(
+                                            "Error: something went wrong. please reLogin"
+                                        );
+                                    }
+                                    await sendInfoMessageToGroup(
+                                        `${myInfoOnGroup.nickname} [${myInfoOnGroup.id}] has left the group`,
+                                        group.id,
+                                        myInfoOnGroup
+                                    );
+
+                                    await updateDoc(
+                                        doc(
+                                            firestoreDb,
+                                            DATABASE_PATH.groupDetails,
+                                            group.id
+                                        ),
                                         {
-                                            groupMembers,
+                                            groupMembers: arrayRemove(
+                                                auth.currentUser?.uid
+                                            ),
                                         }
                                     );
                                     setMessage("You left from group.");

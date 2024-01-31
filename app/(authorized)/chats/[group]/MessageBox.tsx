@@ -16,8 +16,7 @@ import { OgObject } from "open-graph-scraper/dist/lib/types";
 import HoverWrapper from "../../HoverWrapper";
 import { URL_REGEX } from "@/lib/utils";
 import VoiceMessageBox from "./VoiceMessageBox";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import ReactMarkDownMaintain from "./ReactMarkDownMaintain";
 
 export function MessageBox({
     by,
@@ -148,9 +147,9 @@ export function MessageBox({
                                 },
                             }}
                         >
-                            <Markdown remarkPlugins={[remarkGfm]}>
+                            <ReactMarkDownMaintain>
                                 {msg.text}
-                            </Markdown>
+                            </ReactMarkDownMaintain>
                         </Box>
                     </Box>
                 </NativeHoverWrapper>
@@ -204,9 +203,9 @@ export function MessageBox({
                             },
                         }}
                     >
-                        <Markdown remarkPlugins={[remarkGfm]}>
+                        <ReactMarkDownMaintain>
                             {msg.text}
-                        </Markdown>
+                        </ReactMarkDownMaintain>
                     </Box>
                 </NativeHoverWrapper>
                 <div

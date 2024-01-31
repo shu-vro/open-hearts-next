@@ -222,8 +222,10 @@ export default function Message({ by, type = "text", msg }: Props) {
     };
 
     return type === "info" ? (
-        <div className="text-center w-full text-xs opacity-70">
-            <div>{dayjs(msg.created_at.toMillis()).fromNow()}</div>
+        <div className="text-center w-full text-xs opacity-70 my-4">
+            <div>
+                {dayjs(msg.created_at?.toMillis() || Date.now()).fromNow()}
+            </div>
             {msg.info}
         </div>
     ) : (

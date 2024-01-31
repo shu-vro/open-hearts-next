@@ -154,9 +154,9 @@ export default function SharedLink({
                     <Typography noWrap className="name text-lg">
                         {sender?.name || "Friend's name"}
                     </Typography>
-                    <Typography className="justify-self-end opacity-70 font-[.8em] grow">
-                        {dayjs(messageTime?.toMillis()).fromNow()}
-                    </Typography>
+                    <span className="opacity-70 text-[.8em] grow text-right">
+                        {dayjs(messageTime?.toMillis() || Date.now()).fromNow()}
+                    </span>
                 </Box>
                 <Box>{preview}</Box>
             </Box>

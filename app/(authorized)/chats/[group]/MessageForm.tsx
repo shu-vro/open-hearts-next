@@ -39,7 +39,12 @@ export default function MessageForm() {
                     (member) => member.id === auth.currentUser?.uid
                 );
                 try {
-                    setChatMessage(group.id, message, BasicDetails, message.id);
+                    await setChatMessage(
+                        group.id,
+                        message,
+                        BasicDetails,
+                        message.id
+                    );
                 } catch (e: any) {
                     setToastMessage(e.message);
                 }
@@ -61,7 +66,7 @@ export default function MessageForm() {
                 label="Type something..."
                 variant="outlined"
                 multiline
-                maxRows={4}
+                maxRows={6}
                 fullWidth
                 className="grow z-50"
                 name="message"

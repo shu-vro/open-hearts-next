@@ -1,7 +1,7 @@
 "use client";
 
 import Notification, { ExtraButton } from "./Notification";
-import { INotification } from "@/app";
+import { INotification, TGroupMembersBasicDetails } from "@/app";
 import {
     Timestamp,
     arrayRemove,
@@ -12,12 +12,13 @@ import {
     updateDoc,
 } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
-import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
+import { DATABASE_PATH, ROLE, SITEMAP } from "@/lib/variables";
 import { nanoid } from "nanoid";
 import favicon from "@/app/favicon.ico";
 import { useRouter } from "next/navigation";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { useState } from "react";
+import { sendInfoMessageToGroup } from "@/lib/helpers/firebase-helpers";
 
 export default function ParseNotifications({
     iconOnly = false,
@@ -42,26 +43,30 @@ export default function ParseNotifications({
     ) => {
         if (!auth.currentUser) return;
         const notificationId = nanoid();
-        await setDoc(
-            doc(firestoreDb, DATABASE_PATH.notifications, notificationId),
-            {
-                id: notificationId,
-                receiverId: [auth.currentUser.uid],
-                description: description,
-                type: "info-message",
-                photoURL: null,
-                time: serverTimestamp() as Timestamp,
-                seen: [
-                    {
-                        id: auth.currentUser.uid,
-                        done: false,
-                    },
-                ],
-            } as INotification,
-            {
-                merge: true,
-            }
-        );
+        try {
+            await setDoc(
+                doc(firestoreDb, DATABASE_PATH.notifications, notificationId),
+                {
+                    id: notificationId,
+                    receiverId: [auth.currentUser.uid],
+                    description: description,
+                    type: "info-message",
+                    photoURL: null,
+                    time: serverTimestamp() as Timestamp,
+                    seen: [
+                        {
+                            id: auth.currentUser.uid,
+                            done: false,
+                        },
+                    ],
+                } as INotification,
+                {
+                    merge: true,
+                }
+            );
+        } catch (e) {
+            console.log("PARSE NOTIFICATION", e);
+        }
     };
 
     return (
@@ -122,6 +127,20 @@ export default function ParseNotifications({
                                                       groupMembers: arrayUnion(
                                                           auth.currentUser.uid
                                                       ),
+                                                  }
+                                              );
+
+                                              await sendInfoMessageToGroup(
+                                                  auth.currentUser.displayName +
+                                                      ` joined the group`,
+                                                  notification.extraInformation
+                                                      .groupId as string,
+                                                  {
+                                                      addedBy: "",
+                                                      id: auth.currentUser.uid,
+                                                      nickname: auth.currentUser
+                                                          .displayName as string,
+                                                      role: ROLE.member,
                                                   }
                                               );
 

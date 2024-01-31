@@ -23,6 +23,7 @@ import { DEFAULT_GROUP_DETAILS } from "@/lib/variables";
 import { nanoid } from "nanoid";
 import { ROLE } from "@/lib/variables";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { defaultMessage } from "@/contexts/MessageContext";
 
 /**
  * This function creates a group if there is no groupId, or
@@ -209,5 +210,23 @@ export async function setChatMessage(
     } catch (e) {
         alert("error\nCheck console");
         console.table({ e, obj, by, chatId, groupId });
+    }
+}
+
+export async function sendInfoMessageToGroup(
+    message: string,
+    groupId: string,
+    by: TGroupMembersBasicDetails
+) {
+    if (!auth.currentUser) return;
+    const newMessage = { ...defaultMessage };
+    newMessage.info = message;
+
+    newMessage.sender_id = auth.currentUser.uid;
+
+    try {
+        await setChatMessage(groupId, newMessage, by);
+    } catch (e) {
+        console.log(e);
     }
 }

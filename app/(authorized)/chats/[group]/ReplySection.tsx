@@ -7,7 +7,7 @@ import { VscClose } from "react-icons/vsc";
 import { BiImages } from "react-icons/bi";
 import { useAllMessages } from "@/contexts/AllMessagesContext";
 import { determineMessageType } from "@/lib/utils";
-import { useEffect } from "react";
+import { useGroup } from "@/contexts/GroupContext";
 
 /**
  * @required for [MessageForm.tsx](<./MessageForm.tsx>)
@@ -15,9 +15,13 @@ import { useEffect } from "react";
 export default function ReplySection() {
     const { message, setMessage } = useMessage();
     const { messages } = useAllMessages();
+    const { group } = useGroup();
 
     const reply = messages.find((e) => e.id === message.reply);
     const replyType = determineMessageType(reply || {});
+    const replyTo = group?.groupMembersBasicDetails.find(
+        (e) => e.id === reply?.sender_id
+    );
 
     return reply ? (
         <Box
@@ -35,7 +39,7 @@ export default function ReplySection() {
                     gridArea: "name",
                 }}
             >
-                {replyType}
+                {replyTo?.nickname || replyType}
             </b>
             <VscClose
                 style={{
