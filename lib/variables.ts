@@ -10,7 +10,7 @@ export enum DATABASE_PATH {
     reports = "reports",
 }
 
-export enum SITEMAP {
+export const enum SITEMAP {
     forgot_password = "/forgot-password",
     chats = "/chats",
     login = "/login",
@@ -24,15 +24,17 @@ export enum SITEMAP {
     call_page = "/chats/call",
     group_info = "/chats/group_info",
     notifications = "/notifications",
+    group = "/chats/[group]",
+    pinned = "/chats/[group]?pinned=1",
 }
 
-export enum STATUS {
+export const enum STATUS {
     active = "active",
     away = "away",
     inactive = "inactive",
 }
 
-export enum ROLE {
+export const enum ROLE {
     owner,
     admin,
     member,

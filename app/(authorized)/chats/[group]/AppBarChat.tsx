@@ -8,7 +8,6 @@ import {
     IconButton,
     Toolbar,
     Tooltip,
-    Typography,
     useMediaQuery,
 } from "@mui/material";
 import Link from "next/link";

@@ -53,6 +53,7 @@ export default function DeleteOrReportChip({ msg, by }: Props) {
                     <Chip
                         icon={<MdReport size="18" />}
                         label="Report"
+                        size="small"
                         onClick={function () {
                             setShowReportMessageModal(true);
                         }}
@@ -64,6 +65,7 @@ export default function DeleteOrReportChip({ msg, by }: Props) {
                     <Chip
                         icon={<RiDeleteBin6Fill size="18" />}
                         label="Delete"
+                        size="small"
                         onClick={function () {
                             setShowDeleteMessageModal(true);
                         }}
@@ -91,7 +93,7 @@ export default function DeleteOrReportChip({ msg, by }: Props) {
                         onClick={handleShowReportMessageModalClose}
                         variant="contained"
                     >
-                        Close
+                        Cancel
                     </Button>
                     <Button
                         onClick={async () => {
@@ -169,7 +171,7 @@ export default function DeleteOrReportChip({ msg, by }: Props) {
                         onClick={handleShowDeleteMessageModalClose}
                         variant="contained"
                     >
-                        Close
+                        Cancel
                     </Button>
                     <Button
                         onClick={async () => {
