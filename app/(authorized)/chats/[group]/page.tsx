@@ -16,11 +16,36 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SITEMAP } from "@/lib/variables";
 import { Avatar } from "@mui/material";
-import { MessageType, UserType } from "@/app";
+import { IGroupDetails, MessageType, UserType } from "@/app";
 import { useUsers } from "@/contexts/UsersInGroupContext";
 import Link from "next/link";
 
 dayjs.extend(relativeTime);
+
+function PinnedBar({ groupId }: { groupId: IGroupDetails["id"] }) {
+    return (
+        <AppBar
+            position="static"
+            sx={{
+                bgcolor: (theme) => theme.palette.mySwatch.messageBG,
+            }}
+        >
+            <Toolbar>
+                <span className="grow capitalize font-semibold ml-3 truncate">
+                    Pinned Messages
+                </span>
+                <Button
+                    variant="outlined"
+                    size="small"
+                    LinkComponent={Link}
+                    href={SITEMAP.group.replace(`[group]`, groupId)}
+                >
+                    all messages
+                </Button>
+            </Toolbar>
+        </AppBar>
+    );
+}
 
 export default function Chats({ params }: { params: { group: string } }) {
     const { messages } = useAllMessages();
@@ -79,31 +104,7 @@ export default function Chats({ params }: { params: { group: string } }) {
     return (
         <main className="grow w-1/2 flex justify-start items-start flex-col h-full">
             <AppBarChat />
-            {pinned && (
-                <AppBar
-                    position="static"
-                    sx={{
-                        bgcolor: (theme) => theme.palette.mySwatch.messageBG,
-                    }}
-                >
-                    <Toolbar>
-                        <span className="grow capitalize font-semibold ml-3 truncate">
-                            Pinned Messages
-                        </span>
-                        <Button
-                            variant="outlined"
-                            size="small"
-                            LinkComponent={Link}
-                            href={SITEMAP.group.replace(
-                                `[group]`,
-                                group?.id || ""
-                            )}
-                        >
-                            all messages
-                        </Button>
-                    </Toolbar>
-                </AppBar>
-            )}
+            {pinned && <PinnedBar groupId={group?.id || ""} />}
             <div
                 className="chat-section w-full overflow-y-auto h-full relative"
                 id="chat_section"

@@ -256,13 +256,26 @@ export default function Message({ by, type = "text", msg }: Props) {
                 )}
                 style={{ gridArea: "name" }}
             >
-                <Avatar
-                    src={user?.photoURL || ""}
-                    alt="shirshen shuvro"
-                    component={by === "him" ? Link : "div"}
-                    href={SITEMAP.profile + "/" + msg.sender_id}
-                    sx={{ width: 30, height: 30 }}
-                />
+                <div className="relative">
+                    <Avatar
+                        src={user?.photoURL || ""}
+                        alt="shirshen shuvro"
+                        component={by === "him" ? Link : "div"}
+                        href={SITEMAP.profile + "/" + msg.sender_id}
+                        sx={{ width: 30, height: 30 }}
+                    />
+                    {msg.pinned && (
+                        <span
+                            className="absolute bottom--6 right-0 z-[4] text-xl"
+                            style={{
+                                transform:
+                                    by === "him" ? `rotateY(-180deg)` : "",
+                            }}
+                        >
+                            📌
+                        </span>
+                    )}
+                </div>
                 {by === "him" && (
                     <span>
                         {
