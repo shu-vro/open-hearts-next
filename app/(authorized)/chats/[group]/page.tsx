@@ -19,6 +19,7 @@ import { Avatar } from "@mui/material";
 import { IGroupDetails, MessageType, UserType } from "@/app";
 import { useUsers } from "@/contexts/UsersInGroupContext";
 import Link from "next/link";
+import removeMd from "remove-markdown";
 
 dayjs.extend(relativeTime);
 
@@ -147,12 +148,13 @@ export default function Chats({ params }: { params: { group: string } }) {
                             zIndex: 1000,
                             maxWidth: "300px",
                         }}
-                        label={
+                        label={removeMd(
                             (lastMessageType === "text" && lastMessage?.text) ||
-                            (lastMessageType === "image" && "image") ||
-                            (lastMessageType === "voice" && "voice") ||
-                            (lastMessageType === "emoji" && "emoji")
-                        }
+                                (lastMessageType === "image" && "image") ||
+                                (lastMessageType === "voice" && "voice") ||
+                                (lastMessageType === "emoji" && "emoji") ||
+                                ""
+                        )}
                         onClick={() => {
                             chat_section.current?.scrollTo({
                                 top: chat_section.current.scrollHeight,

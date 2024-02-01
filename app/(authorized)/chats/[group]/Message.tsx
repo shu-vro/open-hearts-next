@@ -39,7 +39,7 @@ import GetEmojiLink from "./GetEmojiLink";
 import DeletedMessageBox from "./DeletedMessageBox";
 import { MessageBox } from "./MessageBox";
 import { useGroup } from "@/contexts/GroupContext";
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
 import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import dayjs from "dayjs";
@@ -47,6 +47,7 @@ import { useToastAlert } from "@/contexts/ToastAlertContext";
 import MuiLink from "@/app/MuiLink";
 import DeleteOrReportChip from "./DeleteOrReportChip";
 import { useUsers } from "@/contexts/UsersInGroupContext";
+import { PiPushPinDuotone } from "react-icons/pi";
 
 export type Props = {
     by: "me" | "him";
@@ -334,6 +335,7 @@ export default function Message({ by, type = "text", msg }: Props) {
                         label={Object.keys(msg.reactions).length}
                         color="primary"
                         variant="filled"
+                        size="small"
                         clickable
                         onClick={function () {
                             clickCount++;
@@ -358,19 +360,25 @@ export default function Message({ by, type = "text", msg }: Props) {
                                 newMsg.reactions[auth.currentUser.uid] = emoji;
                             }
 
-                            await setDoc(
-                                doc(
-                                    firestoreDb,
-                                    DATABASE_PATH.groupDetails,
-                                    group.id,
-                                    DATABASE_PATH.messages,
-                                    msg.id
-                                ),
-                                newMsg,
-                                {
-                                    merge: true,
-                                }
-                            );
+                            try {
+                                await setDoc(
+                                    doc(
+                                        firestoreDb,
+                                        DATABASE_PATH.groupDetails,
+                                        group.id,
+                                        DATABASE_PATH.messages,
+                                        msg.id
+                                    ),
+                                    newMsg,
+                                    {
+                                        merge: true,
+                                    }
+                                );
+                            } catch (e) {
+                                setToastMessage(
+                                    "Error: pinned message went wrong!"
+                                );
+                            }
                             clickCount = 0; // Reset the click count on double-click
                         }}
                     />
@@ -419,8 +427,10 @@ export default function Message({ by, type = "text", msg }: Props) {
             </div>
             <div
                 className={cn(
-                    "reply flex justify-center items-center flex-row",
-                    by === "him" ? "justify-self-end" : "justify-self-start"
+                    "reply flex justify-center items-center flex-row-reverse",
+                    by === "him"
+                        ? "justify-self-end"
+                        : "justify-self-start flex-row"
                 )}
                 style={{ gridArea: "reply" }}
             >
@@ -428,6 +438,7 @@ export default function Message({ by, type = "text", msg }: Props) {
                     <Chip
                         icon={<AiOutlineMessage />}
                         label="Reply"
+                        size="small"
                         onClick={() => {
                             setMessage((prev) => {
                                 return {
@@ -439,6 +450,42 @@ export default function Message({ by, type = "text", msg }: Props) {
                     />
                 </HoverWrapper>
                 <DeleteOrReportChip msg={msg} by={by} />
+
+                <HoverWrapper className="rounded-full">
+                    <Chip
+                        icon={<PiPushPinDuotone />}
+                        size="small"
+                        clickable
+                        label={msg.pinned ? "unpin" : "pin"}
+                        onClick={async () => {
+                            if (!group)
+                                return setToastMessage("Group is not resolved");
+                            if (!auth.currentUser)
+                                return setToastMessage("User is not resolved");
+                            try {
+                                await setDoc(
+                                    doc(
+                                        firestoreDb,
+                                        DATABASE_PATH.groupDetails,
+                                        group.id,
+                                        DATABASE_PATH.messages,
+                                        msg.id
+                                    ),
+                                    {
+                                        pinned: !msg.pinned,
+                                    } as Partial<MessageType>,
+                                    {
+                                        merge: true,
+                                    }
+                                );
+                            } catch (e) {
+                                setToastMessage(
+                                    "Error: pinned message went wrong!"
+                                );
+                            }
+                        }}
+                    />
+                </HoverWrapper>
             </div>
 
             <PickEmoji
