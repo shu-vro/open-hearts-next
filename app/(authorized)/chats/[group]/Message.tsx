@@ -39,7 +39,7 @@ import GetEmojiLink from "./GetEmojiLink";
 import DeletedMessageBox from "./DeletedMessageBox";
 import { MessageBox } from "./MessageBox";
 import { useGroup } from "@/contexts/GroupContext";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
 import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import dayjs from "dayjs";
@@ -47,7 +47,7 @@ import { useToastAlert } from "@/contexts/ToastAlertContext";
 import MuiLink from "@/app/MuiLink";
 import DeleteOrReportChip from "./DeleteOrReportChip";
 import { useUsers } from "@/contexts/UsersInGroupContext";
-import { PiPushPinDuotone } from "react-icons/pi";
+import PinnedChip from "./PinnedChip";
 
 export type Props = {
     by: "me" | "him";
@@ -451,41 +451,16 @@ export default function Message({ by, type = "text", msg }: Props) {
                 </HoverWrapper>
                 <DeleteOrReportChip msg={msg} by={by} />
 
-                <HoverWrapper className="rounded-full">
-                    <Chip
-                        icon={<PiPushPinDuotone />}
-                        size="small"
-                        clickable
-                        label={msg.pinned ? "unpin" : "pin"}
-                        onClick={async () => {
-                            if (!group)
-                                return setToastMessage("Group is not resolved");
-                            if (!auth.currentUser)
-                                return setToastMessage("User is not resolved");
-                            try {
-                                await setDoc(
-                                    doc(
-                                        firestoreDb,
-                                        DATABASE_PATH.groupDetails,
-                                        group.id,
-                                        DATABASE_PATH.messages,
-                                        msg.id
-                                    ),
-                                    {
-                                        pinned: !msg.pinned,
-                                    } as Partial<MessageType>,
-                                    {
-                                        merge: true,
-                                    }
-                                );
-                            } catch (e) {
-                                setToastMessage(
-                                    "Error: pinned message went wrong!"
-                                );
-                            }
-                        }}
-                    />
-                </HoverWrapper>
+                <PinnedChip
+                    pinned={msg.pinned}
+                    groupId={group?.id}
+                    messageId={msg.id}
+                    sender_role={
+                        group?.groupMembersBasicDetails.find(
+                            (e) => e.id === auth.currentUser?.uid
+                        )?.role as number
+                    }
+                />
             </div>
 
             <PickEmoji
