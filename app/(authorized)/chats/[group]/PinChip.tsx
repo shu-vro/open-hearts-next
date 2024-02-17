@@ -8,7 +8,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { auth, firestoreDb } from "@/firebase";
 import { DATABASE_PATH, ROLE } from "@/lib/variables";
 
-export default function PinnedChip({
+export default function PinChip({
     pinned,
     groupId,
     messageId,

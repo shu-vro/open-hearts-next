@@ -19,13 +19,17 @@ export default function MessageFooterButtonsMobile({
     setMessage,
     msg,
     groupId,
+    setShowDeleteMessageModal,
+    setShowReportMessageModal,
 }: {
     by: "me" | "him";
     setMessage: React.Dispatch<React.SetStateAction<MessageType>>;
     msg: MessageType;
     groupId?: string;
+    setShowDeleteMessageModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowReportMessageModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-    const [open, setOpen] = useState(process.env.NODE_ENV == "development");
+    const [open, setOpen] = useState(false);
     const handleClose = () => {
         setOpen(false);
     };
@@ -157,7 +161,18 @@ export default function MessageFooterButtonsMobile({
                         >
                             {msg.pinned ? "unpin" : "pin"} message
                         </Button>
-                        <Button>delete</Button>
+                        <Button
+                            onClick={() => {
+                                if (by === "him") {
+                                    setShowReportMessageModal(true);
+                                } else if (by === "me" && !msg.deleted) {
+                                    setShowDeleteMessageModal(true);
+                                }
+                            }}
+                        >
+                            {by === "him" && "Report"}
+                            {by === "me" && !msg.deleted && "Delete"}
+                        </Button>
                     </ButtonGroup>
                 </Box>
             </SwipeableDrawer>

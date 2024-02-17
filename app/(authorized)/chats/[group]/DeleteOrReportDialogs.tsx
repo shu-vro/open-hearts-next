@@ -9,8 +9,6 @@ import {
     DialogContentText,
     DialogTitle,
 } from "@mui/material";
-import { RiDeleteBin6Fill } from "react-icons/ri";
-import { MdReport } from "react-icons/md";
 import { useGroup } from "@/contexts/GroupContext";
 import { auth, firestoreDb } from "@/firebase";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
@@ -28,14 +26,21 @@ import { useAllMessages } from "@/contexts/AllMessagesContext";
 
 type Props = {
     msg: MessageType;
-    by: "me" | "him";
+    showDeleteMessageModal: boolean;
+    showReportMessageModal: boolean;
+    setShowReportMessageModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowDeleteMessageModal: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function DeleteOrReportChip({ msg, by }: Props) {
+export default function DeleteOrReportChip({
+    msg,
+    showDeleteMessageModal,
+    showReportMessageModal,
+    setShowDeleteMessageModal,
+    setShowReportMessageModal,
+}: Props) {
     const { group } = useGroup();
     const { setMessage: setToastMessage } = useToastAlert();
-    const [showDeleteMessageModal, setShowDeleteMessageModal] = useState(false);
-    const [showReportMessageModal, setShowReportMessageModal] = useState(false);
     const {
         messages: { length: lenOfMessages },
     } = useAllMessages();
@@ -48,30 +53,6 @@ export default function DeleteOrReportChip({ msg, by }: Props) {
     };
     return (
         <>
-            {by === "him" && (
-                <HoverWrapper className="rounded-full">
-                    <Chip
-                        icon={<MdReport size="18" />}
-                        label="Report"
-                        size="small"
-                        onClick={function () {
-                            setShowReportMessageModal(true);
-                        }}
-                    />
-                </HoverWrapper>
-            )}
-            {by === "me" && !msg.deleted && (
-                <HoverWrapper className="rounded-full">
-                    <Chip
-                        icon={<RiDeleteBin6Fill size="18" />}
-                        label="Delete"
-                        size="small"
-                        onClick={function () {
-                            setShowDeleteMessageModal(true);
-                        }}
-                    />
-                </HoverWrapper>
-            )}
             {/* REPORT DIALOG */}
             <Dialog
                 open={showReportMessageModal}
