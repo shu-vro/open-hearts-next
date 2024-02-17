@@ -3,7 +3,7 @@
 import { DefaultUserConfig, cn } from "@/lib/utils";
 import Avatar from "@mui/material/Avatar";
 import React, { useEffect, useState } from "react";
-import { AiOutlineMessage, AiOutlinePlus } from "react-icons/ai";
+import { AiOutlinePlus } from "react-icons/ai";
 import {
     Box,
     Button,
@@ -14,6 +14,7 @@ import {
     DialogTitle,
     IconButton,
     Popover,
+    useMediaQuery,
     useTheme,
 } from "@mui/material";
 import EmojiPicker, {
@@ -45,9 +46,10 @@ import { DATABASE_PATH, SITEMAP } from "@/lib/variables";
 import dayjs from "dayjs";
 import { useToastAlert } from "@/contexts/ToastAlertContext";
 import MuiLink from "@/app/MuiLink";
-import DeleteOrReportChip from "./DeleteOrReportChip";
+import DeleteOrReportDialogs from "./DeleteOrReportDialogs";
 import { useUsers } from "@/contexts/UsersInGroupContext";
-import PinnedChip from "./PinnedChip";
+import MessageFooterButtonsMobile from "./MessageFooterButtonsMobile";
+import MessageFooterButtonsDesktop from "./MessageFooterButtonsDesktop";
 
 export type Props = {
     by: "me" | "him";
@@ -213,6 +215,9 @@ export default function Message({ by, type = "text", msg }: Props) {
     const { setMessage } = useMessage();
     const { setMessage: setToastMessage } = useToastAlert();
     const [showReactors, setShowReactors] = useState(false);
+    const [showDeleteMessageModal, setShowDeleteMessageModal] = useState(false);
+    const [showReportMessageModal, setShowReportMessageModal] = useState(false);
+    const match_700 = useMediaQuery("(max-width: 700px)");
 
     useEffect(() => {
         setUser(getUserById(msg.sender_id));
@@ -425,43 +430,37 @@ export default function Message({ by, type = "text", msg }: Props) {
                     </DialogActions>
                 </Dialog>
             </div>
-            <div
-                className={cn(
-                    "reply flex justify-center items-center flex-row-reverse",
-                    by === "him"
-                        ? "justify-self-end"
-                        : "justify-self-start flex-row"
-                )}
-                style={{ gridArea: "reply" }}
-            >
-                <HoverWrapper className="rounded-full">
-                    <Chip
-                        icon={<AiOutlineMessage />}
-                        label="Reply"
-                        size="small"
-                        onClick={() => {
-                            setMessage((prev) => {
-                                return {
-                                    ...prev,
-                                    reply: msg.id,
-                                };
-                            });
-                        }}
-                    />
-                </HoverWrapper>
-                <DeleteOrReportChip msg={msg} by={by} />
-
-                <PinnedChip
-                    pinned={msg.pinned}
+            {match_700 ? (
+                <MessageFooterButtonsMobile
                     groupId={group?.id}
-                    messageId={msg.id}
+                    by={by}
+                    msg={msg}
+                    setMessage={setMessage}
+                    setShowDeleteMessageModal={setShowDeleteMessageModal}
+                    setShowReportMessageModal={setShowReportMessageModal}
+                />
+            ) : (
+                <MessageFooterButtonsDesktop
+                    msg={msg}
+                    setMessage={setMessage}
+                    by={by}
+                    groupId={group?.id}
+                    setShowDeleteMessageModal={setShowDeleteMessageModal}
+                    setShowReportMessageModal={setShowReportMessageModal}
                     sender_role={
                         group?.groupMembersBasicDetails.find(
                             (e) => e.id === auth.currentUser?.uid
                         )?.role as number
                     }
                 />
-            </div>
+            )}
+            <DeleteOrReportDialogs
+                msg={msg}
+                showDeleteMessageModal={showDeleteMessageModal}
+                showReportMessageModal={showReportMessageModal}
+                setShowDeleteMessageModal={setShowDeleteMessageModal}
+                setShowReportMessageModal={setShowReportMessageModal}
+            />
 
             <PickEmoji
                 msg={msg}
