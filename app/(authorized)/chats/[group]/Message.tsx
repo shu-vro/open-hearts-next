@@ -14,6 +14,7 @@ import {
     DialogTitle,
     IconButton,
     Popover,
+    useMediaQuery,
     useTheme,
 } from "@mui/material";
 import EmojiPicker, {
@@ -47,7 +48,7 @@ import { useToastAlert } from "@/contexts/ToastAlertContext";
 import MuiLink from "@/app/MuiLink";
 import DeleteOrReportChip from "./DeleteOrReportChip";
 import { useUsers } from "@/contexts/UsersInGroupContext";
-import PinnedChip from "./PinnedChip";
+import PinChip from "./PinChip";
 
 export type Props = {
     by: "me" | "him";
@@ -213,6 +214,7 @@ export default function Message({ by, type = "text", msg }: Props) {
     const { setMessage } = useMessage();
     const { setMessage: setToastMessage } = useToastAlert();
     const [showReactors, setShowReactors] = useState(false);
+    const match_700 = useMediaQuery("(max-width: 700px)");
 
     useEffect(() => {
         setUser(getUserById(msg.sender_id));
@@ -425,43 +427,47 @@ export default function Message({ by, type = "text", msg }: Props) {
                     </DialogActions>
                 </Dialog>
             </div>
-            <div
-                className={cn(
-                    "reply flex justify-center items-center flex-row-reverse",
-                    by === "him"
-                        ? "justify-self-end"
-                        : "justify-self-start flex-row"
-                )}
-                style={{ gridArea: "reply" }}
-            >
-                <HoverWrapper className="rounded-full">
-                    <Chip
-                        icon={<AiOutlineMessage />}
-                        label="Reply"
-                        size="small"
-                        onClick={() => {
-                            setMessage((prev) => {
-                                return {
-                                    ...prev,
-                                    reply: msg.id,
-                                };
-                            });
-                        }}
-                    />
-                </HoverWrapper>
-                <DeleteOrReportChip msg={msg} by={by} />
+            {match_700 ? (
+                <div></div>
+            ) : (
+                <div
+                    className={cn(
+                        "reply flex justify-center items-center flex-row-reverse",
+                        by === "him"
+                            ? "justify-self-end"
+                            : "justify-self-start flex-row"
+                    )}
+                    style={{ gridArea: "reply" }}
+                >
+                    <HoverWrapper className="rounded-full">
+                        <Chip
+                            icon={<AiOutlineMessage />}
+                            label="Reply"
+                            size="small"
+                            onClick={() => {
+                                setMessage((prev) => {
+                                    return {
+                                        ...prev,
+                                        reply: msg.id,
+                                    };
+                                });
+                            }}
+                        />
+                    </HoverWrapper>
+                    <DeleteOrReportChip msg={msg} by={by} />
 
-                <PinnedChip
-                    pinned={msg.pinned}
-                    groupId={group?.id}
-                    messageId={msg.id}
-                    sender_role={
-                        group?.groupMembersBasicDetails.find(
-                            (e) => e.id === auth.currentUser?.uid
-                        )?.role as number
-                    }
-                />
-            </div>
+                    <PinChip
+                        pinned={msg.pinned}
+                        groupId={group?.id}
+                        messageId={msg.id}
+                        sender_role={
+                            group?.groupMembersBasicDetails.find(
+                                (e) => e.id === auth.currentUser?.uid
+                            )?.role as number
+                        }
+                    />
+                </div>
+            )}
 
             <PickEmoji
                 msg={msg}
