@@ -49,6 +49,8 @@ import MuiLink from "@/app/MuiLink";
 import DeleteOrReportChip from "./DeleteOrReportChip";
 import { useUsers } from "@/contexts/UsersInGroupContext";
 import PinChip from "./PinChip";
+import { BsThreeDots } from "react-icons/bs";
+import MessageFooterButtonsMobile from "./MessageFooterButtonsMobile";
 
 export type Props = {
     by: "me" | "him";
@@ -428,7 +430,12 @@ export default function Message({ by, type = "text", msg }: Props) {
                 </Dialog>
             </div>
             {match_700 ? (
-                <div></div>
+                <MessageFooterButtonsMobile
+                    groupId={group?.id}
+                    by={by}
+                    msg={msg}
+                    setMessage={setMessage}
+                />
             ) : (
                 <div
                     className={cn(
