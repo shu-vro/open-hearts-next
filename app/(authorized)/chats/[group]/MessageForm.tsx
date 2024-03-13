@@ -16,7 +16,6 @@ import MessageFormStack from "./MessageFormStack";
 import { nanoid } from "nanoid";
 import sanitize from "@/lib/helpers/rehype-purify";
 import MDEditor from "@uiw/react-md-editor";
-import rehypeSanitize from "rehype-sanitize";
 
 export default function MessageForm() {
     const {
@@ -70,7 +69,7 @@ export default function MessageForm() {
                 open={Boolean(message.reply || message.imageLink.length)}
             />
             <AddMoreButton submit_form_button={submit_form_button.current!} />
-            <MDEditor
+            {/* <MDEditor
                 value={message.text}
                 onChange={(v) => {
                     setMessage((prev) => ({
@@ -80,11 +79,8 @@ export default function MessageForm() {
                 }}
                 className="grow z-50"
                 visibleDragbar={false}
-                previewOptions={{
-                    rehypePlugins: [[rehypeSanitize]],
-                }}
-            />
-            {/* <TextField
+            /> */}
+            <TextField
                 label="Type something..."
                 variant="outlined"
                 multiline
@@ -106,7 +102,7 @@ export default function MessageForm() {
                         setMessage((prev) => ({ ...prev, text: "" }));
                     }
                 }}
-            /> */}
+            />
             <button
                 className="hidden opacity-0 select-none"
                 type="submit"
