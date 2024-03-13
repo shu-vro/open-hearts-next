@@ -14,6 +14,7 @@ import { useToastAlert } from "@/contexts/ToastAlertContext";
 import { auth } from "@/firebase";
 import MessageFormStack from "./MessageFormStack";
 import { nanoid } from "nanoid";
+import sanitize from "@/lib/helpers/rehype-purify";
 
 export default function MessageForm() {
     const { group } = useGroup();
@@ -39,6 +40,7 @@ export default function MessageForm() {
                     (member) => member.id === auth.currentUser?.uid
                 );
                 try {
+                    message.text = await sanitize(message.text);
                     await setChatMessage(
                         group.id,
                         message,

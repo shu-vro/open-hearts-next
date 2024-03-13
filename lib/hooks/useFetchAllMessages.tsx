@@ -6,6 +6,7 @@ import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { useAllMessages } from "@/contexts/AllMessagesContext";
 import { useGroup } from "@/contexts/GroupContext";
 import { useRouter } from "next/navigation";
+import sanitize from "../helpers/rehype-purify";
 
 export default function useFetchAllMessages(groupId: string) {
     const { messages, setMessages } = useAllMessages();
@@ -28,13 +29,18 @@ export default function useFetchAllMessages(groupId: string) {
             ),
             orderBy("created_at" as keyof MessageType)
         );
-        const unsubscribe = onSnapshot(q, (snapshot) => {
+        const unsubscribe = onSnapshot(q, async (snapshot) => {
             if (!snapshot.empty) {
-                setMessages(
-                    snapshot.docs.map((doc) => {
-                        return doc.data();
-                    }) as MessageType[]
+                const docs: Promise<MessageType>[] = snapshot.docs.map(
+                    async (doc) => {
+                        const data = doc.data() as MessageType;
+                        data.text = await sanitize(data.text);
+                        return data;
+                    }
                 );
+
+                const docsParsed: MessageType[] = await Promise.all(docs);
+                setMessages(docsParsed);
             } else {
                 setMessages([]);
             }
