@@ -3,7 +3,7 @@
 import TextField from "@mui/material/TextField";
 import GifButton from "./GifButton";
 import { useRef } from "react";
-import { IconButton } from "@mui/material";
+import { IconButton, useTheme } from "@mui/material";
 import { MdSend } from "react-icons/md";
 import AddMoreButton from "./AddMoreButton";
 import GetEmojiLink from "./GetEmojiLink";
@@ -15,8 +15,13 @@ import { auth } from "@/firebase";
 import MessageFormStack from "./MessageFormStack";
 import { nanoid } from "nanoid";
 import sanitize from "@/lib/helpers/rehype-purify";
+import MDEditor from "@uiw/react-md-editor";
+import rehypeSanitize from "rehype-sanitize";
 
 export default function MessageForm() {
+    const {
+        palette: { mode: themeMode },
+    } = useTheme();
     const { group } = useGroup();
     const { setMessage: setToastMessage } = useToastAlert();
     const { message, setMessage } = useMessage();
@@ -58,13 +63,28 @@ export default function MessageForm() {
                 });
                 setMessage(() => ({ ...defaultMessage, id: nanoid() }));
             }}
+            data-color-mode={themeMode}
             className="input-area flex justify-end items-center w-full relative"
         >
             <MessageFormStack
                 open={Boolean(message.reply || message.imageLink.length)}
             />
             <AddMoreButton submit_form_button={submit_form_button.current!} />
-            <TextField
+            <MDEditor
+                value={message.text}
+                onChange={(v) => {
+                    setMessage((prev) => ({
+                        ...prev,
+                        text: v as string,
+                    }));
+                }}
+                className="grow z-50"
+                visibleDragbar={false}
+                previewOptions={{
+                    rehypePlugins: [[rehypeSanitize]],
+                }}
+            />
+            {/* <TextField
                 label="Type something..."
                 variant="outlined"
                 multiline
@@ -86,7 +106,7 @@ export default function MessageForm() {
                         setMessage((prev) => ({ ...prev, text: "" }));
                     }
                 }}
-            />
+            /> */}
             <button
                 className="hidden opacity-0 select-none"
                 type="submit"
