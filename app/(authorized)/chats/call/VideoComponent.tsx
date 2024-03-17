@@ -61,7 +61,9 @@ export default function VideoComponent() {
             (async () => {
                 const PeerJs = (await import("peerjs")).default;
                 socket?.on("connect", () => {
-                    setPeer(new PeerJs(socket?.id));
+                    setPeer(
+                        new PeerJs(socket?.id || "experimental_for_future")
+                    );
                 });
             })();
         }

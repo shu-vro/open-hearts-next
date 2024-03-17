@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { Switch, Typography, useTheme } from "@mui/material";
 import { useColorMode } from "@/contexts/ColorModeContext";
+import MuiLink from "@/app/MuiLink";
+import { LuExternalLink } from "react-icons/lu";
 
 let timeout: NodeJS.Timeout | null;
 
@@ -10,6 +12,7 @@ export default function Accessibility() {
     const theme = useTheme();
     const { mode, setMode, setMainColor } = useColorMode();
     const [bgDoodle, setBgDoodle] = useState(localStorage.doodle === "true");
+    const [proEditor, setProEditor] = useState(!!localStorage.proEditor);
     const [
         DO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN,
         setDO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN,
@@ -106,6 +109,31 @@ export default function Accessibility() {
                         setDO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN(
                             !DO_NOT_SHOW_DELETE_ALL_IMAGES_AGAIN
                         );
+                    }}
+                />
+            </SettingsList>
+            <SettingsList>
+                <Typography
+                    variant="h5"
+                    component={MuiLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={"https://uiwjs.github.io/react-md-editor/"}
+                >
+                    Pro Message Editor <LuExternalLink />
+                </Typography>
+
+                <Switch
+                    checked={proEditor}
+                    onChange={() => {
+                        setProEditor((prev) => {
+                            if (!prev) {
+                                localStorage.proEditor = true;
+                            } else {
+                                localStorage.removeItem("proEditor");
+                            }
+                            return !prev;
+                        });
                     }}
                 />
             </SettingsList>
