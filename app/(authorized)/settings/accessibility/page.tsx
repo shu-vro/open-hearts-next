@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { Switch, Typography, useTheme } from "@mui/material";
 import { useColorMode } from "@/contexts/ColorModeContext";
+import MuiLink from "@/app/MuiLink";
+import { LuExternalLink } from "react-icons/lu";
 
 let timeout: NodeJS.Timeout | null;
 
@@ -111,7 +113,15 @@ export default function Accessibility() {
                 />
             </SettingsList>
             <SettingsList>
-                <Typography variant="h5">Pro Message Editor</Typography>
+                <Typography
+                    variant="h5"
+                    component={MuiLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={"https://uiwjs.github.io/react-md-editor/"}
+                >
+                    Pro Message Editor <LuExternalLink />
+                </Typography>
 
                 <Switch
                     checked={proEditor}
