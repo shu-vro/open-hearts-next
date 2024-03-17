@@ -72,8 +72,13 @@ export default function ReactMarkDownMaintain({
                 },
                 blockquote(props) {
                     return (
-                        <blockquote className="relative ml-4">
-                            <div className="absolute left-[-1rem] top-0 w-1 h-full bg-current"></div>
+                        <blockquote
+                            className={props.className}
+                            style={{
+                                // @ts-ignore
+                                "--color-fg-muted": "currentColor",
+                            }}
+                        >
                             {props.children}
                         </blockquote>
                     );

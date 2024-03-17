@@ -25,6 +25,7 @@ export default function MessageForm() {
     const { setMessage: setToastMessage } = useToastAlert();
     const { message, setMessage } = useMessage();
     const submit_form_button = useRef<HTMLButtonElement>(null);
+    const proEditor = localStorage.proEditor;
 
     return (
         <form
@@ -69,40 +70,49 @@ export default function MessageForm() {
                 open={Boolean(message.reply || message.imageLink.length)}
             />
             <AddMoreButton submit_form_button={submit_form_button.current!} />
-            {/* <MDEditor
-                value={message.text}
-                onChange={(v) => {
-                    setMessage((prev) => ({
-                        ...prev,
-                        text: v as string,
-                    }));
-                }}
-                className="grow z-50"
-                visibleDragbar={false}
-            /> */}
-            <TextField
-                label="Type something..."
-                variant="outlined"
-                multiline
-                maxRows={6}
-                fullWidth
-                className="grow z-50"
-                name="message"
-                value={message.text}
-                onChange={(e) => {
-                    setMessage((prev) => ({
-                        ...prev,
-                        text: e.target.value,
-                    }));
-                }}
-                onKeyUp={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                        // Submit the form when Enter is pressed without Shift
-                        submit_form_button.current?.click();
-                        setMessage((prev) => ({ ...prev, text: "" }));
-                    }
-                }}
-            />
+            {proEditor ? (
+                <MDEditor
+                    value={message.text}
+                    onChange={(v) => {
+                        setMessage((prev) => ({
+                            ...prev,
+                            text: v as string,
+                        }));
+                    }}
+                    className="grow z-50"
+                    visibleDragbar={false}
+                    previewOptions={{
+                        style: {
+                            fontSize: ".7em",
+                        },
+                    }}
+                />
+            ) : (
+                <TextField
+                    label="Type something..."
+                    variant="outlined"
+                    multiline
+                    maxRows={6}
+                    fullWidth
+                    className="grow z-50"
+                    name="message"
+                    value={message.text}
+                    onChange={(e) => {
+                        setMessage((prev) => ({
+                            ...prev,
+                            text: e.target.value,
+                        }));
+                    }}
+                    onKeyUp={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            // Submit the form when Enter is pressed without Shift
+                            submit_form_button.current?.click();
+                            setMessage((prev) => ({ ...prev, text: "" }));
+                        }
+                    }}
+                />
+            )}
+
             <button
                 className="hidden opacity-0 select-none"
                 type="submit"
