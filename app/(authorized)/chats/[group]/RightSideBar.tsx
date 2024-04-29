@@ -1,6 +1,5 @@
 "use client";
 
-import { MessageType } from "@/app";
 import GroupInfo from "../group_info/GroupInfo";
 import { useGroup } from "@/contexts/GroupContext";
 import { useAllMessages } from "@/contexts/AllMessagesContext";

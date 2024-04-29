@@ -17,6 +17,7 @@ export default function ImageSwiperSlide({
     };
 
     let imageLink = messages
+        .filter((msg) => !msg.deleted)
         .map((msg) => msg.imageLink)
         .flat(Infinity) as string[];
     return (
